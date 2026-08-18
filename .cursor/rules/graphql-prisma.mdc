@@ -1,0 +1,13 @@
+---
+description: GraphQL modules, Prisma, and validation conventions
+globs: "{modules,lib,prisma,app/api}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# GraphQL and Prisma
+
+Register domain schema in `modules/<domain>/` and merge in `lib/graphql`. Use connection pagination (`edges`, `pageInfo`). Hide fields the current role must not see.
+
+Throw typed errors (`AuthenticationError`, `AuthorizationError`, `ValidationError`, `NotFoundError`, `ConflictError`, `BusinessRuleError`). Do not leak stack traces to clients.
+
+Scope Prisma `where` by `organizationId`. Add composite indexes for tenant filters (`organizationId + status`, `organizationId + createdAt`). Use `select` to avoid over-fetching. No `any` unless unavoidable.

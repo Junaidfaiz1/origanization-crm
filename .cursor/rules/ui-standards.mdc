@@ -1,0 +1,13 @@
+---
+description: Dashboard UI, loading states, and reusable components
+globs: "{app,components}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# UI standards
+
+Professional B2B SaaS look: clear hierarchy, cards, subtle borders, status badges, consistent spacing. Prefer Server Components; mark `"use client"` only when needed.
+
+Every list/detail page needs loading, empty, error, and success states. Reuse `DataTable`, `EmptyState`, `ErrorState`, `StatusBadge`, `MoneyDisplay`, `ConfirmDialog`.
+
+Do not hardcode business rules in the UI. Validate with Zod + React Hook Form. Tables must paginate; do not load unbounded lists into the browser.

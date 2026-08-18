@@ -1,0 +1,24 @@
+---
+description: Multi-tenant isolation, RBAC, and server-side authorization
+alwaysApply: true
+---
+
+# Tenant isolation and auth
+
+Every organization-owned query must include `organizationId` from the authenticated session.
+
+```ts
+// ❌ BAD
+prisma.project.findUnique({ where: { id: projectId } })
+
+// ✅ GOOD
+prisma.project.findFirst({
+  where: { id: projectId, organizationId: ctx.organizationId },
+})
+```
+
+Check permissions on the server (not role name alone). Never trust the frontend. Do not expose secrets, passwords, tokens, or payment credentials in logs, GraphQL, or audit payloads.
+
+Critical workflows (lead conversion, proposal accept, bid accept, payment updates) must use Prisma transactions. BidRequest allows only one winning bid — enforce with constraints + transactions, not UI locking.
+
+Clients must not see bidding internals, freelancer costs, or profit. Freelancers must not see other private bids or agency margin.

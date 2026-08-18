@@ -1,0 +1,16 @@
+---
+description: TechNova CRM architecture, stack, and module boundaries
+alwaysApply: true
+---
+
+# Architecture
+
+Modular Next.js monolith. Do not introduce microservices, always-on workers, WebSockets, or BullMQ.
+
+Stack: Next.js App Router, TypeScript strict, Tailwind, shadcn/ui, Apollo Client, GraphQL Yoga, Prisma, PostgreSQL (Neon), Cloudflare R2, Resend, Stripe webhooks, Vercel serverless.
+
+Put business logic in `modules/<domain>/` (service + validation + GraphQL). UI components must not query Prisma. Derive `organizationId` from the session, never from client input.
+
+Vercel-compatible only: no local filesystem storage, no in-memory sessions, no long-running processes. Use Vercel Cron + DB state for scheduled work.
+
+After each phase: typecheck, lint, and fix before continuing. Keep the repo buildable.
