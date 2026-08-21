@@ -47,14 +47,14 @@ export default async function DashboardLayout({
       >
         Skip to main content
       </a>
-      <div className="flex min-h-dvh bg-background">
+      <div className="flex h-dvh overflow-hidden bg-background">
         <Sidebar
           permissions={user.permissions}
           userName={user.name}
           organizationName={user.organization.name}
           roleName={user.roleName}
         />
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <Header
             userName={user.name}
             organizationName={user.organization.name}
@@ -65,7 +65,7 @@ export default async function DashboardLayout({
           <main
             id="main-content"
             tabIndex={-1}
-            className="flex-1 px-3 py-4 outline-none sm:px-4 sm:py-6 lg:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]"
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 outline-none sm:px-4 sm:py-6 lg:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]"
           >
             <Suspense fallback={null}>
               <FlashToast />
