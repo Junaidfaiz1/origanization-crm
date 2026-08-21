@@ -9,6 +9,11 @@ import {
   ValidationError,
 } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
+import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
 import { assertCanDeleteResource } from "@/modules/resources/rules";
 import type {
   CreateResourceInput,
@@ -169,6 +174,7 @@ function listWhere(organizationId: string, filter: ResourceListFilter): Prisma.R
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.ResourceWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -182,14 +188,7 @@ function listWhere(organizationId: string, filter: ResourceListFilter): Prisma.R
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(organizationId, {
@@ -203,11 +202,12 @@ function listWhere(organizationId: string, filter: ResourceListFilter): Prisma.R
 export async function listResources(actor: TenantActor, filter: ResourceListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.resource.findMany({
     where,
     include: resourceInclude,
-    orderBy: [{ availabilityStatus: "asc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 

@@ -20,7 +20,7 @@ export function SearchInput({
       <Input
         defaultValue={params.get(param) ?? ""}
         placeholder={placeholder}
-        className="pl-9"
+        className="min-h-11 pl-9 md:min-h-10"
         aria-label={placeholder}
         onKeyDown={(event) => {
           if (event.key !== "Enter") {

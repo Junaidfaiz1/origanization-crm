@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { AuthorizationError } from "@/lib/errors/app-error";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { paymentListFilterSchema } from "@/modules/payments/validation";
 import {
   getPaymentSummary,
@@ -14,6 +15,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
 import { PaymentsTable } from "@/components/payments/payments-table";
 import {
   PaymentMethodFilter,
@@ -31,6 +35,7 @@ export default async function PaymentsPage({
     status?: string;
     method?: string;
     invoiceId?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -51,6 +56,7 @@ export default async function PaymentsPage({
     status: params.status,
     method: params.method,
     invoiceId: params.invoiceId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -83,29 +89,27 @@ export default async function PaymentsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">Finance</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Payments</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Record client payments received outside the app and keep invoice balances in sync.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.invoiceId
-                  ? `/payments/new?invoiceId=${params.invoiceId}`
-                  : "/payments/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              Record payment
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Payments"
+        description="Record client payments received outside the app and keep invoice balances in sync."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.invoiceId
+                    ? `/payments/new?invoiceId=${params.invoiceId}`
+                    : "/payments/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                Record payment
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <PaymentSummaryCards summary={summary} />
 
@@ -113,6 +117,7 @@ export default async function PaymentsPage({
         <SearchInput placeholder="Search invoice, client, or reference" />
         <PaymentStatusFilter />
         <PaymentMethodFilter />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {params.invoiceId ? (
@@ -138,7 +143,7 @@ export default async function PaymentsPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} payments</p>
+          <ResultCount count={result.totalCount} label="payments" />
           <PaymentsTable payments={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -148,6 +153,7 @@ export default async function PaymentsPage({
               status: params.status,
               method: params.method,
               invoiceId: params.invoiceId,
+              sort: params.sort,
             }}
           />
         </>

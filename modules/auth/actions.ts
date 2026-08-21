@@ -3,11 +3,17 @@
 import { redirect } from "next/navigation";
 import { AppError } from "@/lib/errors/app-error";
 import { setSessionCookie, clearSessionCookie } from "@/lib/auth/session";
-import { loginUser, registerOrganization } from "@/modules/auth/service";
+import {
+  consumeAuthToken,
+  loginUser,
+  registerOrganization,
+  requestPasswordReset,
+} from "@/modules/auth/service";
 import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
+  resetPasswordSchema,
 } from "@/modules/auth/validation";
 import { logger } from "@/lib/logging/logger";
 import { homePathForRole } from "@/lib/auth/home";
@@ -16,6 +22,16 @@ export type AuthFormState = {
   message?: string;
   errors?: Record<string, string[]>;
 };
+
+function isNextRedirect(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    typeof error.digest === "string" &&
+    error.digest.startsWith("NEXT_REDIRECT")
+  );
+}
 
 export async function registerAction(
   _prev: AuthFormState,
@@ -73,14 +89,7 @@ export async function loginAction(
     if (error instanceof AppError) {
       return { message: error.message };
     }
-    // Next.js redirect throws; rethrow
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "digest" in error &&
-      typeof error.digest === "string" &&
-      error.digest.startsWith("NEXT_REDIRECT")
-    ) {
+    if (isNextRedirect(error)) {
       throw error;
     }
     logger.error("Login failed", { operation: "auth.login", error });
@@ -108,8 +117,58 @@ export async function forgotPasswordAction(
     };
   }
 
+  try {
+    await requestPasswordReset(parsed.data);
+  } catch (error) {
+    logger.error("Forgot password failed", {
+      operation: "auth.forgotPassword",
+      error,
+    });
+  }
+
   return {
     message:
       "If an account exists for that email, you will receive reset instructions shortly.",
   };
+}
+
+export async function resetPasswordAction(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const acceptOnly = formData.get("acceptOnly") === "true";
+  const parsed = resetPasswordSchema.safeParse({
+    token: formData.get("token"),
+    password: formData.get("password") || undefined,
+    confirmPassword: formData.get("confirmPassword") || undefined,
+    acceptOnly,
+  });
+
+  if (!parsed.success) {
+    return {
+      message: "Please fix the highlighted fields.",
+      errors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  try {
+    const result = await consumeAuthToken(parsed.data);
+    redirect(
+      result.purpose === "INVITE"
+        ? "/login?invited=1"
+        : "/login?reset=1",
+    );
+  } catch (error) {
+    if (isNextRedirect(error)) {
+      throw error;
+    }
+    if (error instanceof AppError) {
+      return { message: error.message, errors: error.details as Record<string, string[]> | undefined };
+    }
+    logger.error("Reset password failed", {
+      operation: "auth.resetPassword",
+      error,
+    });
+    return { message: "Unable to update password. Try again." };
+  }
 }

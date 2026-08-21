@@ -7,7 +7,9 @@ import { DateDisplay } from "@/components/shared/date-display";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReportsChartsGrid } from "@/components/reports/report-charts";
 
 export const metadata = { title: "Reports" };
 
@@ -51,12 +53,10 @@ export default async function ReportsPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Reports</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Sales, delivery, bidding, and finance metrics for this organization.
-        </p>
-      </div>
+      <PageHeader
+        title="Reports"
+        description="Sales, delivery, bidding, and finance metrics for this organization."
+      />
 
       <div className="flex flex-wrap gap-2 border-b border-border pb-3">
         {tabs.map((tab) => (
@@ -73,6 +73,8 @@ export default async function ReportsPage({
           </Link>
         ))}
       </div>
+
+      <ReportsChartsGrid charts={overview.charts} section={section} />
 
       {section === "overview" || section === "finance" ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

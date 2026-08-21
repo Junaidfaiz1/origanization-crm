@@ -6,6 +6,7 @@ const PUBLIC_PATHS = new Set([
   "/login",
   "/register",
   "/forgot-password",
+  "/reset-password",
 ]);
 
 export async function proxy(request: NextRequest) {
@@ -27,6 +28,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/opportunities") ||
     pathname.startsWith("/proposals") ||
     pathname.startsWith("/projects") ||
+    pathname.startsWith("/progress") ||
     pathname.startsWith("/bidding") ||
     pathname.startsWith("/resources") ||
     pathname.startsWith("/contracts") ||
@@ -38,7 +40,11 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/reports") ||
     pathname.startsWith("/notifications") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/milestones");
+    pathname.startsWith("/milestones") ||
+    pathname.startsWith("/requirements") ||
+    pathname.startsWith("/team") ||
+    pathname.startsWith("/files") ||
+    pathname.startsWith("/activity");
 
   if (isProtected && !session) {
     const loginUrl = new URL("/login", request.url);
@@ -46,7 +52,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthRoute && session) {
+  if (isAuthRoute && session && pathname !== "/reset-password") {
     const home =
       session.roleKey === "CLIENT"
         ? "/portal"

@@ -10,6 +10,11 @@ import {
 } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanConvertLead,
   conversionNames,
 } from "@/modules/leads/rules";
@@ -95,6 +100,7 @@ function listWhere(
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.LeadWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -107,14 +113,7 @@ function listWhere(
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(organizationId, {
@@ -128,11 +127,12 @@ function listWhere(
 export async function listLeads(actor: TenantActor, filter: LeadListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.lead.findMany({
     where,
     include: leadInclude,
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 

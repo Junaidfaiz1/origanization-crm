@@ -15,6 +15,10 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { ProposalsTable } from "@/components/proposals/proposals-table";
 import { ProposalClientFilter } from "@/components/proposals/proposal-client-filter";
 import { ProposalStatusFilter } from "@/components/proposals/proposal-status-filter";
@@ -30,6 +34,7 @@ export default async function ProposalsPage({
     status?: string;
     clientId?: string;
     opportunityId?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -50,6 +55,7 @@ export default async function ProposalsPage({
     status: params.status,
     clientId: params.clientId,
     opportunityId: params.opportunityId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -88,29 +94,27 @@ export default async function ProposalsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">CRM</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Proposals</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Draft, send, and track client proposals. Accepted proposals become projects.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.opportunityId
-                  ? `/proposals/new?opportunityId=${params.opportunityId}`
-                  : "/proposals/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              New proposal
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="CRM"
+        title="Proposals"
+        description="Draft, send, and track client proposals. Accepted proposals become projects."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.opportunityId
+                    ? `/proposals/new?opportunityId=${params.opportunityId}`
+                    : "/proposals/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                New proposal
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <FilterBar>
         <SearchInput placeholder="Search proposal, client, or opportunity" />
@@ -124,6 +128,7 @@ export default async function ProposalsPage({
             name: opportunity.name,
           }))}
         />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedClient || selectedOpportunity ? (
@@ -169,7 +174,7 @@ export default async function ProposalsPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} proposals</p>
+          <ResultCount count={result.totalCount} label="proposals" />
           <ProposalsTable proposals={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -179,6 +184,7 @@ export default async function ProposalsPage({
               status: params.status,
               clientId: params.clientId,
               opportunityId: params.opportunityId,
+              sort: params.sort,
             }}
           />
         </>

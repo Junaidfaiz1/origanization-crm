@@ -15,6 +15,10 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { ProjectsTable } from "@/components/projects/projects-table";
 import {
   ProjectStatusFilter,
@@ -31,6 +35,7 @@ export default async function ProjectsPage({
     q?: string;
     status?: string;
     clientId?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -50,6 +55,7 @@ export default async function ProjectsPage({
     search: params.q,
     status: params.status,
     clientId: params.clientId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -85,29 +91,27 @@ export default async function ProjectsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">Delivery</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Projects</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Client work from planning through delivery, bidding, and completion.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.clientId
-                  ? `/projects/new?clientId=${params.clientId}`
-                  : "/projects/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              New project
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Delivery"
+        title="Projects"
+        description="Client work from planning through delivery, bidding, and completion."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.clientId
+                    ? `/projects/new?clientId=${params.clientId}`
+                    : "/projects/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                New project
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <ProjectStatusSummary summary={summary} />
 
@@ -115,6 +119,7 @@ export default async function ProjectsPage({
         <SearchInput placeholder="Search project, client, or manager" />
         <ProjectStatusFilter />
         <ProjectClientFilter clients={clients} />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedClient ? (
@@ -144,12 +149,17 @@ export default async function ProjectsPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} projects</p>
+          <ResultCount count={result.totalCount} label="projects" />
           <ProjectsTable projects={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
             endCursor={result.pageInfo.endCursor}
-            currentQuery={{ q: params.q, status: params.status, clientId: params.clientId }}
+            currentQuery={{
+              q: params.q,
+              status: params.status,
+              clientId: params.clientId,
+              sort: params.sort,
+            }}
           />
         </>
       )}

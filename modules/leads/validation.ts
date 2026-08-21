@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LEAD_STATUSES } from "@/modules/leads/rules";
+import { listSortSchema } from "@/lib/ui/list-sort";
 
 const optionalText = z
   .string()
@@ -34,6 +35,7 @@ export const leadListFilterSchema = z.object({
   search: z.string().trim().optional(),
   status: leadStatusSchema.optional(),
   assignedToId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(50).optional().default(20),
 });

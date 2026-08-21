@@ -5,6 +5,11 @@ import { logger } from "@/lib/logging/logger";
 import { NotFoundError, ValidationError } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanDeleteMilestone,
   assertCanManageMilestones,
   MILESTONE_STATUSES,
@@ -145,6 +150,7 @@ function listWhere(
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.MilestoneWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -157,14 +163,7 @@ function listWhere(
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return {
@@ -181,13 +180,12 @@ function listWhere(
 export async function listMilestones(actor: TenantActor, filter: MilestoneListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.milestone.findMany({
     where,
     include: milestoneInclude,
-    orderBy: filter.projectId
-      ? [{ order: "asc" }, { createdAt: "asc" }, { id: "asc" }]
-      : [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 

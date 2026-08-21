@@ -83,10 +83,15 @@ export async function getFreelancerHome(actor: PortalActor) {
 
   const [openRequests, myBids, myTasks, timeEntries, profile, activeTimer] =
     await Promise.all([
-      listBidRequests(actor, { status: "OPEN", first: 5 }),
+      listBidRequests(actor, { status: "OPEN", first: 5, sort: "newest" }),
       listBids(actor, { mineOnly: true, first: 5 }),
-      listTasks(actor, { mineOnly: true, first: 5 }),
-      listTimeEntries(actor, { first: 5, billable: undefined, runningOnly: false }),
+      listTasks(actor, { mineOnly: true, first: 5, sort: "newest" }),
+      listTimeEntries(actor, {
+        first: 5,
+        billable: undefined,
+        runningOnly: false,
+        sort: "newest",
+      }),
       getFreelancerProfile(actor),
       getActiveTimeEntry(actor),
     ]);
@@ -162,7 +167,11 @@ export async function listFreelancerOpenRequests(actor: PortalActor) {
     throw new AuthorizationError("Missing BID_REQUEST_VIEW");
   }
 
-  const result = await listBidRequests(actor, { status: "OPEN", first: 50 });
+  const result = await listBidRequests(actor, {
+    status: "OPEN",
+    first: 50,
+    sort: "newest",
+  });
   return result.nodes.map((request) => sanitizeBidRequest(request, actor.userId));
 }
 
@@ -267,7 +276,11 @@ export async function listFreelancerTasks(actor: PortalActor) {
   if (!hasPermission(actor.permissions ?? [], "TASK_VIEW")) {
     throw new AuthorizationError("Missing TASK_VIEW");
   }
-  const result = await listTasks(actor, { mineOnly: true, first: 50 });
+  const result = await listTasks(actor, {
+    mineOnly: true,
+    first: 50,
+    sort: "newest",
+  });
   return result.nodes;
 }
 
@@ -289,7 +302,12 @@ export async function listFreelancerTimeEntries(actor: PortalActor) {
     throw new AuthorizationError("Missing TIME_ENTRY_VIEW");
   }
   const [entries, activeTimer] = await Promise.all([
-    listTimeEntries(actor, { first: 50, billable: undefined, runningOnly: false }),
+    listTimeEntries(actor, {
+      first: 50,
+      billable: undefined,
+      runningOnly: false,
+      sort: "newest",
+    }),
     getActiveTimeEntry(actor),
   ]);
   return { entries: entries.nodes, activeTimer };

@@ -6,6 +6,11 @@ import { logger } from "@/lib/logging/logger";
 import { BusinessRuleError, NotFoundError, ValidationError } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   ACTIVE_PROJECT_STATUSES,
   assertCanArchiveProject,
   assertCanEditProject,
@@ -41,6 +46,7 @@ const projectInclude = {
   _count: {
     select: {
       bidRequests: true,
+      requirements: true,
       milestones: true,
       tasks: true,
       members: true,
@@ -109,6 +115,7 @@ export function serializeProject(
     managerId: project.managerId,
     manager: project.manager,
     bidRequestCount: project._count.bidRequests,
+    requirementCount: project._count.requirements,
     milestoneCount: project._count.milestones,
     taskCount: project._count.tasks,
     memberCount: project._count.members,
@@ -231,6 +238,7 @@ function listWhere(
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.ProjectWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -244,14 +252,7 @@ function listWhere(
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(organizationId, {
@@ -266,11 +267,12 @@ function listWhere(
 export async function listProjects(actor: TenantActor, filter: ProjectListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.project.findMany({
     where,
     include: projectInclude,
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 

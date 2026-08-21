@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 
 export const CLIENT_STATUSES = ["ACTIVE", "INACTIVE", "ON_HOLD"] as const;
 
@@ -25,6 +26,7 @@ export const clientListFilterSchema = z.object({
   search: z.string().trim().optional(),
   status: clientStatusSchema.optional(),
   companyId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(50).optional().default(20),
 });

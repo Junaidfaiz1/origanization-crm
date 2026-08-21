@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { AuthorizationError } from "@/lib/errors/app-error";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { expenseListFilterSchema } from "@/modules/expenses/validation";
 import {
   getExpenseSummary,
@@ -15,6 +16,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
 import { ExpensesTable } from "@/components/expenses/expenses-table";
 import {
   ExpenseCategoryFilter,
@@ -33,6 +37,7 @@ export default async function ExpensesPage({
     status?: string;
     projectId?: string;
     category?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -53,6 +58,7 @@ export default async function ExpensesPage({
     status: params.status,
     projectId: params.projectId,
     category: params.category,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -88,29 +94,27 @@ export default async function ExpensesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">Finance</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Expenses</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Project costs that feed profitability after approval.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.projectId
-                  ? `/expenses/new?projectId=${params.projectId}`
-                  : "/expenses/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              Submit expense
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Expenses"
+        description="Project costs that feed profitability after approval."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.projectId
+                    ? `/expenses/new?projectId=${params.projectId}`
+                    : "/expenses/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                Submit expense
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <ExpenseSummaryCards summary={summary} />
 
@@ -119,6 +123,7 @@ export default async function ExpensesPage({
         <ExpenseStatusFilter />
         <ExpenseCategoryFilter />
         <ExpenseProjectFilter projects={projects} />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedProject ? (
@@ -148,7 +153,7 @@ export default async function ExpensesPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} expenses</p>
+          <ResultCount count={result.totalCount} label="expenses" />
           <ExpensesTable expenses={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -158,6 +163,7 @@ export default async function ExpensesPage({
               status: params.status,
               projectId: params.projectId,
               category: params.category,
+              sort: params.sort,
             }}
           />
         </>

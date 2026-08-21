@@ -11,6 +11,11 @@ import {
 import { hasPermission } from "@/config/permissions";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanDeleteContract,
   assertCanEditContract,
   assertClientMatchesProject,
@@ -239,6 +244,7 @@ function listWhere(actor: TenantActor, filter: ContractListFilter): Prisma.Contr
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.ContractWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -253,14 +259,7 @@ function listWhere(actor: TenantActor, filter: ContractListFilter): Prisma.Contr
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(actor.organizationId, {
@@ -274,11 +273,12 @@ function listWhere(actor: TenantActor, filter: ContractListFilter): Prisma.Contr
 export async function listContracts(actor: TenantActor, filter: ContractListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.contract.findMany({
     where,
     include: contractInclude,
-    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -590,7 +590,7 @@ export async function deleteContract(actor: TenantActor, id: string) {
 }
 
 export async function getContractSummary(actor: TenantActor, projectId?: string) {
-  const where = listWhere(actor, { projectId, first: 100 });
+  const where = listWhere(actor, { projectId, first: 100, sort: "newest" });
   const contracts = await prisma.contract.findMany({
     where,
     select: { status: true, totalAmount: true },

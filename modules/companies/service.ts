@@ -5,6 +5,11 @@ import { writeAuditLog } from "@/lib/audit";
 import { logger } from "@/lib/logging/logger";
 import { BusinessRuleError, NotFoundError } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
+import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
 import { assertCanArchiveCompany } from "@/modules/companies/rules";
 import type {
   CompanyListFilter,
@@ -61,6 +66,7 @@ function listWhere(
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.CompanyWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -75,14 +81,7 @@ function listWhere(
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(organizationId, {
@@ -97,11 +96,12 @@ function listWhere(
 export async function listCompanies(actor: TenantActor, filter: CompanyListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.company.findMany({
     where,
     include: companyInclude,
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 

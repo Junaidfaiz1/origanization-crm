@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { OPPORTUNITY_STAGES } from "@/modules/opportunities/rules";
 
 const optionalText = z
@@ -41,6 +42,7 @@ export const opportunityListFilterSchema = z.object({
   stage: opportunityStageSchema.optional(),
   clientId: z.string().trim().min(1).optional(),
   assignedToId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(50).optional().default(20),
 });

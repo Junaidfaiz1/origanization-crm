@@ -11,6 +11,10 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { CompaniesTable } from "@/components/companies/companies-table";
 
 export const metadata = { title: "Companies" };
@@ -18,7 +22,7 @@ export const metadata = { title: "Companies" };
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; industry?: string; cursor?: string }>;
+  searchParams: Promise<{ q?: string; industry?: string; sort?: string; cursor?: string }>;
 }) {
   const ctx = await requireDashboardUser();
 
@@ -35,6 +39,7 @@ export default async function CompaniesPage({
   const filter = companyListFilterSchema.parse({
     search: params.q,
     industry: params.industry,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -63,26 +68,25 @@ export default async function CompaniesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">CRM</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Companies</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Company records that sit behind clients, contacts, and deals.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link href="/companies/new">
-              <Plus className="h-4 w-4" />
-              New company
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="CRM"
+        title="Companies"
+        description="Company records that sit behind clients, contacts, and deals."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link href="/companies/new">
+                <Plus className="h-4 w-4" />
+                New company
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <FilterBar>
         <SearchInput placeholder="Search name, industry, or location" />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {result.nodes.length === 0 ? (
@@ -99,12 +103,16 @@ export default async function CompaniesPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} companies</p>
+          <ResultCount count={result.totalCount} label="companies" />
           <CompaniesTable companies={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
             endCursor={result.pageInfo.endCursor}
-            currentQuery={{ q: params.q, industry: params.industry }}
+            currentQuery={{
+              q: params.q,
+              industry: params.industry,
+              sort: params.sort,
+            }}
           />
         </>
       )}

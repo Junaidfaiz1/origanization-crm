@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { TASK_PRIORITIES, TASK_STATUSES } from "@/modules/tasks/rules";
 
 const optionalText = z
@@ -55,6 +56,7 @@ export const taskListFilterSchema = z.object({
     .union([z.boolean(), z.string()])
     .optional()
     .transform((value) => value === true || value === "true"),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

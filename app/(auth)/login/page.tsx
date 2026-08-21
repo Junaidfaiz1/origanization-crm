@@ -3,7 +3,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export const metadata = { title: "Sign in" };
 
-export default function LoginPage() {
+type Props = {
+  searchParams: Promise<{ invited?: string; reset?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const notice =
+    params.invited === "1"
+      ? "Invitation accepted. Sign in with your password."
+      : params.reset === "1"
+        ? "Password updated. Sign in with your new password."
+        : undefined;
+
   return (
     <Card>
       <CardHeader>
@@ -11,7 +23,7 @@ export default function LoginPage() {
         <CardDescription>Sign in to your TechNova workspace.</CardDescription>
       </CardHeader>
       <CardContent>
-        <LoginForm />
+        <LoginForm notice={notice} />
       </CardContent>
     </Card>
   );

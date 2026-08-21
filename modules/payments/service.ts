@@ -13,6 +13,11 @@ import {
 } from "@/lib/errors/app-error";
 import { hasPermission } from "@/config/permissions";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
+import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
 import { applyPayment, roundMoney } from "@/modules/invoices/calculations";
 import {
   assertCanRecordPaymentOnInvoice,
@@ -134,6 +139,7 @@ function listWhere(actor: TenantActor, filter: PaymentListFilter): Prisma.Paymen
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.PaymentWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -159,14 +165,7 @@ function listWhere(actor: TenantActor, filter: PaymentListFilter): Prisma.Paymen
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(actor.organizationId, {
@@ -179,11 +178,12 @@ function listWhere(actor: TenantActor, filter: PaymentListFilter): Prisma.Paymen
 export async function listPayments(actor: TenantActor, filter: PaymentListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.payment.findMany({
     where,
     include: paymentInclude,
-    orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -444,7 +444,7 @@ export async function voidPayment(actor: TenantActor, id: string) {
 }
 
 export async function getPaymentSummary(actor: TenantActor, invoiceId?: string) {
-  const where = listWhere(actor, { invoiceId, first: 100 });
+  const where = listWhere(actor, { invoiceId, first: 100, sort: "newest" });
   const payments = await prisma.payment.findMany({
     where,
     select: { status: true, amount: true },

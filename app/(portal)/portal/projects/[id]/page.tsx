@@ -3,12 +3,15 @@ import { notFound } from "next/navigation";
 import { requirePortalUser } from "@/lib/auth/page";
 import { NotFoundError } from "@/lib/errors/app-error";
 import { getPortalProject } from "@/modules/client-portal/service";
+import { getProjectProgress } from "@/modules/progress/service";
+import { toPublicProgress } from "@/modules/progress/rules";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { MoneyDisplay } from "@/components/shared/money-display";
 import { DateDisplay } from "@/components/shared/date-display";
 import { ErrorState } from "@/components/shared/error-state";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProjectProgressCard } from "@/components/progress/project-progress-card";
 
 export const metadata = { title: "Project" };
 
@@ -21,8 +24,10 @@ export default async function PortalProjectDetailPage({
   const { id } = await params;
 
   let project;
+  let progress;
   try {
     project = await getPortalProject(ctx, id);
+    progress = toPublicProgress(await getProjectProgress(ctx, id));
   } catch (error) {
     if (error instanceof NotFoundError) notFound();
     return <ErrorState title="Could not load project" description="Try again shortly." />;
@@ -45,6 +50,8 @@ export default async function PortalProjectDetailPage({
           <p className="mt-2 text-sm text-muted-foreground">{project.description}</p>
         ) : null}
       </div>
+
+      <ProjectProgressCard progress={progress} />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>

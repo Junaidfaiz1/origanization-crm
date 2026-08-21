@@ -13,6 +13,11 @@ import {
 import { hasPermission } from "@/config/permissions";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanLogTimeOnProject,
   assertValidTaskForTimeEntry,
   computeDurationSeconds,
@@ -223,6 +228,7 @@ function listWhere(actor: TenantActor, filter: TimeEntryListFilter): Prisma.Time
   const search = filter.search?.trim();
   const and: Prisma.TimeEntryWhereInput[] = [];
   const mineOnly = !canViewAllTimeEntries(actor);
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -236,14 +242,7 @@ function listWhere(actor: TenantActor, filter: TimeEntryListFilter): Prisma.Time
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(actor.organizationId, {
@@ -263,11 +262,12 @@ function listWhere(actor: TenantActor, filter: TimeEntryListFilter): Prisma.Time
 export async function listTimeEntries(actor: TenantActor, filter: TimeEntryListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.timeEntry.findMany({
     where,
     include: timeEntryInclude,
-    orderBy: [{ startedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -615,6 +615,7 @@ export async function getTimeEntrySummary(actor: TenantActor, projectId?: string
     first: 100,
     billable: undefined,
     runningOnly: false,
+    sort: "newest",
   });
   const entries = await prisma.timeEntry.findMany({
     where,

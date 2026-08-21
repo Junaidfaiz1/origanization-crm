@@ -17,6 +17,11 @@ import {
   ListTodo,
   CreditCard,
   Timer,
+  ListChecks,
+  UsersRound,
+  Paperclip,
+  History,
+  Gauge,
   type LucideIcon,
 } from "lucide-react";
 import type { PermissionKey } from "@/config/permissions";
@@ -53,6 +58,11 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Delivery",
     items: [
       { href: "/projects", label: "Projects", icon: FolderKanban, permission: "PROJECT_VIEW" },
+      { href: "/progress", label: "Progress", icon: Gauge, permission: "PROJECT_VIEW" },
+      { href: "/requirements", label: "Requirements", icon: ListChecks, permission: "PROJECT_VIEW" },
+      { href: "/team", label: "Team", icon: UsersRound, permission: "PROJECT_VIEW" },
+      { href: "/files", label: "Files", icon: Paperclip, permission: "PROJECT_VIEW" },
+      { href: "/activity", label: "Activity", icon: History, permission: "PROJECT_VIEW" },
       { href: "/bidding", label: "Bidding", icon: Gavel, permission: "BID_REQUEST_VIEW" },
       { href: "/resources", label: "Resources", icon: Users, permission: "RESOURCE_VIEW" },
       { href: "/milestones", label: "Milestones", icon: ClipboardList, permission: "PROJECT_VIEW" },

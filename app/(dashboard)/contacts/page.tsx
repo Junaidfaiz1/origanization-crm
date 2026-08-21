@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { AuthorizationError } from "@/lib/errors/app-error";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { contactListFilterSchema } from "@/modules/contacts/validation";
 import { listContacts, listContactCompanyOptions } from "@/modules/contacts/service";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
 import { ContactsTable } from "@/components/contacts/contacts-table";
 import { CompanyFilter } from "@/components/contacts/company-filter";
 
@@ -19,7 +23,12 @@ export const metadata = { title: "Contacts" };
 export default async function ContactsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; companyId?: string; cursor?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    companyId?: string;
+    sort?: string;
+    cursor?: string;
+  }>;
 }) {
   const ctx = await requireDashboardUser();
 
@@ -36,6 +45,7 @@ export default async function ContactsPage({
   const filter = contactListFilterSchema.parse({
     search: params.q,
     companyId: params.companyId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -69,33 +79,32 @@ export default async function ContactsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">CRM</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Contacts</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            People at client companies. A company can have multiple contacts.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.companyId
-                  ? `/contacts/new?companyId=${params.companyId}`
-                  : "/contacts/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              New contact
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="CRM"
+        title="Contacts"
+        description="People at client companies. A company can have multiple contacts."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.companyId
+                    ? `/contacts/new?companyId=${params.companyId}`
+                    : "/contacts/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                New contact
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <FilterBar>
         <SearchInput placeholder="Search name, email, company, or role" />
         <CompanyFilter companies={companies} />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedCompany ? (
@@ -125,12 +134,16 @@ export default async function ContactsPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} contacts</p>
+          <ResultCount count={result.totalCount} label="contacts" />
           <ContactsTable contacts={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
             endCursor={result.pageInfo.endCursor}
-            currentQuery={{ q: params.q, companyId: params.companyId }}
+            currentQuery={{
+              q: params.q,
+              companyId: params.companyId,
+              sort: params.sort,
+            }}
           />
         </>
       )}

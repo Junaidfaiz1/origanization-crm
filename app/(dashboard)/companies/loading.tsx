@@ -1,11 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 
 export default function CompaniesLoading() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-8 w-48" />
-      <Skeleton className="h-10 w-full max-w-md" />
-      <Skeleton className="h-64 rounded-xl" />
-    </div>
-  );
+  return <PageSkeleton />;
 }

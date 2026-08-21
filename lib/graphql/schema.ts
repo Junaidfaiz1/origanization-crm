@@ -18,6 +18,12 @@ import { projectTypeDefs } from "@/modules/projects/graphql/type-defs";
 import { projectResolvers } from "@/modules/projects/graphql/resolvers";
 import { milestoneTypeDefs } from "@/modules/milestones/graphql/type-defs";
 import { milestoneResolvers } from "@/modules/milestones/graphql/resolvers";
+import { requirementTypeDefs } from "@/modules/requirements/graphql/type-defs";
+import { requirementResolvers } from "@/modules/requirements/graphql/resolvers";
+import { teamTypeDefs } from "@/modules/team/graphql/type-defs";
+import { teamResolvers } from "@/modules/team/graphql/resolvers";
+import { fileTypeDefs } from "@/modules/files/graphql/type-defs";
+import { fileResolvers } from "@/modules/files/graphql/resolvers";
 import { biddingTypeDefs } from "@/modules/bidding/graphql/type-defs";
 import { biddingResolvers } from "@/modules/bidding/graphql/resolvers";
 import { taskTypeDefs } from "@/modules/tasks/graphql/type-defs";
@@ -42,6 +48,12 @@ import { notificationTypeDefs } from "@/modules/notifications/graphql/type-defs"
 import { notificationResolvers } from "@/modules/notifications/graphql/resolvers";
 import { reportTypeDefs } from "@/modules/reports/graphql/type-defs";
 import { reportResolvers } from "@/modules/reports/graphql/resolvers";
+import { activityTypeDefs } from "@/modules/activity/graphql/type-defs";
+import { activityResolvers } from "@/modules/activity/graphql/resolvers";
+import { usersTypeDefs } from "@/modules/users/graphql/type-defs";
+import { usersResolvers } from "@/modules/users/graphql/resolvers";
+import { progressTypeDefs } from "@/modules/progress/graphql/type-defs";
+import { progressResolvers } from "@/modules/progress/graphql/resolvers";
 
 const rootTypeDefs = /* GraphQL */ `
   scalar DateTime
@@ -67,6 +79,9 @@ export const schema = createSchema({
     proposalTypeDefs,
     projectTypeDefs,
     milestoneTypeDefs,
+    requirementTypeDefs,
+    teamTypeDefs,
+    fileTypeDefs,
     biddingTypeDefs,
     taskTypeDefs,
     resourceTypeDefs,
@@ -79,6 +94,9 @@ export const schema = createSchema({
     freelancerPortalTypeDefs,
     notificationTypeDefs,
     reportTypeDefs,
+    activityTypeDefs,
+    usersTypeDefs,
+    progressTypeDefs,
   ],
   resolvers: [
     { DateTime: DateTimeResolver },
@@ -91,6 +109,9 @@ export const schema = createSchema({
     proposalResolvers,
     projectResolvers,
     milestoneResolvers,
+    requirementResolvers,
+    teamResolvers,
+    fileResolvers,
     biddingResolvers,
     taskResolvers,
     resourceResolvers,
@@ -103,6 +124,9 @@ export const schema = createSchema({
     freelancerPortalResolvers,
     notificationResolvers,
     reportResolvers,
+    activityResolvers,
+    usersResolvers,
+    progressResolvers,
   ],
 });
 

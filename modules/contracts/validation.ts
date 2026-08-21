@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { CONTRACT_STATUSES } from "@/modules/contracts/rules";
 
 const optionalText = z
@@ -42,6 +43,7 @@ export const contractListFilterSchema = z.object({
   status: contractStatusSchema.optional(),
   projectId: z.string().trim().min(1).optional(),
   clientId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { AuthorizationError } from "@/lib/errors/app-error";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { resourceListFilterSchema } from "@/modules/resources/validation";
 import {
   getResourceSummary,
@@ -15,6 +16,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
 import { ResourcesTable } from "@/components/resources/resources-table";
 import {
   ResourceAvailabilityFilter,
@@ -33,6 +37,7 @@ export default async function ResourcesPage({
     type?: string;
     availabilityStatus?: string;
     skillId?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -53,6 +58,7 @@ export default async function ResourcesPage({
     type: params.type,
     availabilityStatus: params.availabilityStatus,
     skillId: params.skillId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -88,23 +94,21 @@ export default async function ResourcesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">Delivery</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Resources</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Employees and freelancers with skills, rates, and availability.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link href="/resources/new">
-              <Plus className="h-4 w-4" />
-              New resource
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Delivery"
+        title="Resources"
+        description="Employees and freelancers with skills, rates, and availability."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link href="/resources/new">
+                <Plus className="h-4 w-4" />
+                New resource
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <ResourceSummaryCards summary={summary} />
 
@@ -113,6 +117,7 @@ export default async function ResourcesPage({
         <ResourceTypeFilter />
         <ResourceAvailabilityFilter />
         <ResourceSkillFilter skills={skills} />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedSkill ? (
@@ -139,7 +144,7 @@ export default async function ResourcesPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} resources</p>
+          <ResultCount count={result.totalCount} label="resources" />
           <ResourcesTable resources={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -149,6 +154,7 @@ export default async function ResourcesPage({
               type: params.type,
               availabilityStatus: params.availabilityStatus,
               skillId: params.skillId,
+              sort: params.sort,
             }}
           />
         </>

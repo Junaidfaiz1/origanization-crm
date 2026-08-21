@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { AuthorizationError } from "@/lib/errors/app-error";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { invoiceListFilterSchema } from "@/modules/invoices/validation";
 import {
   getInvoiceSummary,
@@ -16,6 +17,9 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
 import { InvoicesTable } from "@/components/invoices/invoices-table";
 import {
   InvoiceClientFilter,
@@ -34,6 +38,7 @@ export default async function InvoicesPage({
     status?: string;
     clientId?: string;
     projectId?: string;
+    sort?: string;
     cursor?: string;
   }>;
 }) {
@@ -54,6 +59,7 @@ export default async function InvoicesPage({
     status: params.status,
     clientId: params.clientId,
     projectId: params.projectId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -91,29 +97,27 @@ export default async function InvoicesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">Finance</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Invoices</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Numbered invoices with line items, send workflow, and payment balance tracking.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.projectId
-                  ? `/invoices/new?projectId=${params.projectId}`
-                  : "/invoices/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              New invoice
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Invoices"
+        description="Numbered invoices with line items, send workflow, and payment balance tracking."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link
+                href={
+                  params.projectId
+                    ? `/invoices/new?projectId=${params.projectId}`
+                    : "/invoices/new"
+                }
+              >
+                <Plus className="h-4 w-4" />
+                New invoice
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <InvoiceSummaryCards summary={summary} />
 
@@ -122,6 +126,7 @@ export default async function InvoicesPage({
         <InvoiceStatusFilter />
         <InvoiceClientFilter clients={clients} />
         <InvoiceProjectFilter projects={projects} />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {selectedProject ? (
@@ -151,7 +156,7 @@ export default async function InvoicesPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} invoices</p>
+          <ResultCount count={result.totalCount} label="invoices" />
           <InvoicesTable invoices={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -161,6 +166,7 @@ export default async function InvoicesPage({
               status: params.status,
               clientId: params.clientId,
               projectId: params.projectId,
+              sort: params.sort,
             }}
           />
         </>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { PROPOSAL_STATUSES } from "@/modules/proposals/rules";
 
 const optionalText = z
@@ -42,6 +43,7 @@ export const proposalListFilterSchema = z.object({
   status: proposalStatusSchema.optional(),
   clientId: z.string().trim().min(1).optional(),
   opportunityId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(50).optional().default(20),
 });

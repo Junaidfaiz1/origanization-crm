@@ -51,6 +51,7 @@ export const projectTypeDefs = /* GraphQL */ `
     managerId: ID
     manager: ProjectManager
     bidRequestCount: Int!
+    requirementCount: Int!
     milestoneCount: Int!
     taskCount: Int!
     memberCount: Int!

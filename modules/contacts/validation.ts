@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 
 const optionalText = z
   .string()
@@ -27,6 +28,7 @@ export const updateContactSchema = createContactSchema.partial().extend({
 export const contactListFilterSchema = z.object({
   search: z.string().trim().optional(),
   companyId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(50).optional().default(20),
 });

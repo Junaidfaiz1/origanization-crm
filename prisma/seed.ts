@@ -581,6 +581,67 @@ async function main() {
     });
   }
 
+  const requirements = [
+    {
+      id: "seed-req-auth",
+      title: "Secure staff login",
+      description: "Role-based auth for clinic staff and dentists.",
+      priority: "HIGH" as const,
+      status: "OPEN" as const,
+    },
+    {
+      id: "seed-req-appointments",
+      title: "Appointment calendar",
+      description: "Book, reschedule, and cancel patient appointments.",
+      priority: "URGENT" as const,
+      status: "IN_PROGRESS" as const,
+    },
+    {
+      id: "seed-req-billing",
+      title: "Invoice export",
+      description: "Export patient invoices as PDF for accounting.",
+      priority: "MEDIUM" as const,
+      status: "OPEN" as const,
+    },
+  ];
+
+  for (const requirement of requirements) {
+    await prisma.projectRequirement.upsert({
+      where: { id: requirement.id },
+      update: {},
+      create: {
+        id: requirement.id,
+        projectId: project.id,
+        title: requirement.title,
+        description: requirement.description,
+        priority: requirement.priority,
+        status: requirement.status,
+      },
+    });
+  }
+
+  const employeeResource = resources.find(
+    (item) => item.userId === createdUsers["employee@technova.test"],
+  );
+  if (employeeResource) {
+    await prisma.projectMember.upsert({
+      where: {
+        projectId_resourceId: {
+          projectId: project.id,
+          resourceId: employeeResource.id,
+        },
+      },
+      update: {},
+      create: {
+        id: "seed-team-employee",
+        organizationId: technova.id,
+        projectId: project.id,
+        resourceId: employeeResource.id,
+        role: "In-house engineer",
+      },
+    });
+  }
+
   await prisma.task.upsert({
     where: { id: "seed-task-wireframes" },
     update: {},
@@ -772,6 +833,36 @@ async function main() {
       entityType: "BidRequest",
       entityId: bidRequest.id,
     },
+  });
+
+  await prisma.auditLog.createMany({
+    data: [
+      {
+        organizationId: technova.id,
+        userId: createdUsers["pm@technova.test"],
+        action: "Created project",
+        entityType: "Project",
+        entityId: project.id,
+        newValue: { name: project.name, status: project.status },
+      },
+      {
+        organizationId: technova.id,
+        userId: createdUsers["pm@technova.test"],
+        action: "Created requirement",
+        entityType: "ProjectRequirement",
+        entityId: "seed-req-auth",
+        newValue: { title: "Secure staff login", status: "OPEN" },
+      },
+      {
+        organizationId: technova.id,
+        userId: createdUsers["pm@technova.test"],
+        action: "Created milestone",
+        entityType: "Milestone",
+        entityId: "seed-ms-1",
+        newValue: { name: "UI/UX", status: "PENDING" },
+      },
+    ],
+    skipDuplicates: true,
   });
 
   await prisma.invoiceSequence.upsert({

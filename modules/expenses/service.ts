@@ -11,6 +11,11 @@ import {
 import { hasPermission } from "@/config/permissions";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanDeleteExpense,
   assertCanEditExpense,
   assertCanReviewExpense,
@@ -139,6 +144,7 @@ function listWhere(actor: TenantActor, filter: ExpenseListFilter): Prisma.Expens
   const search = filter.search?.trim();
   const and: Prisma.ExpenseWhereInput[] = [];
   const mineOnly = !canViewAllExpenses(actor);
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -152,14 +158,7 @@ function listWhere(actor: TenantActor, filter: ExpenseListFilter): Prisma.Expens
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(actor.organizationId, {
@@ -177,11 +176,12 @@ function listWhere(actor: TenantActor, filter: ExpenseListFilter): Prisma.Expens
 export async function listExpenses(actor: TenantActor, filter: ExpenseListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.expense.findMany({
     where,
     include: expenseInclude,
-    orderBy: [{ date: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -419,7 +419,7 @@ export async function deleteExpense(actor: TenantActor, id: string) {
 }
 
 export async function getExpenseSummary(actor: TenantActor, projectId?: string) {
-  const where = listWhere(actor, { projectId, first: 100 });
+  const where = listWhere(actor, { projectId, first: 100, sort: "newest" });
   const expenses = await prisma.expense.findMany({
     where,
     select: { status: true, amount: true },

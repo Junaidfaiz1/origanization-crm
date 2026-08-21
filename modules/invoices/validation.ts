@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { INVOICE_STATUSES } from "@/modules/invoices/rules";
 
 const optionalText = z
@@ -44,6 +45,7 @@ export const invoiceListFilterSchema = z.object({
   status: invoiceStatusSchema.optional(),
   clientId: z.string().trim().min(1).optional(),
   projectId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

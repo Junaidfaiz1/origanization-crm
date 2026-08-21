@@ -12,6 +12,10 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { LeadsTable } from "@/components/leads/leads-table";
 import { LeadStatusFilter } from "@/components/leads/lead-status-filter";
 
@@ -20,7 +24,7 @@ export const metadata = { title: "Leads" };
 export default async function LeadsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; cursor?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; sort?: string; cursor?: string }>;
 }) {
   const ctx = await requireDashboardUser();
 
@@ -38,6 +42,7 @@ export default async function LeadsPage({
   const filter = leadListFilterSchema.parse({
     search: params.q,
     status,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
@@ -66,27 +71,26 @@ export default async function LeadsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">CRM</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Leads</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Capture inbound interest, assign owners, and convert qualified leads.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link href="/leads/new">
-              <Plus className="h-4 w-4" />
-              New lead
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="CRM"
+        title="Leads"
+        description="Capture inbound interest, assign owners, and convert qualified leads."
+        actions={
+          canCreate ? (
+            <Button asChild className="shrink-0">
+              <Link href="/leads/new">
+                <Plus className="h-4 w-4" />
+                New lead
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
 
       <FilterBar>
         <SearchInput placeholder="Search name, email, or company" />
         <LeadStatusFilter />
+        <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
       </FilterBar>
 
       {result.nodes.length === 0 ? (
@@ -103,12 +107,12 @@ export default async function LeadsPage({
         />
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} leads</p>
+          <ResultCount count={result.totalCount} label="leads" />
           <LeadsTable leads={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
             endCursor={result.pageInfo.endCursor}
-            currentQuery={{ q: params.q, status: params.status }}
+            currentQuery={{ q: params.q, status: params.status, sort: params.sort }}
           />
         </>
       )}

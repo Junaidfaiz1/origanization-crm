@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 
 const optionalText = z
   .string()
@@ -72,6 +73,7 @@ export const timeEntryListFilterSchema = z.object({
     .union([z.boolean(), z.string()])
     .optional()
     .transform((value) => value === true || value === "true"),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

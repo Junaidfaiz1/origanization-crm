@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { PAYMENT_METHODS, PAYMENT_STATUSES } from "@/modules/payments/rules";
 
 const optionalText = z
@@ -25,6 +26,7 @@ export const paymentListFilterSchema = z.object({
   status: paymentStatusSchema.optional(),
   invoiceId: z.string().trim().min(1).optional(),
   method: paymentMethodSchema.optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

@@ -13,6 +13,11 @@ import {
 import { hasPermission } from "@/config/permissions";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   calculateInvoiceTotals,
   roundMoney,
 } from "@/modules/invoices/calculations";
@@ -208,6 +213,7 @@ function listWhere(actor: TenantActor, filter: InvoiceListFilter): Prisma.Invoic
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.InvoiceWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -221,14 +227,7 @@ function listWhere(actor: TenantActor, filter: InvoiceListFilter): Prisma.Invoic
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(actor.organizationId, {
@@ -242,11 +241,12 @@ function listWhere(actor: TenantActor, filter: InvoiceListFilter): Prisma.Invoic
 export async function listInvoices(actor: TenantActor, filter: InvoiceListFilter) {
   const first = filter.first ?? 20;
   const where = listWhere(actor, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.invoice.findMany({
     where,
     include: invoiceInclude,
-    orderBy: [{ issueDate: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -706,7 +706,7 @@ export async function deleteInvoice(actor: TenantActor, id: string) {
 }
 
 export async function getInvoiceSummary(actor: TenantActor, projectId?: string) {
-  const where = listWhere(actor, { projectId, first: 100 });
+  const where = listWhere(actor, { projectId, first: 100, sort: "newest" });
   const invoices = await prisma.invoice.findMany({
     where,
     select: { status: true, total: true, amountDue: true, amountPaid: true },

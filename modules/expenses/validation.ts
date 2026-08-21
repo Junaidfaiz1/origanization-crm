@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { EXPENSE_CATEGORIES, EXPENSE_STATUSES } from "@/modules/expenses/rules";
 
 const optionalText = z
@@ -34,6 +35,7 @@ export const expenseListFilterSchema = z.object({
   status: expenseStatusSchema.optional(),
   projectId: z.string().trim().min(1).optional(),
   category: expenseCategorySchema.optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

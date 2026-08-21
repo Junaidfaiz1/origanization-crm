@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listSortSchema } from "@/lib/ui/list-sort";
 import { AVAILABILITY_STATUSES, RESOURCE_TYPES } from "@/modules/resources/rules";
 
 const optionalText = z
@@ -46,6 +47,7 @@ export const resourceListFilterSchema = z.object({
   type: resourceTypeSchema.optional(),
   availabilityStatus: availabilityStatusSchema.optional(),
   skillId: z.string().trim().min(1).optional(),
+  sort: listSortSchema,
   cursor: z.string().trim().optional(),
   first: z.coerce.number().int().min(1).max(100).optional().default(20),
 });

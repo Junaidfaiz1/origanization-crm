@@ -8,6 +8,7 @@ import { hasPermission } from "@/config/permissions";
 import { createLeadSchema, updateLeadSchema, leadStatusSchema } from "@/modules/leads/validation";
 import { archiveLead, convertLead, createLead, updateLead } from "@/modules/leads/service";
 import { logger } from "@/lib/logging/logger";
+import { withFlashToast } from "@/lib/ui/flash-toast";
 
 export type LeadFormState = {
   message?: string;
@@ -70,7 +71,7 @@ export async function createLeadAction(
   try {
     const lead = await createLead(actor, parsed.data);
     revalidatePath("/leads");
-    redirect(`/leads/${lead.id}`);
+    redirect(withFlashToast(`/leads/${lead.id}`, "created"));
   } catch (error) {
     if (isNextRedirect(error)) {
       throw error;
@@ -114,7 +115,7 @@ export async function updateLeadAction(
     await updateLead(actor, id, parsed.data);
     revalidatePath("/leads");
     revalidatePath(`/leads/${id}`);
-    redirect(`/leads/${id}`);
+    redirect(withFlashToast(`/leads/${id}`, "updated"));
   } catch (error) {
     if (isNextRedirect(error)) {
       throw error;
@@ -147,7 +148,7 @@ export async function archiveLeadAction(formData: FormData) {
   const id = formValue(formData, "id");
   await archiveLead(actor, id);
   revalidatePath("/leads");
-  redirect("/leads");
+  redirect(withFlashToast("/leads", "archived"));
 }
 
 export async function convertLeadAction(formData: FormData) {
@@ -157,7 +158,7 @@ export async function convertLeadAction(formData: FormData) {
     const result = await convertLead(actor, id);
     revalidatePath("/leads");
     revalidatePath(`/leads/${id}`);
-    redirect(`/leads/${result.lead.id}?converted=1`);
+    redirect(withFlashToast(`/leads/${result.lead.id}`, "converted"));
   } catch (error) {
     if (isNextRedirect(error)) {
       throw error;
