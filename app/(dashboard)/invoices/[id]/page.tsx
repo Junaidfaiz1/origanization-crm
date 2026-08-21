@@ -6,8 +6,7 @@ import { NotFoundError, AuthorizationError } from "@/lib/errors/app-error";
 import { DateDisplay } from "@/components/shared/date-display";
 import { ErrorState } from "@/components/shared/error-state";
 import { MoneyDisplay } from "@/components/shared/money-display";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EntityHeader } from "@/components/shared/entity-header";
 import { InvoiceDetailActions } from "@/components/invoices/invoice-detail-actions";
 import { getInvoice } from "@/modules/invoices/service";
 
@@ -76,136 +75,186 @@ export default async function InvoiceDetailPage({
     Number(invoice.amountDue) > 0;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <Link href="/invoices" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Invoices
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-              {invoice.invoiceNumber}
-            </h1>
-            <StatusBadge status={invoice.status} />
+    <div className="mx-auto max-w-3xl space-y-6">
+      <EntityHeader
+        backHref="/invoices"
+        backLabel="Invoices"
+        title={invoice.invoiceNumber}
+        status={invoice.status}
+        description={invoice.client.companyName}
+        actions={
+          <InvoiceDetailActions
+            invoiceId={invoice.id}
+            canEdit={canEdit}
+            canSend={canSend}
+            canCancel={canCancel}
+            canMarkOverdue={canMarkOverdue}
+            canDelete={canDelete}
+            canRecordPayment={canRecordPayment}
+          />
+        }
+      />
+
+      <article className="rounded-lg border border-border bg-card p-5 shadow-xs sm:p-8 print:border-0 print:shadow-none">
+        <div className="flex flex-col gap-6 border-b border-border pb-6 sm:flex-row sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold tracking-tight">TechNova</p>
+            <p className="mt-1 text-caption text-muted-foreground">
+              {ctx.user.organization.name}
+            </p>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {invoice.client.companyName}
+          <div className="sm:text-right">
+            <p className="text-h3">{invoice.invoiceNumber}</p>
+            <p className="mt-1 text-caption text-muted-foreground">
+              Status {invoice.status.replaceAll("_", " ").toLowerCase()}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-6 border-b border-border py-6 sm:grid-cols-2">
+          <div>
+            <p className="text-caption font-medium uppercase tracking-wide text-muted-foreground">
+              Bill to
+            </p>
+            <p className="mt-2 text-sm font-medium">{invoice.client.companyName}</p>
             {invoice.project ? (
-              <>
-                {" · "}
+              <p className="mt-1 text-sm text-muted-foreground">
+                Project:{" "}
                 <Link
                   href={`/projects/${invoice.project.id}`}
-                  className="hover:text-foreground hover:underline"
+                  className="hover:underline"
                 >
                   {invoice.project.name}
                 </Link>
-              </>
+              </p>
             ) : null}
-          </p>
-        </div>
-        <InvoiceDetailActions
-          invoiceId={invoice.id}
-          canEdit={canEdit}
-          canSend={canSend}
-          canCancel={canCancel}
-          canMarkOverdue={canMarkOverdue}
-          canDelete={canDelete}
-          canRecordPayment={canRecordPayment}
-        />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Line items</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="overflow-x-auto rounded-xl border border-border">
-              <table className="w-full min-w-[28rem] text-left text-sm">
-                <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2 font-medium">Description</th>
-                    <th className="px-3 py-2 font-medium">Qty</th>
-                    <th className="px-3 py-2 font-medium">Unit</th>
-                    <th className="px-3 py-2 font-medium">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {invoice.items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="px-3 py-2">{item.description}</td>
-                      <td className="px-3 py-2">{item.quantity}</td>
-                      <td className="px-3 py-2">
-                        <MoneyDisplay amount={item.unitPrice} currency={invoice.currency} />
-                      </td>
-                      <td className="px-3 py-2">
-                        <MoneyDisplay amount={item.total} currency={invoice.currency} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {invoice.notes ? (
-              <div>
-                <p className="text-xs text-muted-foreground">Notes</p>
-                <p className="mt-1 whitespace-pre-wrap text-sm">{invoice.notes}</p>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Totals</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
-              <MoneyDisplay amount={invoice.subtotal} currency={invoice.currency} />
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Discount</span>
-              <MoneyDisplay amount={invoice.discount} currency={invoice.currency} />
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Tax</span>
-              <MoneyDisplay amount={invoice.tax} currency={invoice.currency} />
-            </div>
-            <div className="flex justify-between border-t border-border pt-3 font-semibold">
-              <span>Total</span>
-              <MoneyDisplay amount={invoice.total} currency={invoice.currency} />
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Paid</span>
-              <MoneyDisplay amount={invoice.amountPaid} currency={invoice.currency} />
-            </div>
-            <div className="flex justify-between font-medium">
-              <span>Amount due</span>
-              <MoneyDisplay amount={invoice.amountDue} currency={invoice.currency} />
-            </div>
-            <div className="border-t border-border pt-3 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Issued</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm sm:justify-items-end">
+            <div>
+              <p className="text-caption text-muted-foreground">Issue date</p>
+              <p className="mt-1 font-medium">
                 <DateDisplay value={invoice.issueDate} />
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Due</span>
-                {invoice.dueDate ? <DateDisplay value={invoice.dueDate} /> : "—"}
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Payments</span>
-                <Link
-                  href={`/payments?invoiceId=${invoice.id}`}
-                  className="font-medium hover:underline"
-                >
-                  {invoice.paymentCount}
-                </Link>
-              </div>
+              </p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div>
+              <p className="text-caption text-muted-foreground">Due date</p>
+              <p className="mt-1 font-medium">
+                {invoice.dueDate ? <DateDisplay value={invoice.dueDate} /> : "—"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto py-6">
+          <table className="w-full min-w-[28rem] text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-caption text-muted-foreground">
+                <th className="pb-2 font-medium">Description</th>
+                <th className="pb-2 font-medium">Qty</th>
+                <th className="pb-2 font-medium">Rate</th>
+                <th className="pb-2 text-right font-medium">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {invoice.items.map((item) => (
+                <tr key={item.id}>
+                  <td className="py-3 pr-3">{item.description}</td>
+                  <td className="py-3 pr-3">{item.quantity}</td>
+                  <td className="py-3 pr-3">
+                    <MoneyDisplay
+                      amount={item.unitPrice}
+                      currency={invoice.currency}
+                    />
+                  </td>
+                  <td className="py-3 text-right">
+                    <MoneyDisplay amount={item.total} currency={invoice.currency} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="ml-auto max-w-xs space-y-2 border-t border-border pt-4 text-sm">
+          <Row
+            label="Subtotal"
+            value={
+              <MoneyDisplay amount={invoice.subtotal} currency={invoice.currency} />
+            }
+          />
+          <Row
+            label="Discount"
+            value={
+              <MoneyDisplay amount={invoice.discount} currency={invoice.currency} />
+            }
+          />
+          <Row
+            label="Tax"
+            value={
+              <MoneyDisplay amount={invoice.tax} currency={invoice.currency} />
+            }
+          />
+          <Row
+            label="Total"
+            value={
+              <MoneyDisplay amount={invoice.total} currency={invoice.currency} />
+            }
+            strong
+          />
+          <Row
+            label="Paid"
+            value={
+              <MoneyDisplay
+                amount={invoice.amountPaid}
+                currency={invoice.currency}
+              />
+            }
+          />
+          <Row
+            label="Amount due"
+            value={
+              <MoneyDisplay amount={invoice.amountDue} currency={invoice.currency} />
+            }
+            strong
+          />
+        </div>
+
+        {invoice.notes ? (
+          <div className="mt-6 border-t border-border pt-4">
+            <p className="text-caption text-muted-foreground">Notes</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm">{invoice.notes}</p>
+          </div>
+        ) : null}
+
+        <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-sm">
+          <span className="text-muted-foreground">Payments</span>
+          <Link
+            href={`/payments?invoiceId=${invoice.id}`}
+            className="font-medium text-primary hover:underline"
+          >
+            {invoice.paymentCount} recorded
+          </Link>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function Row({
+  label,
+  value,
+  strong,
+}: {
+  label: string;
+  value: React.ReactNode;
+  strong?: boolean;
+}) {
+  return (
+    <div
+      className={`flex justify-between gap-6 ${strong ? "border-t border-border pt-2 font-semibold" : ""}`}
+    >
+      <span className={strong ? "" : "text-muted-foreground"}>{label}</span>
+      <span>{value}</span>
     </div>
   );
 }

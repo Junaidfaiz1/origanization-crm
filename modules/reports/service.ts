@@ -9,6 +9,12 @@ import {
   OUTSTANDING_INVOICE_STATUSES,
   PENDING_PROPOSAL_STATUSES,
 } from "@/modules/reports/rules";
+import {
+  bucketAmountsByMonth,
+  buildBidConversionSeries,
+  buildFinanceBreakdownSeries,
+  humanizeKey,
+} from "@/modules/reports/charts";
 import { OPPORTUNITY_STAGES, OPEN_OPPORTUNITY_STAGES } from "@/modules/opportunities/rules";
 import { LEAD_STATUSES } from "@/modules/leads/rules";
 
@@ -69,59 +75,179 @@ async function sumOutstandingInvoiceDue(organizationId: string) {
   return toNumber(result._sum.amountDue);
 }
 
+function hasPerm(actor: TenantActor, permission: string) {
+  return (actor.permissions ?? []).includes(permission);
+}
+
 export async function getDashboardMetrics(actor: TenantActor) {
   const orgId = actor.organizationId;
-  const canViewFinance = (actor.permissions ?? []).includes("REPORT_VIEW");
+  const canViewFinance = hasPerm(actor, "REPORT_VIEW");
+  const canViewLeads = hasPerm(actor, "LEAD_VIEW");
+  const canViewOpportunities = hasPerm(actor, "OPPORTUNITY_VIEW");
+  const canViewProjects = hasPerm(actor, "PROJECT_VIEW");
+  const canViewBids = hasPerm(actor, "BID_REQUEST_VIEW");
+  const canViewProposals = hasPerm(actor, "PROPOSAL_VIEW");
+  const canViewInvoices = hasPerm(actor, "INVOICE_VIEW");
+  const canViewTasks = hasPerm(actor, "TASK_VIEW");
+
+  const now = new Date();
+  const upcomingEnd = new Date(now);
+  upcomingEnd.setDate(upcomingEnd.getDate() + 14);
 
   const [
     activeProjects,
     openBids,
     pendingProposals,
     outstandingInvoices,
+    overdueInvoices,
+    leadsCount,
+    openOpportunities,
+    pipelineValue,
+    myOpenTasks,
+    upcomingMilestones,
     revenue,
     resourceCost,
     expenses,
     recentProjects,
     recentActivity,
+    upcomingMilestoneRows,
+    myTaskRows,
   ] = await Promise.all([
-    prisma.project.count({
-      where: {
-        organizationId: orgId,
-        archivedAt: null,
-        status: { in: [...ACTIVE_PROJECT_STATUSES] },
-      },
-    }),
-    prisma.bidRequest.count({
-      where: { organizationId: orgId, status: "OPEN" },
-    }),
-    prisma.proposal.count({
-      where: {
-        organizationId: orgId,
-        archivedAt: null,
-        status: { in: [...PENDING_PROPOSAL_STATUSES] },
-      },
-    }),
-    prisma.invoice.count({
-      where: {
-        organizationId: orgId,
-        status: { in: [...OUTSTANDING_INVOICE_STATUSES] },
-      },
-    }),
+    canViewProjects
+      ? prisma.project.count({
+          where: {
+            organizationId: orgId,
+            archivedAt: null,
+            status: { in: [...ACTIVE_PROJECT_STATUSES] },
+          },
+        })
+      : Promise.resolve(0),
+    canViewBids
+      ? prisma.bidRequest.count({
+          where: { organizationId: orgId, status: "OPEN" },
+        })
+      : Promise.resolve(0),
+    canViewProposals
+      ? prisma.proposal.count({
+          where: {
+            organizationId: orgId,
+            archivedAt: null,
+            status: { in: [...PENDING_PROPOSAL_STATUSES] },
+          },
+        })
+      : Promise.resolve(0),
+    canViewInvoices
+      ? prisma.invoice.count({
+          where: {
+            organizationId: orgId,
+            status: { in: [...OUTSTANDING_INVOICE_STATUSES] },
+          },
+        })
+      : Promise.resolve(0),
+    canViewInvoices
+      ? prisma.invoice.count({
+          where: { organizationId: orgId, status: "OVERDUE" },
+        })
+      : Promise.resolve(0),
+    canViewLeads
+      ? prisma.lead.count({
+          where: { organizationId: orgId, archivedAt: null },
+        })
+      : Promise.resolve(0),
+    canViewOpportunities
+      ? prisma.opportunity.count({
+          where: {
+            organizationId: orgId,
+            archivedAt: null,
+            stage: { in: [...OPEN_OPPORTUNITY_STAGES] },
+          },
+        })
+      : Promise.resolve(0),
+    canViewOpportunities
+      ? prisma.opportunity
+          .findMany({
+            where: {
+              organizationId: orgId,
+              archivedAt: null,
+              stage: { in: [...OPEN_OPPORTUNITY_STAGES] },
+            },
+            select: { estimatedValue: true },
+          })
+          .then((rows) =>
+            rows.reduce((sum, row) => sum + toNumber(row.estimatedValue), 0),
+          )
+      : Promise.resolve(0),
+    canViewTasks
+      ? prisma.task.count({
+          where: {
+            organizationId: orgId,
+            assignedToId: actor.userId,
+            status: { not: "DONE" },
+          },
+        })
+      : Promise.resolve(0),
+    canViewProjects
+      ? prisma.milestone.count({
+          where: {
+            project: { organizationId: orgId, archivedAt: null },
+            status: { notIn: ["COMPLETED"] },
+            dueDate: { gte: now, lte: upcomingEnd },
+          },
+        })
+      : Promise.resolve(0),
     canViewFinance ? sumSucceededPayments(orgId) : Promise.resolve(0),
     canViewFinance ? sumAcceptedBidAmounts(orgId) : Promise.resolve(0),
     canViewFinance ? sumApprovedExpenses(orgId) : Promise.resolve(0),
-    prisma.project.findMany({
-      where: { organizationId: orgId, archivedAt: null },
-      orderBy: { updatedAt: "desc" },
-      take: 5,
-      select: { id: true, name: true, status: true, budget: true },
-    }),
+    canViewProjects
+      ? prisma.project.findMany({
+          where: { organizationId: orgId, archivedAt: null },
+          orderBy: { updatedAt: "desc" },
+          take: 5,
+          select: { id: true, name: true, status: true, budget: true },
+        })
+      : Promise.resolve([]),
     prisma.auditLog.findMany({
       where: { organizationId: orgId },
       orderBy: { createdAt: "desc" },
       take: 6,
       select: { id: true, action: true, entityType: true, createdAt: true },
     }),
+    canViewProjects
+      ? prisma.milestone.findMany({
+          where: {
+            project: { organizationId: orgId, archivedAt: null },
+            status: { notIn: ["COMPLETED"] },
+            dueDate: { gte: now, lte: upcomingEnd },
+          },
+          orderBy: { dueDate: "asc" },
+          take: 5,
+          select: {
+            id: true,
+            name: true,
+            dueDate: true,
+            status: true,
+            project: { select: { id: true, name: true } },
+          },
+        })
+      : Promise.resolve([]),
+    canViewTasks
+      ? prisma.task.findMany({
+          where: {
+            organizationId: orgId,
+            assignedToId: actor.userId,
+            status: { not: "DONE" },
+          },
+          orderBy: [{ dueDate: "asc" }, { updatedAt: "desc" }],
+          take: 5,
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            dueDate: true,
+            project: { select: { id: true, name: true } },
+          },
+        })
+      : Promise.resolve([]),
   ]);
 
   const profit = canViewFinance
@@ -134,14 +260,28 @@ export async function getDashboardMetrics(actor: TenantActor) {
     : null;
 
   return {
+    roleKey: actor.roleKey ?? null,
     canViewFinance,
+    canViewLeads,
+    canViewOpportunities,
+    canViewProjects,
+    canViewBids,
+    canViewProposals,
+    canViewInvoices,
+    canViewTasks,
     revenue: canViewFinance ? formatMoney(revenue) : null,
     profit: profit ? formatMoney(profit.profit) : null,
     profitMargin: profit ? formatMarginPercent(profit.profitMargin) : null,
-    activeProjects,
-    openBids,
-    pendingProposals,
-    outstandingInvoices,
+    activeProjects: canViewProjects ? activeProjects : null,
+    openBids: canViewBids ? openBids : null,
+    pendingProposals: canViewProposals ? pendingProposals : null,
+    outstandingInvoices: canViewInvoices ? outstandingInvoices : null,
+    overdueInvoices: canViewInvoices ? overdueInvoices : null,
+    leadsCount: canViewLeads ? leadsCount : null,
+    openOpportunities: canViewOpportunities ? openOpportunities : null,
+    pipelineValue: canViewOpportunities ? formatMoney(pipelineValue) : null,
+    myOpenTasks: canViewTasks ? myOpenTasks : null,
+    upcomingMilestones: canViewProjects ? upcomingMilestones : null,
     recentProjects: recentProjects.map((project) => ({
       id: project.id,
       name: project.name,
@@ -149,6 +289,22 @@ export async function getDashboardMetrics(actor: TenantActor) {
       budget: project.budget ? project.budget.toString() : null,
     })),
     recentActivity,
+    upcomingMilestoneItems: upcomingMilestoneRows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      dueDate: row.dueDate,
+      status: row.status,
+      projectId: row.project.id,
+      projectName: row.project.name,
+    })),
+    myTaskItems: myTaskRows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      status: row.status,
+      dueDate: row.dueDate,
+      projectId: row.project.id,
+      projectName: row.project.name,
+    })),
   };
 }
 
@@ -427,11 +583,127 @@ export async function getFinanceReport(actor: TenantActor) {
 
 export async function getReportsOverview(actor: TenantActor) {
   assertCanViewReports(actor);
-  const [sales, projects, bidding, finance] = await Promise.all([
+  const [sales, projects, bidding, finance, charts] = await Promise.all([
     getSalesReport(actor),
     getProjectsReport(actor),
     getBiddingReport(actor),
     getFinanceReport(actor),
+    getReportCharts(actor),
   ]);
-  return { sales, projects, bidding, finance };
+  return { sales, projects, bidding, finance, charts };
+}
+
+export async function getReportCharts(actor: TenantActor) {
+  assertCanViewReports(actor);
+  const orgId = actor.organizationId;
+  const now = new Date();
+  const monthsBack = 6;
+  const rangeStart = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (monthsBack - 1), 1),
+  );
+
+  const [payments, opportunities, leadGroups, projectGroups, bidRequests, bids] =
+    await Promise.all([
+      prisma.payment.findMany({
+        where: {
+          organizationId: orgId,
+          status: "SUCCEEDED",
+          OR: [
+            { paidAt: { gte: rangeStart } },
+            { paidAt: null, createdAt: { gte: rangeStart } },
+          ],
+        },
+        select: { amount: true, paidAt: true, createdAt: true },
+      }),
+      prisma.opportunity.findMany({
+        where: { organizationId: orgId, archivedAt: null },
+        select: { stage: true, estimatedValue: true },
+      }),
+      prisma.lead.groupBy({
+        by: ["status"],
+        where: { organizationId: orgId, archivedAt: null },
+        _count: { _all: true },
+      }),
+      prisma.project.groupBy({
+        by: ["status"],
+        where: { organizationId: orgId, archivedAt: null },
+        _count: { _all: true },
+      }),
+      prisma.bidRequest.groupBy({
+        by: ["status"],
+        where: { organizationId: orgId },
+        _count: { _all: true },
+      }),
+      prisma.bid.groupBy({
+        by: ["status"],
+        where: {
+          organizationId: orgId,
+          status: { notIn: ["DRAFT", "WITHDRAWN"] },
+        },
+        _count: { _all: true },
+      }),
+    ]);
+
+  const revenue = payments.reduce((sum, row) => sum + toNumber(row.amount), 0);
+  // Reuse finance totals for breakdown (full org, not just window).
+  const [fullRevenue, resourceCost, expenses] = await Promise.all([
+    sumSucceededPayments(orgId),
+    sumAcceptedBidAmounts(orgId),
+    sumApprovedExpenses(orgId),
+  ]);
+
+  const totalRequests = bidRequests.reduce((sum, row) => sum + row._count._all, 0);
+  const openRequests =
+    bidRequests.find((row) => row.status === "OPEN")?._count._all ?? 0;
+  const awardedRequests =
+    bidRequests.find((row) => row.status === "AWARDED")?._count._all ?? 0;
+
+  return {
+    revenueByMonth: bucketAmountsByMonth(
+      payments.map((row) => ({
+        at: row.paidAt ?? row.createdAt,
+        amount: toNumber(row.amount),
+      })),
+      monthsBack,
+      now,
+    ).map((row) => ({
+      label: row.label,
+      amount: row.amount,
+    })),
+    pipelineByStage: OPPORTUNITY_STAGES.map((stage) => {
+      const rows = opportunities.filter((row) => row.stage === stage);
+      return {
+        label: humanizeKey(stage),
+        count: rows.length,
+        value: Number(
+          rows
+            .reduce((sum, row) => sum + toNumber(row.estimatedValue), 0)
+            .toFixed(2),
+        ),
+      };
+    }),
+    bidConversion: buildBidConversionSeries({
+      totalRequests,
+      openRequests,
+      awardedRequests,
+    }),
+    financeBreakdown: buildFinanceBreakdownSeries({
+      revenue: fullRevenue,
+      resourceCost,
+      expenses,
+    }),
+    leadsByStatus: LEAD_STATUSES.map((status) => ({
+      label: humanizeKey(status),
+      count: leadGroups.find((row) => row.status === status)?._count._all ?? 0,
+    })),
+    projectsByStatus: projectGroups.map((row) => ({
+      label: humanizeKey(row.status),
+      count: row._count._all,
+    })),
+    bidsByStatus: bids.map((row) => ({
+      label: humanizeKey(row.status),
+      count: row._count._all,
+    })),
+    windowRevenue: formatMoney(revenue),
+  };
 }

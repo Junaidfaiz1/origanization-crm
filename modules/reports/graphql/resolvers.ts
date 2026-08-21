@@ -6,6 +6,7 @@ import {
   getDashboardMetrics,
   getFinanceReport,
   getProjectsReport,
+  getReportCharts,
   getReportsOverview,
   getSalesReport,
 } from "@/modules/reports/service";
@@ -45,6 +46,11 @@ export const reportResolvers = {
         const actor = requirePermission(ctx, "REPORT_VIEW");
         return getFinanceReport(actor);
       }),
+    reportCharts: async (_p: unknown, _args: unknown, ctx: GraphQLContext) =>
+      run(ctx.requestId, async () => {
+        const actor = requirePermission(ctx, "REPORT_VIEW");
+        return getReportCharts(actor);
+      }),
     dashboardMetrics: async (_p: unknown, _args: unknown, ctx: GraphQLContext) =>
       run(ctx.requestId, async () => {
         const actor = requireAuth(ctx);
@@ -58,6 +64,12 @@ export const reportResolvers = {
           openBids: metrics.openBids,
           pendingProposals: metrics.pendingProposals,
           outstandingInvoices: metrics.outstandingInvoices,
+          overdueInvoices: metrics.overdueInvoices,
+          leadsCount: metrics.leadsCount,
+          openOpportunities: metrics.openOpportunities,
+          pipelineValue: metrics.pipelineValue,
+          myOpenTasks: metrics.myOpenTasks,
+          upcomingMilestones: metrics.upcomingMilestones,
         };
       }),
   },

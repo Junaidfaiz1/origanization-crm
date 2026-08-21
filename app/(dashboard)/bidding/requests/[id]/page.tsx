@@ -7,6 +7,7 @@ import { DateDisplay } from "@/components/shared/date-display";
 import { ErrorState } from "@/components/shared/error-state";
 import { MoneyDisplay } from "@/components/shared/money-display";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { EntityHeader } from "@/components/shared/entity-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BidRequestDetailActions } from "@/components/bidding/bid-request-detail-actions";
 import {
@@ -89,38 +90,24 @@ export default async function BidRequestDetailPage({
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <Link href="/bidding" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Bidding
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{request.title}</h1>
-            <StatusBadge status={request.status} />
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            <Link
-              href={`/projects/${request.projectId}`}
-              className="hover:text-foreground hover:underline"
-            >
-              {request.project.name}
-            </Link>
-            {" · "}
-            {request.project.clientName}
-            {" · "}
-            {request.biddingType}
-          </p>
-        </div>
-        <BidRequestDetailActions
-          requestId={request.id}
-          status={request.status}
-          canEdit={canEdit}
-          canOpen={canOpen}
-          canPause={canPause}
-          canClose={canClose}
-          canCancel={canCancel}
-        />
-      </div>
+      <EntityHeader
+        backHref="/bidding"
+        backLabel="Bidding"
+        title={request.title}
+        status={request.status}
+        description={`${request.project.name} · ${request.project.clientName} · ${request.biddingType}`}
+        actions={
+          <BidRequestDetailActions
+            requestId={request.id}
+            status={request.status}
+            canEdit={canEdit}
+            canOpen={canOpen}
+            canPause={canPause}
+            canClose={canClose}
+            canCancel={canCancel}
+          />
+        }
+      />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -140,6 +127,15 @@ export default async function BidRequestDetailPage({
             <Field label="Ends">
               {request.endsAt ? <DateDisplay value={request.endsAt} /> : "—"}
             </Field>
+            <Field label="Project">
+              <Link
+                href={`/projects/${request.projectId}`}
+                className="hover:underline"
+              >
+                {request.project.name}
+              </Link>
+            </Field>
+            <Field label="Bids" value={String(request.bidCount)} />
             <Field label="Description" value={request.description} className="sm:col-span-2" />
           </CardContent>
         </Card>
@@ -150,12 +146,12 @@ export default async function BidRequestDetailPage({
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Bids</span>
+              <span className="text-muted-foreground">Bids received</span>
               <span className="font-medium">{request.bidCount}</span>
             </div>
             {request.awardedBid ? (
               <div>
-                <p className="text-xs text-muted-foreground">Winner</p>
+                <p className="text-caption text-muted-foreground">Winner</p>
                 <p className="mt-1 font-medium">{request.awardedBid.bidder.name}</p>
                 <p className="text-muted-foreground">
                   <MoneyDisplay
@@ -174,7 +170,7 @@ export default async function BidRequestDetailPage({
 
       {canManage ? (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold tracking-tight">Compare bids</h2>
+          <h2 className="text-h3">Compare bids</h2>
           <BidComparisonTable
             bids={comparisonBids}
             currency={request.currency}

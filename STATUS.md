@@ -3,7 +3,7 @@
 Living tracker: **what is done**, **what remains**, **QA**, and **bugs**.  
 Update this file after every feature, test pass, or bugfix. Do not mark a feature Done unless it meets the Definition of Done in `.cursor/rules/feature-workflow.mdc`.
 
-**Last updated:** 2026-08-20 (Reports shipped)
+**Last updated:** 2026-08-21 (UI/UX redesign polish pass)
 
 | Status | Meaning |
 | --- | --- |
@@ -21,16 +21,16 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Area | Status |
 | --- | --- |
 | Phase 1 — Foundation | **Done** (app shell; most module pages still placeholders) |
-| Phase 2 — Auth + multi-tenancy | **Done** (register/login/session/RBAC; invite/settings UI incomplete) |
+| Phase 2 — Auth + multi-tenancy | **Done** (register/login/session/RBAC; invite + role UI; real forgot-password) |
 | Phase 3 — CRM | **CRM phase done** — leads, companies, contacts, clients, opportunities, proposals |
-| Phase 4 — Projects | **Projects + milestones + tasks done** — requirements/team still placeholder |
+| Phase 4 — Projects | **Done** — projects, requirements, team, milestones, tasks, files, activity |
 | Phase 5 — Bidding | **Done** — bid requests, submit/withdraw, compare+score, negotiate, accept transaction |
-| Phase 6 — Delivery | **Done** — resources, time tracking, expenses |
+| Phase 6 — Delivery | **Done** — resources, time tracking, expenses, project progress |
 | Phase 7 — Finance | Contracts + invoices + **manual payments** done; Stripe deferred |
 | Phase 8 — Portals | **Client + freelancer portals done** |
-| Phase 9 — Notifications | **Done** — in-app center + event hooks; email still console stub |
-| Phase 10 — Reports | **Done** — sales/projects/bidding/finance + live dashboard |
-| Phase 11 — Polish | Partial (layout, empty/error on dashboard) |
+| Phase 9 — Notifications | **Done** — in-app center + event hooks; Resend provider wired (needs `RESEND_API_KEY`) |
+| Phase 10 — Reports | **Done** — sales/projects/bidding/finance + live dashboard + Recharts |
+| Phase 11 — Polish | **Done** — design system tokens, collapsible shell, role dashboard, opportunities board, invoice document layout, portal chrome |
 | Phase 12 — Test + deploy | Husky + Vitest wired; no Vercel/cron/migrate-on-prod |
 
 **QA of product features:** none yet (no CRM/bidding/finance flows to QA).  
@@ -63,8 +63,8 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Roles + permissions seed | Done | QA pending | `config/permissions.ts` + Prisma seed |
 | Tenant isolation helpers | Foundation | QA pending | `lib/tenant`, unit tests — **not** proven on CRM queries yet |
 | GraphQL `me` | Done | QA pending | |
-| User invite / role change UI | Not started | — | Settings page is a placeholder |
-| Forgot-password email flow | Placeholder | — | Page exists; no real reset mail |
+| User invite / role change UI | **Done** | QA pending | `/settings` members table + invite form; GraphQL `workspaceMembers`/`inviteUser`/`updateMemberRole`; last-owner guards; tests in `tests/users-auth.test.ts` |
+| Forgot-password email flow | **Done** | QA pending | Tokenized reset + invite accept via `/reset-password`; Resend/console email; hashed `PasswordResetToken.purpose` |
 | Cross-tenant access test (two orgs) | Foundation | QA pending | Seed has Rival Studio (`owner@rival.test`); no e2e |
 
 **Demo logins (after seed):** password `Demo1234!`  
@@ -90,12 +90,12 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Feature | Build | QA | Remaining |
 | --- | --- | --- | --- |
 | Projects (CRUD, status, manager, archive, status summary) | **Done** | QA pending | `/projects` list/detail/new/edit; GraphQL `projects`/`project` + mutations; links from clients/opportunities/proposals; tests in `tests/projects.test.ts` |
-| Requirements | Placeholder | — | |
-| Team assignment | Placeholder | — | |
+| Requirements (CRUD, priority, status, project filter) | **Done** | QA pending | `/requirements` list/detail/new/edit; scoped via parent `project.organizationId`; GraphQL + `PROJECT_VIEW`/`PROJECT_UPDATE`; status summary; seed on ABC project; tests in `tests/requirements.test.ts`. Attachments via Files (`entityType=ProjectRequirement`). |
+| Team assignment (assign/remove resource, role) | **Done** | QA pending | `/team` list/detail/new/edit; unique per project+resource; PLANNING/BIDDING → `RESOURCE_ASSIGNED`; rates hidden without `RESOURCE_VIEW`; GraphQL + audit; seed employee on ABC; tests in `tests/team.test.ts` |
 | Milestones (CRUD, status, order, billed amounts) | **Done** | QA pending | `/milestones` list/detail/new/edit; scoped via parent `project.organizationId`; GraphQL `milestones`/`milestone` + mutations; uses `PROJECT_VIEW`/`PROJECT_UPDATE`; tests in `tests/milestones.test.ts` |
 | Tasks (list + kanban + filters) | **Done** | QA pending | `/tasks` list + `?view=kanban`; detail/new/edit; assignee visibility; closed-project rule; GraphQL + `TASK_*` perms; tests in `tests/tasks.test.ts` |
-| Files (R2 + metadata) | Not started | — | Storage stub throws if used |
-| Project activity | Foundation | — | Dashboard shows recent `AuditLog` only |
+| Files (R2 + metadata) | **Done** | QA pending | `/files` list/detail/upload; metadata in Postgres; **R2 only** (no local fallback); mime/size validation; signed download URLs; GraphQL list/delete/download URL; tests in `tests/files.test.ts` |
+| Project activity | **Done** | QA pending | `/activity` feed + project detail preview; scopes AuditLog to project-related entities; GraphQL `activity`/`projectActivity`; seed sample events; tests in `tests/activity.test.ts` |
 
 ---
 
@@ -120,7 +120,7 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Resources + skills | **Done** | QA pending | `/resources` list/detail/new/edit; skills, rates, availability; GraphQL + `RESOURCE_*` perms; tests in `tests/resources.test.ts` |
 | Time tracking (server-validated duration) | **Done** | QA pending | `/time-tracking` list/detail/new/edit; timer start/stop; server-computed duration; GraphQL + `TIME_ENTRY_*` perms; tests in `tests/time-tracking.test.ts` |
 | Expenses approve/reject | **Done** | QA pending | `/expenses` list/detail/new/edit; submit, approve/reject; GraphQL + `EXPENSE_*` perms; tests in `tests/expenses.test.ts` |
-| Project progress | Not started | — | |
+| Project progress | **Done** | QA pending | `/progress` board + project detail card; milestone/task/hours/budget %; health (on track / at risk / delayed); GraphQL `projectProgress*`; portal shows public progress (no hours/budget burn); tests in `tests/progress.test.ts` |
 
 ---
 
@@ -152,7 +152,7 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | In-app notification center | **Done** | QA pending | `/notifications` + portal/freelancer inboxes; header unread badge; GraphQL list/mark read; own-inbox only |
 | Read / unread | **Done** | QA pending | Mark one / mark all; unread filter |
 | Event hooks (bid/proposal/task/invoice/payment) | **Done** | QA pending | createNotifications in domain txns; email templates fired best-effort |
-| Resend email service | Foundation | — | Console no-op if no API key; templates wired from domain events |
+| Resend email service | **Done** | QA pending | `ResendEmailProvider` when `RESEND_API_KEY` set; console fallback otherwise; welcome on register; existing bid/proposal/invoice/payment hooks; HTML escaped; tests in `tests/email.test.ts`. Verify domain/`EMAIL_FROM` in Resend dashboard. |
 
 ---
 
@@ -161,8 +161,8 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Feature | Build | QA | Remaining |
 | --- | --- | --- | --- |
 | Sales / project / bidding / finance reports | **Done** | QA pending | `/reports` tabs; `REPORT_VIEW`; GraphQL overview; tests in `tests/reports.test.ts` |
-| Charts (revenue, pipeline, bid conversion) | Foundation | — | Tabular metrics shipped; chart library not added |
-| Dashboard revenue & profit live numbers | **Done** | QA pending | Via `getDashboardMetrics`; gated by `REPORT_VIEW` |
+| Charts (revenue, pipeline, bid conversion) | **Done** | QA pending | Recharts on `/reports`; series via `getReportCharts` + GraphQL `reportCharts`; tests for month bucketing |
+| Dashboard revenue & profit live numbers | **Done** | QA pending | `getDashboardMetrics` soft-gates finance + CRM/delivery KPIs; role layout presets |
 
 ---
 
@@ -170,10 +170,16 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 
 | Item | Build | Notes |
 | --- | --- | --- |
-| Loading / empty / error on dashboard | Foundation | Module pages are placeholders, not full states |
-| DataTable, filters, pagination, sort | Not started | |
-| Toasts, confirm dialogs, kanban | Not started | |
-| Mobile / a11y pass | Foundation | Phone/tablet/desktop shell: drawer nav, compact header, auth brand bar, safe-area, 44px targets |
+| Design system tokens + typography | **Done** | Semantic success/warning/error/info; Geist scale utilities; refined teal brand |
+| App shell (sidebar/header/theme) | **Done** | Collapsible sidebar (Zustand persist), theme toggle, avatar menu; permission nav unchanged |
+| Role-specific dashboard | **Done** | Soft-gated KPIs by permission; layout presets by roleKey; charts when `REPORT_VIEW` |
+| Loading / empty / error | **Done** | Shared `PageSkeleton` table variant; EmptyState icon prop; ErrorState semantic colors |
+| DataTable, filters, pagination, sort | **Done** | Denser DataTable; SortSelect + ResultCount on list modules |
+| Entity detail chrome | **Done** | `EntityHeader` / `EntityTabs`; project overview metrics; lead + bid + invoice polish |
+| Opportunities kanban | **Done** | `?view=kanban` board + list toggle |
+| Invoice document layout | **Done** | Print-friendly bill-to / line items / totals |
+| Portal chrome | **Done** | Client lighter sidebar treatment; freelancer work portal; theme toggle parity |
+| Toasts, confirm dialogs, kanban | **Done** | ConfirmDialog on shared Dialog primitive; tasks + opportunities boards |
 
 ---
 
@@ -203,6 +209,11 @@ These prove **helpers**, not full features:
 | `tests/proposals.test.ts` | Totals, status rules, validation, tenant scope, portal permissions | No |
 | `tests/projects.test.ts` | Archive/edit rules, closed-task rule, validation, tenant scope, role perms | No |
 | `tests/milestones.test.ts` | Closed-project rules, delete-with-tasks, validation, PROJECT perms | No |
+| `tests/requirements.test.ts` | Closed-project rules, validation, tenant scope, PROJECT perms | No |
+| `tests/team.test.ts` | Closed-project rules, RESOURCE_ASSIGNED transition, validation, tenant scope, rate visibility | No |
+| `tests/files.test.ts` | Mime/size rules, R2-only provider, validation, PROJECT perms, tenant shape | No |
+| `tests/activity.test.ts` | Href map, change summary, filters, PROJECT_VIEW, tenant scope shape | No |
+| `tests/polish.test.ts` | Flash toast helpers, shared list-sort + multi-module sort defaults | No |
 | `tests/tasks.test.ts` | Closed-project rules, milestone validation, list filters, TASK perms | No |
 | `tests/resources.test.ts` | Delete rules, validation, RESOURCE perms, tenant scope | No |
 | `tests/time-tracking.test.ts` | Duration rules, closed-project rule, validation, TIME_ENTRY perms | No |
@@ -216,7 +227,10 @@ These prove **helpers**, not full features:
 | `tests/client-portal.test.ts` | CLIENT-only access, linked profile, field isolation, portal perms | No |
 | `tests/freelancer-portal.test.ts` | FREELANCER-only access, home routing, field isolation, portal perms | No |
 | `tests/notifications.test.ts` | Ownership, type map, audience hrefs, unread filter, tenant shape | No |
-| `tests/reports.test.ts` | REPORT_VIEW gate, margin formatting, role perms, tenant shape | No |
+| `tests/email.test.ts` | Provider selection (console vs Resend), HTML escape, invite/reset mail, best-effort errors | No |
+| `tests/users-auth.test.ts` | Invite/role rules, last-owner guards, reset validation, USER_* perms, token hash | No |
+| `tests/progress.test.ts` | Overall/schedule/health rules, public redaction, PROJECT_VIEW, tenant shape | No |
+| `tests/reports.test.ts` | REPORT_VIEW gate, margin formatting, chart bucketing, role perms, tenant shape | No |
 | `tests/tenant.test.ts` | Tenant where-clause helper | No |
 | `tests/permissions.test.ts` | Role permission maps | No |
 
@@ -268,4 +282,6 @@ After `add tests for <feature>`: mention the test file under Automated tests; do
 
 After `fix: <bug>`: move a row from Open bugs → Bugs solved (date, cause, fix, test path).
 
-Suggested next command: **`implement polish`** or **`what's next?`** (see [`COMMANDS.md`](COMMANDS.md)).
+Suggested next command: **`implement deploy`** / cron / Stripe, or **`what's next?`** (see [`COMMANDS.md`](COMMANDS.md)).
+
+**Note:** Put `RESEND_API_KEY` only in local `.env` (gitignored). Rotate any key shared in chat. File uploads require Cloudflare R2 env vars.

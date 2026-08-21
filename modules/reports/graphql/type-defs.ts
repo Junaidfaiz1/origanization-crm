@@ -108,11 +108,39 @@ export const reportTypeDefs = /* GraphQL */ `
     invoices: [FinanceInvoiceBucket!]!
   }
 
+  type ReportMoneyPoint {
+    label: String!
+    amount: Float!
+  }
+
+  type ReportCountPoint {
+    label: String!
+    count: Int!
+  }
+
+  type ReportStagePoint {
+    label: String!
+    count: Int!
+    value: Float!
+  }
+
+  type ReportCharts {
+    revenueByMonth: [ReportMoneyPoint!]!
+    pipelineByStage: [ReportStagePoint!]!
+    bidConversion: [ReportCountPoint!]!
+    financeBreakdown: [ReportMoneyPoint!]!
+    leadsByStatus: [ReportCountPoint!]!
+    projectsByStatus: [ReportCountPoint!]!
+    bidsByStatus: [ReportCountPoint!]!
+    windowRevenue: String!
+  }
+
   type ReportsOverview {
     sales: SalesReport!
     projects: ProjectsReport!
     bidding: BiddingReport!
     finance: FinanceReport!
+    charts: ReportCharts!
   }
 
   type DashboardMetrics {
@@ -120,10 +148,16 @@ export const reportTypeDefs = /* GraphQL */ `
     revenue: String
     profit: String
     profitMargin: String
-    activeProjects: Int!
-    openBids: Int!
-    pendingProposals: Int!
-    outstandingInvoices: Int!
+    activeProjects: Int
+    openBids: Int
+    pendingProposals: Int
+    outstandingInvoices: Int
+    overdueInvoices: Int
+    leadsCount: Int
+    openOpportunities: Int
+    pipelineValue: String
+    myOpenTasks: Int
+    upcomingMilestones: Int
   }
 
   extend type Query {
@@ -132,6 +166,7 @@ export const reportTypeDefs = /* GraphQL */ `
     projectsReport: ProjectsReport!
     biddingReport: BiddingReport!
     financeReport: FinanceReport!
+    reportCharts: ReportCharts!
     dashboardMetrics: DashboardMetrics!
   }
 `;

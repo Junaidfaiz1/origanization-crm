@@ -1,22 +1,33 @@
 @import "tailwindcss";
 
+/* TechNova design tokens — prefer semantic vars over ad-hoc Tailwind colors */
 :root {
-  --background: #f6f7fb;
+  --background: #f4f6f9;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
+  --elevated: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
   --primary: #0f766e;
   --primary-foreground: #f0fdfa;
-  --secondary: #eef2ff;
-  --secondary-foreground: #1e1b4b;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #ecfeff;
-  --accent-foreground: #134e4a;
+  --secondary: #eef2f7;
+  --secondary-foreground: #1e293b;
+  --accent: #ecfdf8;
+  --accent-foreground: #115e59;
   --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #059669;
+  --success-foreground: #ecfdf5;
+  --warning: #d97706;
+  --warning-foreground: #fffbeb;
+  --info: #0284c7;
+  --info-foreground: #f0f9ff;
   --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --border-strong: #cbd5e1;
   --input: #e2e8f0;
   --ring: #0f766e;
   --sidebar: #0b1220;
@@ -24,6 +35,9 @@
   --sidebar-muted: #94a3b8;
   --sidebar-accent: #132036;
   --sidebar-border: #1e293b;
+  --sidebar-active: #0f766e;
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.06), 0 1px 2px rgb(15 23 42 / 0.04);
 }
 
 .dark {
@@ -31,18 +45,28 @@
   --foreground: #e2e8f0;
   --card: #0b1220;
   --card-foreground: #e2e8f0;
+  --elevated: #111827;
+  --muted: #111827;
+  --muted-foreground: #94a3b8;
   --popover: #0b1220;
   --popover-foreground: #e2e8f0;
   --primary: #2dd4bf;
   --primary-foreground: #042f2e;
   --secondary: #1e293b;
   --secondary-foreground: #e2e8f0;
-  --muted: #111827;
-  --muted-foreground: #94a3b8;
-  --accent: #164e63;
-  --accent-foreground: #ecfeff;
+  --accent: #134e4a;
+  --accent-foreground: #ccfbf1;
   --destructive: #f87171;
+  --destructive-foreground: #450a0a;
+  --success: #34d399;
+  --success-foreground: #064e3b;
+  --warning: #fbbf24;
+  --warning-foreground: #78350f;
+  --info: #38bdf8;
+  --info-foreground: #0c4a6e;
   --border: #1e293b;
+  --border-subtle: #0f172a;
+  --border-strong: #334155;
   --input: #1e293b;
   --ring: #2dd4bf;
   --sidebar: #020617;
@@ -50,6 +74,9 @@
   --sidebar-muted: #94a3b8;
   --sidebar-accent: #111827;
   --sidebar-border: #1e293b;
+  --sidebar-active: #2dd4bf;
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.25);
 }
 
 @theme inline {
@@ -57,6 +84,7 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-elevated: var(--elevated);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -68,7 +96,16 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-sidebar: var(--sidebar);
@@ -76,12 +113,15 @@
   --color-sidebar-muted: var(--sidebar-muted);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-active: var(--sidebar-active);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
 }
 
 * {
@@ -98,6 +138,74 @@ body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Typography scale */
+.text-display {
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.text-h1 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.text-h2 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.text-h3 {
+  font-size: 1.125rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.text-h4 {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.text-body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.text-small {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.text-caption {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.text-label {
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .text-display {
+    font-size: 2.25rem;
+  }
+  .text-h1 {
+    font-size: 1.75rem;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -108,4 +216,17 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Client portal: slightly lighter sidebar treatment */
+.portal-client-sidebar {
+  --sidebar: #0f172a;
+  --sidebar-accent: #1e293b;
+  --sidebar-active: #14b8a6;
+}
+
+.dark .portal-client-sidebar {
+  --sidebar: #020617;
+  --sidebar-accent: #0f172a;
+  --sidebar-active: #2dd4bf;
 }

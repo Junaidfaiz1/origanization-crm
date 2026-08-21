@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireDashboardUser } from "@/lib/auth/page";
 import { hasPermission } from "@/config/permissions";
 import { getLead } from "@/modules/leads/service";
 import { NotFoundError } from "@/lib/errors/app-error";
 import { ErrorState } from "@/components/shared/error-state";
+import { EntityHeader } from "@/components/shared/entity-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { MoneyDisplay } from "@/components/shared/money-display";
 import { DateDisplay } from "@/components/shared/date-display";
@@ -57,34 +57,34 @@ export default async function LeadDetailPage({
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <Link href="/leads" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Leads
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-3">
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{lead.name}</h1>
-            <StatusBadge status={lead.status} />
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {lead.companyName ?? "No company"} · Created <DateDisplay value={lead.createdAt} />
-          </p>
-        </div>
-        <LeadDetailActions
-          leadId={lead.id}
-          canUpdate={canUpdate}
-          canDelete={canDelete}
-          canConvert={canConvert}
-        />
-      </div>
+      <EntityHeader
+        backHref="/leads"
+        backLabel="Leads"
+        title={lead.name}
+        status={lead.status}
+        description={`${lead.companyName ?? "No company"} · Created`}
+        meta={
+          <span>
+            <DateDisplay value={lead.createdAt} />
+          </span>
+        }
+        actions={
+          <LeadDetailActions
+            leadId={lead.id}
+            canUpdate={canUpdate}
+            canDelete={canDelete}
+            canConvert={canConvert}
+          />
+        }
+      />
 
       {query.converted === "1" ? (
-        <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+        <p className="rounded-md border border-success/30 bg-success/10 px-3 py-2 text-sm text-success">
           Lead converted. A company, contact, client, and opportunity were created.
         </p>
       ) : null}
       {query.error === "convert" ? (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-destructive dark:border-red-900 dark:bg-red-950/40">
+        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           This lead could not be converted. It may already be converted or archived.
         </p>
       ) : null}

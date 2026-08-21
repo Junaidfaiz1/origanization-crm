@@ -6,6 +6,11 @@ import { logger } from "@/lib/logging/logger";
 import { BusinessRuleError, NotFoundError, ValidationError } from "@/lib/errors/app-error";
 import { decodeCursor, encodeCursor } from "@/lib/graphql/pagination";
 import {
+  createdAtCursorWhere,
+  createdAtOrderBy,
+  isNewestFirst,
+} from "@/lib/ui/list-sort";
+import {
   assertCanArchiveOpportunity,
   OPEN_OPPORTUNITY_STAGES,
   OPPORTUNITY_STAGES,
@@ -133,6 +138,7 @@ function listWhere(
   const decoded = filter.cursor ? decodeCursor(filter.cursor) : null;
   const search = filter.search?.trim();
   const and: Prisma.OpportunityWhereInput[] = [];
+  const newestFirst = isNewestFirst(filter.sort);
 
   if (search) {
     and.push({
@@ -145,14 +151,7 @@ function listWhere(
   }
 
   if (decoded) {
-    and.push({
-      OR: [
-        { createdAt: { lt: decoded.createdAt } },
-        {
-          AND: [{ createdAt: decoded.createdAt }, { id: { lt: decoded.id } }],
-        },
-      ],
-    });
+    and.push(createdAtCursorWhere(decoded, newestFirst));
   }
 
   return tenantWhere(organizationId, {
@@ -170,11 +169,12 @@ export async function listOpportunities(
 ) {
   const first = filter.first ?? 20;
   const where = listWhere(actor.organizationId, filter);
+  const newestFirst = isNewestFirst(filter.sort);
 
   const rows = await prisma.opportunity.findMany({
     where,
     include: opportunityInclude,
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: [...createdAtOrderBy(newestFirst)],
     take: first + 1,
   });
 
@@ -191,6 +191,33 @@ export async function listOpportunities(
     totalCount: await prisma.opportunity.count({
       where: listWhere(actor.organizationId, { ...filter, cursor: undefined }),
     }),
+  };
+}
+
+export async function listOpportunitiesForKanban(
+  actor: TenantActor,
+  filter: OpportunityListFilter,
+) {
+  const where = listWhere(actor.organizationId, {
+    ...filter,
+    stage: undefined,
+    cursor: undefined,
+  });
+
+  const rows = await prisma.opportunity.findMany({
+    where,
+    include: opportunityInclude,
+    orderBy: [{ estimatedValue: "desc" }, { updatedAt: "desc" }],
+    take: 200,
+  });
+
+  const nodes = rows.map(serializeOpportunity);
+  return {
+    columns: OPPORTUNITY_STAGES.map((stage) => ({
+      stage,
+      opportunities: nodes.filter((row) => row.stage === stage),
+    })),
+    totalCount: nodes.length,
   };
 }
 

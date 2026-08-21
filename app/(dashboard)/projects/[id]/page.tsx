@@ -6,11 +6,19 @@ import { NotFoundError } from "@/lib/errors/app-error";
 import { DateDisplay } from "@/components/shared/date-display";
 import { ErrorState } from "@/components/shared/error-state";
 import { MoneyDisplay } from "@/components/shared/money-display";
-import { StatusBadge } from "@/components/shared/status-badge";
+import { EntityHeader, EntityTabs } from "@/components/shared/entity-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProjectDetailActions } from "@/components/projects/project-detail-actions";
 import { getProject } from "@/modules/projects/service";
+import { getFileSummary } from "@/modules/files/service";
+import { getProjectActivityPreview } from "@/modules/activity/service";
+import { getProjectProgress } from "@/modules/progress/service";
 import { isProjectClosed } from "@/modules/projects/rules";
+import { ActivityFeed } from "@/components/activity/activity-feed";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ProjectProgressCard } from "@/components/progress/project-progress-card";
+import { MetricCard } from "@/components/shared/metric-card";
+import { CheckCircle2, Clock3, Target, Users } from "lucide-react";
 
 export const metadata = { title: "Project" };
 
@@ -32,8 +40,16 @@ export default async function ProjectDetailPage({
   const { id } = await params;
 
   let project;
+  let fileSummary;
+  let activity;
+  let progress;
   try {
     project = await getProject(ctx, id);
+    [fileSummary, activity, progress] = await Promise.all([
+      getFileSummary(ctx, id),
+      getProjectActivityPreview(ctx, id, 8),
+      getProjectProgress(ctx, id),
+    ]);
   } catch (error) {
     if (error instanceof NotFoundError) {
       notFound();
@@ -52,18 +68,27 @@ export default async function ProjectDetailPage({
     hasPermission(ctx.permissions, "PROJECT_DELETE") && !project.archivedAt;
   const canManageMilestones = canUpdate && !isProjectClosed(project.status);
 
+  const tabs = [
+    { href: `/projects/${project.id}`, label: "Overview" },
+    { href: `/progress?projectId=${project.id}`, label: "Progress" },
+    { href: `/requirements?projectId=${project.id}`, label: "Requirements" },
+    { href: `/tasks?projectId=${project.id}`, label: "Tasks" },
+    { href: `/team?projectId=${project.id}`, label: "Team" },
+    { href: `/files?projectId=${project.id}`, label: "Files" },
+    { href: `/milestones?projectId=${project.id}`, label: "Milestones" },
+    { href: `/activity?projectId=${project.id}`, label: "Activity" },
+  ];
+
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Projects
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{project.name}</h1>
-            <StatusBadge status={project.status} />
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
+      <EntityHeader
+        backHref="/projects"
+        backLabel="Projects"
+        title={project.name}
+        status={project.status}
+        description={project.client.companyName}
+        meta={
+          <span className="flex flex-wrap gap-x-2 gap-y-1 text-muted-foreground">
             <Link
               href={`/clients/${project.clientId}`}
               className="hover:text-foreground hover:underline"
@@ -72,7 +97,7 @@ export default async function ProjectDetailPage({
             </Link>
             {project.opportunity ? (
               <>
-                {" · "}
+                <span aria-hidden>·</span>
                 <Link
                   href={`/opportunities/${project.opportunity.id}`}
                   className="hover:text-foreground hover:underline"
@@ -81,14 +106,56 @@ export default async function ProjectDetailPage({
                 </Link>
               </>
             ) : null}
-            {" · Created "}
-            <DateDisplay value={project.createdAt} />
-          </p>
-        </div>
-        <ProjectDetailActions
-          projectId={project.id}
-          canUpdate={canUpdate}
-          canArchive={canArchive}
+            <span aria-hidden>·</span>
+            <span>
+              Created <DateDisplay value={project.createdAt} />
+            </span>
+          </span>
+        }
+        actions={
+          <ProjectDetailActions
+            projectId={project.id}
+            canUpdate={canUpdate}
+            canArchive={canArchive}
+          />
+        }
+      />
+
+      <EntityTabs items={tabs} activeHref={`/projects/${project.id}`} />
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricCard
+          title="Progress"
+          value={`${Math.round(progress.overallPercent)}%`}
+          hint={progress.health.replaceAll("_", " ").toLowerCase()}
+          icon={Target}
+          href={`/progress?projectId=${project.id}`}
+        />
+        <MetricCard
+          title="Tasks"
+          value={`${progress.tasks.done}/${progress.tasks.total}`}
+          hint="Completed"
+          icon={CheckCircle2}
+          href={`/tasks?projectId=${project.id}`}
+        />
+        <MetricCard
+          title="Team"
+          value={String(project.memberCount)}
+          hint="Assigned members"
+          icon={Users}
+          href={`/team?projectId=${project.id}`}
+        />
+        <MetricCard
+          title="Deadline"
+          value={
+            project.endDate ? (
+              <DateDisplay value={project.endDate} />
+            ) : (
+              "—"
+            )
+          }
+          hint="Target end date"
+          icon={Clock3}
         />
       </div>
 
@@ -112,7 +179,11 @@ export default async function ProjectDetailPage({
               )}
             </Field>
             <Field label="Start date">
-              {project.startDate ? <DateDisplay value={project.startDate} /> : "—"}
+              {project.startDate ? (
+                <DateDisplay value={project.startDate} />
+              ) : (
+                "—"
+              )}
             </Field>
             <Field label="End date">
               {project.endDate ? <DateDisplay value={project.endDate} /> : "—"}
@@ -126,151 +197,134 @@ export default async function ProjectDetailPage({
             <Field label="Actual cost">
               <MoneyDisplay amount={project.actualCost} />
             </Field>
-            <Field label="Description" value={project.description} className="sm:col-span-2" />
+            <Field
+              label="Description"
+              value={project.description}
+              className="sm:col-span-2"
+            />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Delivery</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Bid requests</span>
-              <Link
+        <div className="space-y-4">
+          <ProjectProgressCard progress={progress} href="/progress" />
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Delivery</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <DeliveryLink
+                label="Bid requests"
                 href={`/bidding?projectId=${project.id}`}
-                className="font-medium hover:underline"
-              >
-                {project.bidRequestCount}
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Milestones</span>
-              <Link
+                value={project.bidRequestCount}
+              />
+              <DeliveryLink
+                label="Requirements"
+                href={`/requirements?projectId=${project.id}`}
+                value={project.requirementCount}
+              />
+              <DeliveryLink
+                label="Files"
+                href={`/files?projectId=${project.id}`}
+                value={fileSummary.total}
+              />
+              <DeliveryLink
+                label="Milestones"
                 href={`/milestones?projectId=${project.id}`}
-                className="font-medium hover:underline"
-              >
-                {project.milestoneCount}
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Tasks</span>
-              <Link
+                value={project.milestoneCount}
+              />
+              <DeliveryLink
+                label="Tasks"
                 href={`/tasks?projectId=${project.id}`}
-                className="font-medium hover:underline"
-              >
-                {project.taskCount}
-              </Link>
-            </div>
-            {hasPermission(ctx.permissions, "TIME_ENTRY_VIEW") ? (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Time logged</span>
-                <Link
+                value={project.taskCount}
+              />
+              <DeliveryLink
+                label="Team"
+                href={`/team?projectId=${project.id}`}
+                value={project.memberCount}
+              />
+              {hasPermission(ctx.permissions, "TIME_ENTRY_VIEW") ? (
+                <DeliveryLink
+                  label="Time logged"
                   href={`/time-tracking?projectId=${project.id}`}
-                  className="font-medium hover:underline"
-                >
-                  View entries
-                </Link>
-              </div>
-            ) : null}
-            {hasPermission(ctx.permissions, "EXPENSE_VIEW") ? (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Expenses</span>
-                <Link
-                  href={`/expenses?projectId=${project.id}`}
-                  className="font-medium hover:underline"
-                >
-                  View expenses
-                </Link>
-              </div>
-            ) : null}
-            {hasPermission(ctx.permissions, "CONTRACT_VIEW") ? (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Contracts</span>
-                <Link
-                  href={`/contracts?projectId=${project.id}`}
-                  className="font-medium hover:underline"
-                >
-                  View contracts
-                </Link>
-              </div>
-            ) : null}
-            {hasPermission(ctx.permissions, "INVOICE_VIEW") ? (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Invoices</span>
-                <Link
-                  href={`/invoices?projectId=${project.id}`}
-                  className="font-medium hover:underline"
-                >
-                  View invoices
-                </Link>
-              </div>
-            ) : null}
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Team members</span>
-              <span className="font-medium">{project.memberCount}</span>
-            </div>
-            {canManageMilestones ? (
-              <>
-                <Link
-                  href={`/milestones/new?projectId=${project.id}`}
-                  className="inline-block text-xs font-medium hover:underline"
-                >
-                  Add milestone
-                </Link>
-                {hasPermission(ctx.permissions, "TASK_CREATE") ? (
+                  value="View"
+                />
+              ) : null}
+              {canManageMilestones ? (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 text-caption">
                   <Link
-                    href={`/tasks/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
+                    href={`/requirements/new?projectId=${project.id}`}
+                    className="font-medium text-primary hover:underline"
                   >
-                    Add task
+                    Add requirement
                   </Link>
-                ) : null}
-                {hasPermission(ctx.permissions, "TIME_ENTRY_CREATE") ? (
                   <Link
-                    href={`/time-tracking/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
+                    href={`/team/new?projectId=${project.id}`}
+                    className="font-medium text-primary hover:underline"
                   >
-                    Log time
+                    Assign member
                   </Link>
-                ) : null}
-                {hasPermission(ctx.permissions, "EXPENSE_CREATE") ? (
-                  <Link
-                    href={`/expenses/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
-                  >
-                    Submit expense
-                  </Link>
-                ) : null}
-                {hasPermission(ctx.permissions, "CONTRACT_CREATE") ? (
-                  <Link
-                    href={`/contracts/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
-                  >
-                    Create contract
-                  </Link>
-                ) : null}
-                {hasPermission(ctx.permissions, "INVOICE_CREATE") ? (
-                  <Link
-                    href={`/invoices/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
-                  >
-                    Create invoice
-                  </Link>
-                ) : null}
-                {hasPermission(ctx.permissions, "BID_REQUEST_CREATE") ? (
-                  <Link
-                    href={`/bidding/requests/new?projectId=${project.id}`}
-                    className="inline-block text-xs font-medium hover:underline"
-                  >
-                    Open bid request
-                  </Link>
-                ) : null}
-              </>
-            ) : null}
-          </CardContent>
-        </Card>
+                  {hasPermission(ctx.permissions, "TASK_CREATE") ? (
+                    <Link
+                      href={`/tasks/new?projectId=${project.id}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      Add task
+                    </Link>
+                  ) : null}
+                  {hasPermission(ctx.permissions, "BID_REQUEST_CREATE") ? (
+                    <Link
+                      href={`/bidding/requests/new?projectId=${project.id}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      Open bid request
+                    </Link>
+                  ) : null}
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-h3">Activity</h2>
+          <Link
+            href={`/activity?projectId=${project.id}`}
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+        {activity.length === 0 ? (
+          <EmptyState
+            title="No project activity yet"
+            description="Updates to this project, its tasks, bids, and invoices will appear here."
+          />
+        ) : (
+          <ActivityFeed items={activity} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DeliveryLink({
+  label,
+  href,
+  value,
+}: {
+  label: string;
+  href: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-muted-foreground">{label}</span>
+      <Link href={href} className="font-medium hover:underline">
+        {value}
+      </Link>
     </div>
   );
 }
@@ -288,7 +342,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-caption text-muted-foreground">{label}</p>
       <div className="mt-1 text-sm">{children ?? value ?? "—"}</div>
     </div>
   );

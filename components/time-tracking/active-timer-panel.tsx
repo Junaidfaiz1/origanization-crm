@@ -6,9 +6,10 @@ import { startTimerAction, stopTimerAction } from "@/modules/time-tracking/actio
 import type { SerializedTimeEntry } from "@/modules/time-tracking/service";
 import { formatDuration } from "@/modules/time-tracking/rules";
 import { DateDisplay } from "@/components/shared/date-display";
+import { Timer } from "lucide-react";
 
 const selectClassName =
-  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 type ProjectOption = {
   id: string;
@@ -38,29 +39,46 @@ export function ActiveTimerPanel({
 
   if (activeEntry) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
-        <p className="text-xs font-medium uppercase tracking-wide text-amber-800 dark:text-amber-200">
-          Timer running
-        </p>
-        <p className="mt-2 text-lg font-semibold">{activeEntry.project.name}</p>
-        <p className="text-sm text-muted-foreground">
-          Started <DateDisplay value={activeEntry.startedAt} />
-          {activeEntry.task ? ` · ${activeEntry.task.title}` : ""}
-        </p>
-        <form action={stopTimerAction} className="mt-4">
-          <input type="hidden" name="id" value={activeEntry.id} />
-          <Button type="submit">Stop timer</Button>
-        </form>
+      <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-warning/20 text-warning">
+            <Timer className="h-5 w-5" aria-hidden />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-caption font-medium uppercase tracking-wide text-warning">
+              Timer running
+            </p>
+            <p className="mt-1 text-h4">{activeEntry.project.name}</p>
+            <p className="text-sm text-muted-foreground">
+              Started <DateDisplay value={activeEntry.startedAt} />
+              {activeEntry.task ? ` · ${activeEntry.task.title}` : ""}
+            </p>
+            <form action={stopTimerAction} className="mt-4">
+              <input type="hidden" name="id" value={activeEntry.id} />
+              <Button type="submit" variant="destructive">
+                Stop timer
+              </Button>
+            </form>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-sm font-medium">Start a timer</p>
+    <div className="rounded-lg border border-border bg-card p-4 shadow-xs">
+      <div className="flex items-center gap-2">
+        <Timer className="h-4 w-4 text-muted-foreground" aria-hidden />
+        <p className="text-sm font-medium">Start a timer</p>
+      </div>
       <form action={startTimerAction} className="mt-4 grid gap-3 sm:grid-cols-2">
-        <FormField label="Project" htmlFor="timer-projectId">
-          <select id="timer-projectId" name="projectId" required className={selectClassName}>
+        <FormField label="Project" htmlFor="timer-projectId" required>
+          <select
+            id="timer-projectId"
+            name="projectId"
+            required
+            className={selectClassName}
+          >
             <option value="" disabled>
               Select project
             </option>
@@ -72,7 +90,12 @@ export function ActiveTimerPanel({
           </select>
         </FormField>
         <FormField label="Task" htmlFor="timer-taskId">
-          <select id="timer-taskId" name="taskId" className={selectClassName} defaultValue="">
+          <select
+            id="timer-taskId"
+            name="taskId"
+            className={selectClassName}
+            defaultValue=""
+          >
             <option value="">No task</option>
             {tasks.map((task) => (
               <option key={task.id} value={task.id}>
@@ -82,11 +105,21 @@ export function ActiveTimerPanel({
           </select>
         </FormField>
         <FormField label="Notes" htmlFor="timer-notes" className="sm:col-span-2">
-          <input id="timer-notes" name="notes" className={selectClassName} placeholder="Optional" />
+          <input
+            id="timer-notes"
+            name="notes"
+            className={selectClassName}
+            placeholder="Optional"
+          />
         </FormField>
         <div className="sm:col-span-2">
           <label className="flex items-center gap-2 text-sm">
-            <input name="billable" type="checkbox" defaultChecked className="rounded border-input" />
+            <input
+              name="billable"
+              type="checkbox"
+              defaultChecked
+              className="rounded border-input"
+            />
             Billable
           </label>
         </div>

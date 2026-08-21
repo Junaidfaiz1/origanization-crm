@@ -3,19 +3,40 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_SECTIONS } from "@/components/layout/nav";
-import { cn } from "@/lib/utils/cn";
+import {
+  AppBrand,
+  NavActiveIndicator,
+  navLinkClass,
+} from "@/components/layout/app-brand";
 import { hasPermission, type PermissionKey } from "@/config/permissions";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils/cn";
 
 type SidebarNavProps = {
   onNavigate?: () => void;
   permissions?: string[];
+  collapsed?: boolean;
 };
 
-export function SidebarNav({ onNavigate, permissions = [] }: SidebarNavProps) {
+export function SidebarNav({
+  onNavigate,
+  permissions = [],
+  collapsed = false,
+}: SidebarNavProps) {
   const currentPath = usePathname();
 
-  return (
-    <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
+  const content = (
+    <nav
+      className={cn(
+        "flex-1 overflow-y-auto overscroll-contain py-3",
+        collapsed ? "px-1.5" : "px-2.5",
+      )}
+    >
       {NAV_SECTIONS.map((section) => {
         const items = section.items.filter(
           (item) =>
@@ -26,31 +47,50 @@ export function SidebarNav({ onNavigate, permissions = [] }: SidebarNavProps) {
           return null;
         }
         return (
-          <div key={section.title} className="mb-6">
-            <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-wider text-sidebar-muted">
-              {section.title}
-            </p>
-            <div className="space-y-1">
+          <div key={section.title} className="mb-4">
+            {!collapsed ? (
+              <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-sidebar-muted">
+                {section.title}
+              </p>
+            ) : (
+              <div className="mx-auto mb-2 h-px w-6 bg-sidebar-border" aria-hidden />
+            )}
+            <div className="space-y-0.5">
               {items.map((item) => {
                 const active =
-                  currentPath === item.href ||
-                  currentPath.startsWith(`${item.href}/`);
+                  item.href === "/dashboard"
+                    ? currentPath === "/dashboard"
+                    : currentPath === item.href ||
+                      currentPath.startsWith(`${item.href}/`);
                 const Icon = item.icon;
-                return (
+                const link = (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={onNavigate}
-                    className={cn(
-                      "flex min-h-11 items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors",
-                      active
-                        ? "bg-sidebar-accent text-white"
-                        : "text-sidebar-muted hover:bg-sidebar-accent hover:text-white",
-                    )}
+                    aria-current={active ? "page" : undefined}
+                    className={navLinkClass(active, collapsed)}
+                    title={collapsed ? item.label : undefined}
                   >
+                    <NavActiveIndicator active={active} />
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{item.label}</span>
+                    {!collapsed ? (
+                      <span className="truncate">{item.label}</span>
+                    ) : (
+                      <span className="sr-only">{item.label}</span>
+                    )}
                   </Link>
+                );
+
+                if (!collapsed) {
+                  return link;
+                }
+
+                return (
+                  <Tooltip key={item.href}>
+                    <TooltipTrigger asChild>{link}</TooltipTrigger>
+                    <TooltipContent side="right">{item.label}</TooltipContent>
+                  </Tooltip>
                 );
               })}
             </div>
@@ -59,18 +99,18 @@ export function SidebarNav({ onNavigate, permissions = [] }: SidebarNavProps) {
       })}
     </nav>
   );
+
+  if (collapsed) {
+    return <TooltipProvider delayDuration={200}>{content}</TooltipProvider>;
+  }
+
+  return content;
 }
 
-export function SidebarBrand() {
-  return (
-    <div className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border px-5">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-        TN
-      </div>
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold">TechNova CRM</p>
-        <p className="truncate text-xs text-sidebar-muted">Agency workspace</p>
-      </div>
-    </div>
-  );
+export function SidebarBrand({
+  collapsed = false,
+}: {
+  collapsed?: boolean;
+}) {
+  return <AppBrand collapsed={collapsed} />;
 }

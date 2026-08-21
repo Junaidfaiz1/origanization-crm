@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Briefcase, Gavel, ListTodo } from "lucide-react";
 import { requireFreelancerUser } from "@/lib/auth/page";
 import { getFreelancerHome } from "@/modules/freelancer-portal/service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,8 @@ import { MoneyDisplay } from "@/components/shared/money-display";
 import { DateDisplay } from "@/components/shared/date-display";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { PageHeader } from "@/components/shared/page-header";
+import { MetricCard } from "@/components/shared/metric-card";
 
 export const metadata = { title: "Freelancer portal" };
 
@@ -27,28 +30,30 @@ export default async function FreelancerHomePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs text-muted-foreground">Welcome</p>
-        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-          {home.profile?.name ?? ctx.user.name}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Open bid requests, your bids, assigned tasks, and time. Other freelancers’
-          bids and agency margins stay private.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Welcome"
+        title={home.profile?.name ?? ctx.user.name}
+        description="Open bid requests, your bids, assigned tasks, and time. Other freelancers' bids and agency margins stay private."
+      />
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat
-          label="Open requests"
+        <MetricCard
+          title="Open requests"
           value={String(home.counts.openRequests)}
           href="/freelancer/requests"
+          icon={Gavel}
         />
-        <Stat label="My bids" value={String(home.counts.myBids)} href="/freelancer/bids" />
-        <Stat
-          label="Active tasks"
+        <MetricCard
+          title="My bids"
+          value={String(home.counts.myBids)}
+          href="/freelancer/bids"
+          icon={Briefcase}
+        />
+        <MetricCard
+          title="Active tasks"
           value={String(home.counts.activeTasks)}
           href="/freelancer/tasks"
+          icon={ListTodo}
         />
       </div>
 
@@ -62,13 +67,14 @@ export default async function FreelancerHomePage() {
               <EmptyState
                 title="No open requests"
                 description="When the agency opens bidding, eligible work will appear here."
+                className="border-0 bg-transparent py-8"
               />
             ) : (
               home.openRequests.map((request) => (
                 <Link
                   key={request.id}
                   href={`/freelancer/requests/${request.id}`}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:bg-muted/40"
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{request.title}</p>
@@ -101,13 +107,14 @@ export default async function FreelancerHomePage() {
               <EmptyState
                 title="No active tasks"
                 description="Tasks assigned to you after a won bid will show here."
+                className="border-0 bg-transparent py-8"
               />
             ) : (
               home.myTasks.map((task) => (
                 <Link
                   key={task.id}
                   href={`/freelancer/tasks/${task.id}`}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:bg-muted/40"
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{task.title}</p>
@@ -129,25 +136,5 @@ export default async function FreelancerHomePage() {
         </Card>
       </div>
     </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="rounded-xl border border-border bg-card p-4 hover:bg-muted/40"
-    >
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-xl font-semibold tracking-tight">{value}</p>
-    </Link>
   );
 }

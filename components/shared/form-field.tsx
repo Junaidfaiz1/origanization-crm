@@ -5,20 +5,34 @@ export function FormField({
   label,
   htmlFor,
   error,
+  hint,
+  required,
   children,
   className,
 }: {
   label: string;
   htmlFor: string;
   error?: string;
+  hint?: string;
+  required?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={cn("space-y-2", className)}>
-      <Label htmlFor={htmlFor}>{label}</Label>
+    <div className={cn("space-y-1.5", className)}>
+      <Label htmlFor={htmlFor} className="text-label">
+        {label}
+        {required ? <span className="text-destructive"> *</span> : null}
+      </Label>
       {children}
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {hint && !error ? (
+        <p className="text-caption text-muted-foreground">{hint}</p>
+      ) : null}
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

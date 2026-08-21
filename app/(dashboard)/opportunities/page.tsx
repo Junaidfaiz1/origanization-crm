@@ -7,6 +7,7 @@ import { opportunityListFilterSchema } from "@/modules/opportunities/validation"
 import {
   getOpportunityPipelineSummary,
   listOpportunities,
+  listOpportunitiesForKanban,
   listOpportunityClientOptions,
 } from "@/modules/opportunities/service";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,13 @@ import { ErrorState } from "@/components/shared/error-state";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { SearchInput } from "@/components/shared/search-input";
 import { Pagination } from "@/components/shared/pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { ResultCount } from "@/components/shared/result-count";
+import { SortSelect } from "@/components/shared/sort-select";
+import { DEFAULT_LIST_SORT_OPTIONS } from "@/lib/ui/list-sort";
 import { OpportunitiesTable } from "@/components/opportunities/opportunities-table";
+import { OpportunityKanbanBoard } from "@/components/opportunities/opportunity-kanban-board";
+import { OpportunityViewToggle } from "@/components/opportunities/opportunity-view-toggle";
 import {
   OpportunityPipelineSummary,
   OpportunityStageFilter,
@@ -31,7 +38,9 @@ export default async function OpportunitiesPage({
     q?: string;
     stage?: string;
     clientId?: string;
+    sort?: string;
     cursor?: string;
+    view?: string;
   }>;
 }) {
   const ctx = await requireDashboardUser();
@@ -46,23 +55,32 @@ export default async function OpportunitiesPage({
   }
 
   const params = await searchParams;
+  const isKanban = params.view === "kanban";
   const filter = opportunityListFilterSchema.parse({
     search: params.q,
-    stage: params.stage,
+    stage: isKanban ? undefined : params.stage,
     clientId: params.clientId,
+    sort: params.sort,
     cursor: params.cursor,
     first: 20,
   });
 
-  let result;
+  let result: Awaited<ReturnType<typeof listOpportunities>> | null = null;
+  let kanban: Awaited<ReturnType<typeof listOpportunitiesForKanban>> | null =
+    null;
   let summary;
   let clients;
   try {
-    [result, summary, clients] = await Promise.all([
-      listOpportunities(ctx, filter),
+    const [listOrNull, boardOrNull, pipeline, clientOptions] = await Promise.all([
+      isKanban ? Promise.resolve(null) : listOpportunities(ctx, filter),
+      isKanban ? listOpportunitiesForKanban(ctx, filter) : Promise.resolve(null),
       getOpportunityPipelineSummary(ctx),
       listOpportunityClientOptions(ctx),
     ]);
+    result = listOrNull;
+    kanban = boardOrNull;
+    summary = pipeline;
+    clients = clientOptions;
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return (
@@ -82,45 +100,55 @@ export default async function OpportunitiesPage({
 
   const canCreate = hasPermission(ctx.permissions, "OPPORTUNITY_CREATE");
   const selectedClient = clients.find((client) => client.id === params.clientId);
+  const empty =
+    (isKanban && (kanban?.totalCount ?? 0) === 0) ||
+    (!isKanban && (result?.nodes.length ?? 0) === 0);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">CRM</p>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Opportunities</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Sales pipeline from discovery through won and lost deals.
-          </p>
-        </div>
-        {canCreate ? (
-          <Button asChild className="shrink-0">
-            <Link
-              href={
-                params.clientId
-                  ? `/opportunities/new?clientId=${params.clientId}`
-                  : "/opportunities/new"
-              }
-            >
-              <Plus className="h-4 w-4" />
-              New opportunity
-            </Link>
-          </Button>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="CRM"
+        title="Opportunities"
+        description="Sales pipeline from discovery through won and lost deals."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <OpportunityViewToggle />
+            {canCreate ? (
+              <Button asChild className="shrink-0">
+                <Link
+                  href={
+                    params.clientId
+                      ? `/opportunities/new?clientId=${params.clientId}`
+                      : "/opportunities/new"
+                  }
+                >
+                  <Plus className="h-4 w-4" />
+                  New opportunity
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+        }
+      />
 
       <OpportunityPipelineSummary summary={summary} />
 
       <FilterBar>
         <SearchInput placeholder="Search deal, client, or description" />
-        <OpportunityStageFilter />
+        {!isKanban ? <OpportunityStageFilter /> : null}
         <OpportunityClientFilter clients={clients} />
+        {!isKanban ? (
+          <SortSelect options={[...DEFAULT_LIST_SORT_OPTIONS]} />
+        ) : null}
       </FilterBar>
 
       {selectedClient ? (
         <p className="text-sm text-muted-foreground">
           Filtered to{" "}
-          <Link href={`/clients/${selectedClient.id}`} className="font-medium hover:underline">
+          <Link
+            href={`/clients/${selectedClient.id}`}
+            className="font-medium hover:underline"
+          >
             {selectedClient.company.name}
           </Link>
           {" · "}
@@ -130,7 +158,7 @@ export default async function OpportunitiesPage({
         </p>
       ) : null}
 
-      {result.nodes.length === 0 ? (
+      {empty ? (
         <EmptyState
           title="No opportunities yet"
           description="Create a deal to track value, stage, and expected close date."
@@ -142,9 +170,14 @@ export default async function OpportunitiesPage({
             ) : undefined
           }
         />
-      ) : (
+      ) : isKanban && kanban ? (
         <>
-          <p className="text-sm text-muted-foreground">{result.totalCount} opportunities</p>
+          <ResultCount count={kanban.totalCount} label="opportunities" />
+          <OpportunityKanbanBoard board={kanban} />
+        </>
+      ) : result ? (
+        <>
+          <ResultCount count={result.totalCount} label="opportunities" />
           <OpportunitiesTable opportunities={result.nodes} />
           <Pagination
             hasNextPage={result.pageInfo.hasNextPage}
@@ -153,10 +186,11 @@ export default async function OpportunitiesPage({
               q: params.q,
               stage: params.stage,
               clientId: params.clientId,
+              sort: params.sort,
             }}
           />
         </>
-      )}
+      ) : null}
     </div>
   );
 }

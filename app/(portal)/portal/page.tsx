@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FileText, FolderKanban, Receipt, Wallet } from "lucide-react";
 import { requirePortalUser } from "@/lib/auth/page";
 import { getPortalHome } from "@/modules/client-portal/service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,8 @@ import { MoneyDisplay } from "@/components/shared/money-display";
 import { DateDisplay } from "@/components/shared/date-display";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { PageHeader } from "@/components/shared/page-header";
+import { MetricCard } from "@/components/shared/metric-card";
 
 export const metadata = { title: "Client portal" };
 
@@ -27,25 +30,36 @@ export default async function PortalHomePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs text-muted-foreground">Welcome</p>
-        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-          {home.client.companyName}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          View proposals, project progress, invoices, and payments. Bidding and
-          internal costs stay with the agency.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Welcome"
+        title={home.client.companyName}
+        description="View proposals, project progress, invoices, and payments. Bidding and internal costs stay with the agency."
+      />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Proposals" value={String(home.counts.proposals)} href="/portal/proposals" />
-        <Stat label="Projects" value={String(home.counts.projects)} href="/portal/projects" />
-        <Stat label="Invoices" value={String(home.counts.invoices)} href="/portal/invoices" />
-        <Stat
-          label="Outstanding"
+        <MetricCard
+          title="Proposals"
+          value={String(home.counts.proposals)}
+          href="/portal/proposals"
+          icon={FileText}
+        />
+        <MetricCard
+          title="Projects"
+          value={String(home.counts.projects)}
+          href="/portal/projects"
+          icon={FolderKanban}
+        />
+        <MetricCard
+          title="Invoices"
+          value={String(home.counts.invoices)}
+          href="/portal/invoices"
+          icon={Receipt}
+        />
+        <MetricCard
+          title="Outstanding"
           value={String(home.counts.outstandingInvoices)}
           href="/portal/invoices"
+          icon={Wallet}
         />
       </div>
 
@@ -59,18 +73,22 @@ export default async function PortalHomePage() {
               <EmptyState
                 title="No proposals waiting"
                 description="When the agency sends a proposal, it will appear here."
+                className="border-0 bg-transparent py-8"
               />
             ) : (
               home.actionableProposals.map((proposal) => (
                 <Link
                   key={proposal.id}
                   href={`/portal/proposals/${proposal.id}`}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:bg-muted/40"
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{proposal.title}</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      <MoneyDisplay amount={proposal.total} currency={proposal.currency} />
+                      <MoneyDisplay
+                        amount={proposal.total}
+                        currency={proposal.currency}
+                      />
                     </p>
                   </div>
                   <StatusBadge status={proposal.status} />
@@ -89,18 +107,23 @@ export default async function PortalHomePage() {
               <EmptyState
                 title="No invoices yet"
                 description="Sent invoices will show here with balances due."
+                className="border-0 bg-transparent py-8"
               />
             ) : (
               home.recentInvoices.map((invoice) => (
                 <Link
                   key={invoice.id}
                   href={`/portal/invoices/${invoice.id}`}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 hover:bg-muted/40"
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{invoice.invoiceNumber}</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Due <MoneyDisplay amount={invoice.amountDue} currency={invoice.currency} />
+                      Due{" "}
+                      <MoneyDisplay
+                        amount={invoice.amountDue}
+                        currency={invoice.currency}
+                      />
                       {" · "}
                       <DateDisplay value={invoice.issueDate} />
                     </p>
@@ -113,25 +136,5 @@ export default async function PortalHomePage() {
         </Card>
       </div>
     </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  href,
-}: {
-  label: string;
-  value: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="rounded-xl border border-border bg-card p-4 hover:bg-muted/40"
-    >
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-xl font-semibold tracking-tight">{value}</p>
-    </Link>
   );
 }

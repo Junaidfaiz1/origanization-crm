@@ -39,7 +39,7 @@ export default async function FreelancerLayout({
   return (
     <AppApolloProvider>
       <div className="flex min-h-dvh bg-background">
-        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex lg:flex-col">
+        <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
           <FreelancerBrand />
           <FreelancerSidebarNav />
         </aside>
@@ -48,7 +48,7 @@ export default async function FreelancerLayout({
             userName={ctx.user.name}
             organizationName={ctx.user.organization.name}
           />
-          <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 lg:px-8 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 lg:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {children}
           </main>
         </div>
