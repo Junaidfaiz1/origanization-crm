@@ -41,6 +41,8 @@ function eslintCommands(files) {
   return batches.map((batch) => `${ESLINT} ${batch.join(" ")}`);
 }
 
-export default {
+const lintStagedConfig = {
   "*.{js,jsx,mjs,ts,tsx}": eslintCommands,
 };
+
+export default lintStagedConfig;
