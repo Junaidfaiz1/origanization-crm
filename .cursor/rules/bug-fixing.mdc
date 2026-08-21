@@ -1,0 +1,28 @@
+---
+description: Reproduce, root-cause, and regression-test bugs without weakening auth or tenant scope
+alwaysApply: true
+---
+
+# Bug-fixing workflow
+
+When the user reports a bug, failing test, or broken page, follow `.cursor/skills/fix-bug/SKILL.md`. Do not start unrelated features.
+
+1. **Reproduce first** — a failing test or exact steps. Do not guess-patch.
+2. **Find the root cause** in the service/module (authz, tenant `where`, transaction, webhook, invoice math). Do not patch UI only if the server is wrong.
+3. **Fix at the source.** Never "fix" by dropping `requirePermission`, skipping `organizationId`, empty `try/catch`, or `any`.
+4. **Add or adjust a regression test** that fails before the fix and passes after.
+5. Run targeted Vitest, then `npm run typecheck` and `npm run lint`. Never leave the repo broken.
+
+```ts
+// ❌ BAD — symptom patch
+catch (e) {}
+prisma.invoice.findUnique({ where: { id } })
+if (ctx.role === "ADMIN") return invoice
+
+// ✅ GOOD — root cause
+throw new AuthorizationError("Missing INVOICE_VIEW")
+prisma.invoice.findFirst({ where: { id, organizationId: ctx.organizationId } })
+requirePermission(ctx, "INVOICE_VIEW")
+```
+
+Do not weaken portal field stripping so a CLIENT can see profit, bids, or freelancer costs.

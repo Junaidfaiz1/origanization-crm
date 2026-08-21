@@ -1,0 +1,153 @@
+import Link from "next/link";
+import { requireFreelancerUser } from "@/lib/auth/page";
+import { getFreelancerHome } from "@/modules/freelancer-portal/service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { MoneyDisplay } from "@/components/shared/money-display";
+import { DateDisplay } from "@/components/shared/date-display";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
+
+export const metadata = { title: "Freelancer portal" };
+
+export default async function FreelancerHomePage() {
+  const ctx = await requireFreelancerUser();
+
+  let home;
+  try {
+    home = await getFreelancerHome(ctx);
+  } catch {
+    return (
+      <ErrorState
+        title="Could not load portal"
+        description="Check that your account is linked to a freelancer resource."
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs text-muted-foreground">Welcome</p>
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          {home.profile?.name ?? ctx.user.name}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Open bid requests, your bids, assigned tasks, and time. Other freelancers’
+          bids and agency margins stay private.
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Stat
+          label="Open requests"
+          value={String(home.counts.openRequests)}
+          href="/freelancer/requests"
+        />
+        <Stat label="My bids" value={String(home.counts.myBids)} href="/freelancer/bids" />
+        <Stat
+          label="Active tasks"
+          value={String(home.counts.activeTasks)}
+          href="/freelancer/tasks"
+        />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Open requests</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {home.openRequests.length === 0 ? (
+              <EmptyState
+                title="No open requests"
+                description="When the agency opens bidding, eligible work will appear here."
+              />
+            ) : (
+              home.openRequests.map((request) => (
+                <Link
+                  key={request.id}
+                  href={`/freelancer/requests/${request.id}`}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{request.title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {request.projectName}
+                      {request.budgetMax ? (
+                        <>
+                          {" · "}
+                          <MoneyDisplay
+                            amount={request.budgetMax}
+                            currency={request.currency}
+                          />
+                        </>
+                      ) : null}
+                    </p>
+                  </div>
+                  <StatusBadge status={request.status} />
+                </Link>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>My tasks</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {home.myTasks.length === 0 ? (
+              <EmptyState
+                title="No active tasks"
+                description="Tasks assigned to you after a won bid will show here."
+              />
+            ) : (
+              home.myTasks.map((task) => (
+                <Link
+                  key={task.id}
+                  href={`/freelancer/tasks/${task.id}`}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-border p-3 hover:bg-muted/40"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{task.title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {task.projectName}
+                      {task.dueDate ? (
+                        <>
+                          {" · Due "}
+                          <DateDisplay value={task.dueDate} />
+                        </>
+                      ) : null}
+                    </p>
+                  </div>
+                  <StatusBadge status={task.status} />
+                </Link>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string;
+  href: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="rounded-xl border border-border bg-card p-4 hover:bg-muted/40"
+    >
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-xl font-semibold tracking-tight">{value}</p>
+    </Link>
+  );
+}

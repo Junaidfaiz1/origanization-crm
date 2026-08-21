@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: technova-postgres
+    environment:
+      POSTGRES_USER: technova
+      POSTGRES_PASSWORD: technova
+      POSTGRES_DB: technova
+    ports:
+      - "5432:5432"
+    volumes:
+      - technova_pgdata:/var/lib/postgresql/data
+
+volumes:
+  technova_pgdata:

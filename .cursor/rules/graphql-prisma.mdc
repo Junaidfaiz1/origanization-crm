@@ -1,13 +1,46 @@
 ---
-description: GraphQL modules, Prisma, and validation conventions
-globs: "{modules,lib,prisma,app/api}/**/*.{ts,tsx}"
+description: GraphQL Yoga modules, Prisma tenant queries, and Zod validation
+globs: "{modules,lib,prisma,app/api}/**/*.{ts,tsx,prisma}"
 alwaysApply: false
 ---
 
 # GraphQL and Prisma
 
-Register domain schema in `modules/<domain>/` and merge in `lib/graphql`. Use connection pagination (`edges`, `pageInfo`). Hide fields the current role must not see.
+## Module layout
 
-Throw typed errors (`AuthenticationError`, `AuthorizationError`, `ValidationError`, `NotFoundError`, `ConflictError`, `BusinessRuleError`). Do not leak stack traces to clients.
+```
+modules/leads/
+  validation.ts    Zod input schemas
+  service.ts       tenant-scoped business logic
+  schema.ts        SDL (types, enums, queries, mutations)
+  resolvers.ts     thin: parse args → requirePermission → service
+```
 
-Scope Prisma `where` by `organizationId`. Add composite indexes for tenant filters (`organizationId + status`, `organizationId + createdAt`). Use `select` to avoid over-fetching. No `any` unless unavoidable.
+Register in `lib/graphql`. Use connection types, Input types, and enums matching Prisma. Reuse frontend fragments (`LeadFields`, `ProjectFields`, …).
+
+Hide fields the current actor must not see (profit, other bids, costs) in the resolver — not with UI omission alone.
+
+```ts
+// ❌ BAD — resolver talks to Prisma and skips authz
+leads: (_, args) => prisma.lead.findMany({ where: args })
+
+// ✅ GOOD
+leads: async (_, args, ctx) => {
+  requirePermission(ctx, "LEAD_VIEW")
+  return leadService.list(ctx, args)
+}
+```
+
+## Prisma
+
+- Prisma 7: generate with `prisma generate`, import from `@/generated/prisma/client`, connect via `@prisma/adapter-pg`. CLI URL lives in `prisma.config.ts`.
+- `organizationId` on every org-owned model; composite indexes for tenant filters.
+- `findFirst`/`updateMany` with `{ id, organizationId }`. Never `findUnique` by id alone for tenant data.
+- Transactions for lead conversion, proposal accept, bid accept, payment application, role changes.
+- BidRequest: at most one winner (`awardedBidId` unique, checked inside a transaction).
+- No `any`. Map Prisma nullability to GraphQL explicitly.
+- Soft-delete: default lists exclude archived; finance/audit relations remain.
+
+## Validation
+
+Zod in `validation.ts` for every mutation. Reject empty strings, negative money, non-positive bid days, invalid status transitions. Parse in the resolver; services assume valid typed input.

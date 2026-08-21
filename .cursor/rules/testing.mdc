@@ -1,0 +1,47 @@
+---
+description: Vitest for module/lib business rules, tenant isolation, bidding, webhooks, and profit
+globs: "{tests,modules,lib}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Testing
+
+Use Vitest. Unit-test business logic in `modules/` and `lib/`, not UI-only happy paths. Colocate as `modules/<domain>/*.test.ts` or `tests/<domain>.test.ts`. Import `describe` / `it` / `expect` from `vitest`. No `any`.
+
+If `vitest.config.mts` or `npm test` is missing, add a minimal node-env config (include `tests/**/*.test.ts`, `modules/**/*.test.ts`, `lib/**/*.test.ts`) and `"test": "vitest run"`. Do not write the whole CRM suite.
+
+Mock Stripe, R2, and Resend. Do **not** mock away the rule under test (tenant `where`, accept transaction, webhook idempotency).
+
+```ts
+// ❌ BAD — id-only fetch; mocks the invariant
+prisma.bidRequest.findUnique({ where: { id } })
+vi.mocked(acceptBid).mockResolvedValue(winner)
+
+// ✅ GOOD — tenant scope + real service
+prisma.bidRequest.findFirst({ where: { id, organizationId: ctx.organizationId } })
+await expect(acceptBid(ctxB, { bidId })).rejects.toThrow(ConflictError)
+```
+
+## Must cover (when that module exists)
+
+| Area | Assert |
+| --- | --- |
+| Authz | missing permission → `AuthorizationError` |
+| Tenant | org A id cannot be read/updated as org B |
+| Lead conversion | transaction creates client/opportunity; rollback on failure |
+| Proposal accept | status + optional project create |
+| Bid submit | closed request rejected; duplicate active bid rejected |
+| Bid negotiate | original amount unchanged; history appended |
+| Bid accept | one winner; others rejected; request AWARDED |
+| Concurrent accept | second transaction fails; still one winner |
+| Invoice math | totals, amountDue, paid-cannot-exceed-total |
+| Stripe webhook | signature required; duplicate `providerPaymentId` / event id → no duplicate payment |
+| Profit | `revenue - resourceCost - expenses - paymentFees`; revenue 0 → `—` (no NaN) |
+
+## Commands
+
+Targeted: `npx vitest run path/to/file.test.ts`. Then `npm test`, `npm run typecheck`, `npm run lint`. Use `npm run build` before deploy / Phase 12 — not after every unit test.
+
+E2E (Playwright later, Phase 12): login → lead → convert → opportunity → proposal → accept → project → bid → negotiate → accept → invoice → webhook → profit.
+
+Do not add snapshot-heavy UI tests for every form.

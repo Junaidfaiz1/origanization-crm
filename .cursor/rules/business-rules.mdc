@@ -1,0 +1,45 @@
+---
+description: Non-negotiable business rules, bidding, finance, and portal visibility
+alwaysApply: true
+---
+
+# Business rules
+
+Enforce on the server. UI may hide actions; it must not be the only control.
+
+1. Every org-owned record is tenant-scoped (`organizationId` from session).
+2. A closed/awarded/cancelled BidRequest cannot receive new bids.
+3. A BidRequest has **exactly one** winning bid — unique `awardedBidId` + transaction, not UI locking.
+4. A rejected/withdrawn bid cannot be accepted.
+5. Only users with `BID_ACCEPT` (checked server-side) can accept bids.
+6. A freelancer cannot see other people’s private bids.
+7. A client cannot see internal bidding data, negotiation, or freelancer costs.
+8. A client cannot see agency profit, margin, or internal notes.
+9. Payment success comes from the Stripe webhook, never from the browser alone.
+10. Duplicate webhooks are idempotent (`providerPaymentId` unique).
+11. `invoice.amountPaid` cannot exceed `total` unless explicit credit/refund logic exists.
+12. Completed/closed projects cannot get normal new tasks without reopening.
+13. Financial reports require `REPORT_VIEW` (and finance fields require finance perms).
+14. Users access only their organization’s resources.
+15. Soft-delete/archive must not break historical invoices, payments, or audit rows.
+
+## Bidding
+
+- Bidding is **not** fields on Project. Use `Project → BidRequest → Bid → BidNegotiation`.
+- Never overwrite the original bid amount; append negotiation history.
+- Do not auto-pick the lowest bid. Optional scoring is transparent; manager decides.
+- One active bid per bidder per request (unless a product flag explicitly allows otherwise).
+- Accept workflow is one transaction: lock request, verify no winner, accept selected, reject others, award request, assign resource, set project `RESOURCE_ASSIGNED`, audit, notify. Rollback on failure.
+
+## Finance
+
+- Profit: `revenue - resourceCost - expenses - paymentFees`. Margin: `profit / revenue * 100`; if revenue is 0, show `—` (no NaN).
+- Unique invoice numbers **per organization**.
+
+## Portals
+
+| Audience | Must not see |
+| --- | --- |
+| CLIENT | bidding internals, freelancer rates/costs, profit, internal notes, negotiations |
+| FREELANCER | other private bids, agency margin, client-internal notes |
+| Internal | other tenants; finance screens still need `REPORT_VIEW` / invoice perms |

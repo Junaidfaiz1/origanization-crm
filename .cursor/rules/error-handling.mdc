@@ -1,0 +1,40 @@
+---
+description: Typed GraphQL errors, structured logs, and secret redaction
+globs: "{modules,lib,app/api}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Error handling
+
+Throw typed errors from services. Map them in Yoga. Never send stack traces, Prisma messages, or secrets to the client.
+
+```ts
+// ❌ BAD
+catch (e) { return { message: String(e) } } // leaks internals
+catch (e) {}                                // swallows failures
+
+// ✅ GOOD
+throw new NotFoundError("Lead not found")
+throw new BusinessRuleError("BidRequest is closed")
+throw new ConflictError("This BidRequest already has a winner")
+```
+
+Types: `AuthenticationError`, `AuthorizationError`, `ValidationError` (Zod issues), `NotFoundError`, `ConflictError`, `BusinessRuleError`, `InternalServerError`.
+
+Client-safe payload: `{ code, message, fields? }`. Log the real error server-side with requestId.
+
+## Logging
+
+Structured JSON: `requestId`, `userId`, `organizationId`, `operation`, `entityType`, `entityId`, `durationMs`, `error`.
+
+Never log: passwords, hashes, session tokens, `AUTH_SECRET`, Stripe secrets, R2 keys, Resend keys, raw card data, webhook signing payloads beyond event id.
+
+```ts
+// ❌ BAD
+logger.info("stripe", { secret: process.env.STRIPE_SECRET_KEY, body })
+
+// ✅ GOOD
+logger.info("stripe.webhook", { eventId, type, organizationId })
+```
+
+Audit payloads follow the same redaction. Prefer `ConflictError` for unique-constraint races (second bid accept).

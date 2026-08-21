@@ -1,16 +1,49 @@
 ---
-description: TechNova CRM architecture, stack, and module boundaries
+description: Modular monolith folders, GraphQL boundary, and tenant scoping
 alwaysApply: true
 ---
 
-# Architecture
+# System architecture
 
-Modular Next.js monolith. Do not introduce microservices, always-on workers, WebSockets, or BullMQ.
+Modular Next.js monolith. Business logic lives in `modules/<domain>/`. UI never queries Prisma.
 
-Stack: Next.js App Router, TypeScript strict, Tailwind, shadcn/ui, Apollo Client, GraphQL Yoga, Prisma, PostgreSQL (Neon), Cloudflare R2, Resend, Stripe webhooks, Vercel serverless.
+## Folders
 
-Put business logic in `modules/<domain>/` (service + validation + GraphQL). UI components must not query Prisma. Derive `organizationId` from the session, never from client input.
+```
+app/(auth)/                 login, register, forgot-password
+app/(dashboard)/            dashboard, leads, clients, projects, bidding, …
+app/(portal)/               client + freelancer portals (role-gated)
+app/api/graphql/            GraphQL Yoga
+app/api/stripe/             webhook (raw body + signature)
+app/api/cron/               expire-bids, expire-proposals, overdue invoices, reminders
+components/ui/              shadcn primitives
+components/{layout,tables,forms,modals,charts}/
+components/{bidding,projects,invoices}/   domain-specific UI only
+lib/{auth,graphql,prisma,permissions,tenant,validation,storage,email,stripe,notifications,audit,errors}/
+modules/<domain>/           service.ts, validation.ts, schema.ts, resolvers.ts
+prisma/schema.prisma        prisma/seed.ts
+tests/                      unit/integration for critical workflows
+proxy.ts                    auth/session gate (not middleware.ts)
+```
 
-Vercel-compatible only: no local filesystem storage, no in-memory sessions, no long-running processes. Use Vercel Cron + DB state for scheduled work.
+Domain modules: `auth`, `organizations`, `users`, `roles`, `leads`, `clients`, `opportunities`, `proposals`, `projects`, `bidding`, `resources`, `contracts`, `milestones`, `tasks`, `time-tracking`, `invoices`, `payments`, `expenses`, `notifications`, `files`, `reports`, `audit`.
 
-After each phase: typecheck, lint, and fix before continuing. Keep the repo buildable.
+## GraphQL merge
+
+Each module exports schema + resolvers. `lib/graphql` merges them into Yoga. Pages talk to GraphQL (or a thin server action that calls the **same** service). Never duplicate rules in the UI.
+
+## Tenant scoping
+
+Every org-owned entity has `organizationId`. Derive it from the authenticated membership session — never from client input.
+
+```ts
+// ❌ BAD
+prisma.project.findUnique({ where: { id: projectId } })
+
+// ✅ GOOD
+prisma.project.findFirst({
+  where: { id: projectId, organizationId: ctx.organizationId },
+})
+```
+
+Reuse this pattern for update/delete. Composite unique keys that include `organizationId` where it prevents cross-tenant collisions (e.g. invoice numbers).

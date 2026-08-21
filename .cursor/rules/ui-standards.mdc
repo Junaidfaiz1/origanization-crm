@@ -1,13 +1,44 @@
 ---
-description: Dashboard UI, loading states, and reusable components
+description: Professional B2B SaaS UI, reusable components, and page states
 globs: "{app,components}/**/*.{ts,tsx}"
 alwaysApply: false
 ---
 
 # UI standards
 
-Professional B2B SaaS look: clear hierarchy, cards, subtle borders, status badges, consistent spacing. Prefer Server Components; mark `"use client"` only when needed.
+Portfolio-grade B2B SaaS: clear hierarchy, cards, subtle borders, readable tables, status badges, consistent spacing. Not tutorial CRUD. Dark mode via `next-themes` if the shell already supports it.
 
-Every list/detail page needs loading, empty, error, and success states. Reuse `DataTable`, `EmptyState`, `ErrorState`, `StatusBadge`, `MoneyDisplay`, `ConfirmDialog`.
+Prefer Server Components. Validate with Zod + React Hook Form. Do not hardcode business rules in the UI — hide/disable actions, still enforce on the server.
 
-Do not hardcode business rules in the UI. Validate with Zod + React Hook Form. Tables must paginate; do not load unbounded lists into the browser.
+## Every list/detail page
+
+Must render **loading** (skeleton), **empty**, **error**, and **success**. No blank screens.
+
+```tsx
+// ❌ BAD
+if (!rows.length) return null
+
+// ✅ GOOD
+if (error) return <ErrorState title="Could not load leads" onRetry={refetch} />
+if (!rows.length) return (
+  <EmptyState
+    title="No leads yet"
+    description="Capture a lead to start the sales pipeline."
+    action={{ label: "Create lead", href: "/leads/new" }}
+  />
+)
+```
+
+## Reuse before creating
+
+`DataTable`, `SearchInput`, `FilterBar`, `Pagination`, `StatusBadge`, `EmptyState`, `ErrorState`, `ConfirmDialog`, `FormField`, `MoneyDisplay`, `DateDisplay`, `Avatar`, `UserSelect`, `ProjectStatusBadge`, `BidStatusBadge`.
+
+If a primitive is missing, add it under `components/` once, then use it.
+
+## Patterns
+
+- Sidebar groups: Dashboard, CRM, Delivery, Finance, Reports, Notifications, Settings.
+- Tables: sortable columns, server pagination, row click → detail. Destructive actions use `ConfirmDialog` + toast.
+- Money always through `MoneyDisplay` (org currency). Status always through a badge, not raw enums.
+- Client portal and freelancer portal use the same primitives but **different field sets** (see business-rules).
+- Layout must work on phone, tablet, and desktop: hamburger + sheet nav below `lg`, no horizontal page scroll, `min-w-0` on flex children, 44px tap targets, `text-base` inputs on mobile (iOS zoom), safe-area padding.

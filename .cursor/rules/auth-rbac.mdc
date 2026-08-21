@@ -1,0 +1,40 @@
+---
+description: Session tenancy, RBAC permissions, and portal authorization
+globs: "{modules,lib/auth,lib/permissions,lib/tenant,proxy.ts,app}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Auth, RBAC, and permissions
+
+Roles: `OWNER`, `ADMIN`, `SALES_MANAGER`, `PROJECT_MANAGER`, `FINANCE_MANAGER`, `EMPLOYEE`, `FREELANCER`, `CLIENT`.
+
+Do **not** authorize with `if (role === "ADMIN")` alone. Check permission keys on the server.
+
+```ts
+// ❌ BAD
+if (ctx.role === "OWNER") await invoiceService.create(...)
+
+// ✅ GOOD
+requirePermission(ctx, "INVOICE_CREATE")
+await invoiceService.create(ctx, input)
+```
+
+`ctx` includes `userId`, `organizationId` (from membership), `permissions: Set<string>`. Client-sent `organizationId` is ignored.
+
+## Permission keys
+
+`ORGANIZATION_VIEW/UPDATE` · `USER_VIEW/INVITE/UPDATE/DELETE` · `LEAD_VIEW/CREATE/UPDATE/DELETE` · `CLIENT_VIEW/CREATE/UPDATE/DELETE` · `OPPORTUNITY_VIEW/CREATE/UPDATE` · `PROPOSAL_VIEW/CREATE/UPDATE/SEND/ACCEPT/REJECT` · `PROJECT_VIEW/CREATE/UPDATE/DELETE` · `BID_REQUEST_VIEW/CREATE/UPDATE/OPEN/CLOSE` · `BID_VIEW/SUBMIT/UPDATE/SHORTLIST/ACCEPT/REJECT` · `CONTRACT_VIEW/CREATE/UPDATE` · `TASK_VIEW/CREATE/UPDATE/DELETE` · `INVOICE_VIEW/CREATE/UPDATE/SEND` · `PAYMENT_VIEW` · `EXPENSE_VIEW/CREATE/UPDATE` · `REPORT_VIEW` · `AUDIT_LOG_VIEW`
+
+Add keys in the same `RESOURCE_ACTION` style when a new verb appears.
+
+## Session
+
+- Credentials: hash passwords (bcrypt). HttpOnly secure cookies. `AUTH_SECRET` server-only.
+- `proxy.ts` can redirect unauthenticated dashboard routes; **authorization still happens in resolvers/services**.
+- Invite/accept membership before accessing org data. Seed system roles; org-specific roles are optional overlays.
+
+## Portal rules
+
+- CLIENT queries use a restricted schema path or field-level stripping: no bids, costs, profit, internal notes.
+- FREELANCER sees own bids + eligible open requests; never others’ bid amounts unless marked public.
+- Cross-tenant: tests must prove org A cannot read org B ids.

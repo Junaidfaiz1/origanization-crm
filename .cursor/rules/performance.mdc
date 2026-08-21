@@ -1,0 +1,39 @@
+---
+description: Indexes, pagination, select, N+1, and Server Components
+globs: "{app,modules,lib,prisma}/**/*.{ts,tsx,prisma}"
+alwaysApply: false
+---
+
+# Performance
+
+## Database
+
+- Index `organizationId` plus common filters: `(organizationId, status)`, `(organizationId, createdAt)`, `(organizationId, clientId)`, plus `email`, `slug`, `projectId`, `bidRequestId`, `bidderId`, `invoiceId`, `assignedToId`.
+- `select` / `include` only fields the resolver returns. Do not `findMany` then strip in JS.
+
+```ts
+// ❌ BAD — unbounded + over-fetch
+prisma.invoice.findMany({ where: { organizationId } })
+
+// ✅ GOOD
+prisma.invoice.findMany({
+  where: { organizationId, status },
+  select: { id: true, invoiceNumber: true, total: true, status: true },
+  take: 21, // page size + 1 for hasNextPage
+  ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+  orderBy: { createdAt: "desc" },
+})
+```
+
+## GraphQL
+
+Connection pagination: `edges { node, cursor }`, `pageInfo { hasNextPage, endCursor }`. Default page size ≤ 20; max ≤ 50.
+
+Avoid N+1: batch with Prisma `include` or DataLoader. Never query in a loop per edge.
+
+## UI
+
+- Server Components by default. `"use client"` only for forms, dialogs, Kanban, charts.
+- Do not load unbounded lists into the browser. Server-side search/filter/sort.
+- Lazy-load heavy charts. Cache expensive dashboard aggregates only with a clear TTL/invalidation (Redis optional).
+- Images via Next.js Image; files via R2 signed URLs.

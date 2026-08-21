@@ -1,0 +1,45 @@
+---
+description: Locked TechNova CRM tech stack — do not substitute
+alwaysApply: true
+---
+
+# Tech stack lock
+
+Use this stack. Do not add NestJS, a second backend, microservices, BullMQ, always-on workers, or WebSocket servers.
+
+| Layer | Choice |
+| --- | --- |
+| App | Next.js 16 App Router, React 19, TypeScript 5.9 `strict` |
+| UI | Tailwind 4, shadcn/ui, lucide-react, next-themes, sonner |
+| Forms | React Hook Form + Zod 4 |
+| Client data | Apollo Client 4; Zustand only for real client UI state |
+| API | GraphQL Yoga 5 + GraphQL 16 at `app/api/graphql/route.ts` (`/api/graphql`). Do not bump GraphQL to 17 until Yoga supports it. |
+| DB | Prisma 7 + PostgreSQL (Neon). Driver adapter `@prisma/adapter-pg`. Client generated to `generated/prisma`. Config in `prisma.config.ts`. No local filesystem storage. |
+| Files | Cloudflare R2 via `lib/storage` abstraction |
+| Email | Resend via `lib/email` abstraction (never call Resend from domain services) |
+| Payments | Stripe test mode; **webhooks are source of truth** |
+| Jobs | Vercel Cron + DB state (`app/api/cron/*`), secret-protected, idempotent |
+| Auth edge | `proxy.ts` at repo root exporting `proxy`. **Not** `middleware.ts`. |
+| Deploy | Vercel serverless. Sessions in DB/cookies, not in-memory. |
+
+## Allowed optional infra
+
+- Upstash Redis only when a measured need exists (rate limit, cache). Never for basic CRUD.
+- Sentry-compatible logging abstraction. No secrets in client bundles.
+
+## Forbidden
+
+```ts
+// ❌ BAD
+export function middleware(req: NextRequest) {}  // Next.js 16: use proxy.ts
+writeFileSync("./uploads/x.pdf", buf)            // use R2
+new Worker() / BullMQ / ws.Server()              // not Vercel-compatible
+
+// ✅ GOOD
+export function proxy(request: NextRequest) {}
+await storage.upload({ key, body, mimeType })
+```
+
+Prefer fewer dependencies. Add a package only when the feature cannot be done with the stack above. Env vars live in `.env.example`; never commit `.env`.
+
+Stay on **latest stable within this stack**. Do not bump to GraphQL 17 (Yoga 5 peers `^15 || ^16`), TypeScript 7 (Prisma 7 recommends 5.9.x), or ESLint 10 until `eslint-config-next` documents it. Prisma client is imported from `@/generated/prisma/client`, never `@prisma/client` directly.

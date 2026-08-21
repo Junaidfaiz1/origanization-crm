@@ -1,0 +1,13 @@
+export const NOTIFICATION_TYPES = [
+  "BID_SUBMITTED",
+  "BID_ACCEPTED",
+  "BID_REJECTED",
+  "PROPOSAL_SENT",
+  "PROPOSAL_ACCEPTED",
+  "PROPOSAL_REJECTED",
+  "TASK_ASSIGNED",
+  "INVOICE_SENT",
+  "PAYMENT_RECORDED",
+] as const;
+
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];

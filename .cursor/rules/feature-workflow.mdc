@@ -1,0 +1,45 @@
+---
+description: Feature-by-feature implementation workflow and Definition of Done
+alwaysApply: true
+---
+
+# Feature-by-feature workflow
+
+Never dump the whole CRM in one pass. When the user names a domain (`implement leads`, `add bidding`, `build invoices`), implement **that module only**, end-to-end.
+
+Follow `.cursor/skills/implement-feature/SKILL.md`. For “what’s next”, follow `.cursor/skills/next-feature/SKILL.md`. For tests only, follow `.cursor/skills/test-feature/SKILL.md`. For bugs, follow `.cursor/skills/fix-bug/SKILL.md`.
+
+## Order of work
+
+1. Inspect existing `modules/<domain>/`, Prisma, GraphQL merge, and UI patterns.
+2. Schema + migration → service + Zod + authz → GraphQL → pages/components → tests → checks.
+3. Do not start unrelated modules. Do not leave the repo unbuildable.
+
+## Definition of Done
+
+A feature is not done because a page exists. Complete all of:
+
+- Prisma model + migration (tenant `organizationId` where the entity is org-owned)
+- Service with business rules (no Prisma in React)
+- Zod validation on every mutation
+- Server authz via permissions (not role-name-only)
+- GraphQL schema + resolvers registered in `lib/graphql`
+- UI: list + detail (or pipeline), filters, pagination
+- Loading, empty, error, and success states
+- Audit log for create/update/status/money/permission changes
+- Tests for critical logic (conversion, accept, webhook, profit)
+- `npm run typecheck`, `npm run lint`, and `npm test` pass; fix before stopping
+
+## Hard stops
+
+```ts
+// ❌ BAD — client-supplied tenant
+prisma.lead.findMany({ where: { organizationId: args.organizationId } })
+
+// ✅ GOOD — session tenant
+prisma.lead.findMany({ where: { organizationId: ctx.organizationId } })
+```
+
+- UI components must not import Prisma.
+- Critical workflows use Prisma transactions (lead convert, proposal accept, bid accept, payment updates).
+- After the feature: typecheck + lint + `npm test`, update `STATUS.md`, then stop. Offer the next module; do not auto-build it.
