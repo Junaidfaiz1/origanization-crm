@@ -19,7 +19,7 @@ export function MarketingShell({
         <div className="absolute inset-0 mk-noise" />
       </div>
       <MarketingNavbar />
-      <main className="relative pt-20">{children}</main>
+      <main className="relative pt-[3.75rem] sm:pt-20">{children}</main>
       <MarketingFooter />
     </div>
   );

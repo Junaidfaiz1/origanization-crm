@@ -110,8 +110,8 @@ export default function ServiceBusinessesSolutionPage() {
             ))}
           </div>
           <div className="mt-12 flex flex-wrap gap-3">
-            <Link href={MARKETING_ROUTES.pricing} className="text-sm text-teal-300 hover:text-teal-200">
-              Pricing →
+            <Link href={MARKETING_ROUTES.contact} className="text-sm text-teal-300 hover:text-teal-200">
+              Contact →
             </Link>
             <Link href={MARKETING_ROUTES.solutions} className="text-sm text-slate-500 hover:text-slate-300">
               All solutions

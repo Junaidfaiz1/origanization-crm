@@ -133,13 +133,13 @@ export function MarketingNavbar() {
           : "border-b border-transparent bg-transparent py-4",
       )}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
         <Link
           href={MARKETING_ROUTES.home}
-          className="mk-focus-ring group flex items-baseline gap-2"
+          className="mk-focus-ring group flex min-w-0 items-baseline gap-2"
           data-cursor="link"
         >
-          <span className="font-[family-name:var(--font-marketing-display)] text-2xl tracking-wide text-[var(--mk-text)]">
+          <span className="font-[family-name:var(--font-marketing-display)] text-xl tracking-wide text-[var(--mk-text)] sm:text-2xl">
             Technova
           </span>
           <span className="hidden text-[10px] uppercase tracking-[0.22em] text-[var(--mk-muted)] sm:inline">

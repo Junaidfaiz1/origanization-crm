@@ -57,16 +57,16 @@ export function MarketingExperience() {
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute inset-0 mk-radial-glow" />
         <div className="absolute inset-0 mk-noise" />
-        <div className="pointer-events-auto absolute inset-0 h-[min(100dvh,900px)] lg:h-dvh">
+        <div className="pointer-events-auto absolute inset-0 h-[55vh] max-h-[420px] sm:h-[min(100dvh,720px)] lg:h-dvh lg:max-h-none">
           <HeroSceneCanvas className="h-full w-full" />
         </div>
         <div
-          className="absolute inset-0 bg-gradient-to-b from-[#050505]/30 via-transparent to-[#050505]"
+          className="absolute inset-0 bg-gradient-to-b from-[#050505]/50 via-[#050505]/20 to-[#050505] sm:from-[#050505]/30"
           aria-hidden
         />
       </div>
 
-      <main className="relative z-10 pt-16">
+      <main className="relative z-10 pt-[3.75rem] sm:pt-16">
         <MarketingSections />
       </main>
 

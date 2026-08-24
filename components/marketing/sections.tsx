@@ -112,39 +112,43 @@ export function MarketingSections() {
       {/* Hero */}
       <section
         id="hero"
-        className="mk-section relative flex min-h-[calc(100dvh-4rem)] flex-col justify-end px-4 pb-16 pt-24 sm:px-6 lg:justify-center lg:px-8 lg:pb-28"
+        className="mk-section relative flex min-h-[calc(100dvh-4rem)] flex-col justify-end px-4 pb-12 pt-20 sm:px-6 sm:pb-16 sm:pt-24 lg:justify-center lg:px-8 lg:pb-28"
       >
         <div className="pointer-events-none absolute inset-0 mk-editorial-grid opacity-40" />
-        <div className="relative mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div>
-            <p className="font-[family-name:var(--font-marketing-display)] text-xl tracking-[0.08em] text-[var(--mk-warm)] sm:text-2xl">
+        <div className="relative mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10">
+          <div className="min-w-0">
+            <p className="font-[family-name:var(--font-marketing-display)] text-lg tracking-[0.08em] text-[var(--mk-warm)] sm:text-2xl">
               Technova
             </p>
-            <h1 className="mk-display mt-4 max-w-xl text-balance text-5xl leading-[1.02] text-[var(--mk-text)] sm:text-6xl lg:text-7xl">
+            <h1 className="mk-display mt-3 max-w-xl text-balance text-[2.35rem] leading-[1.05] text-[var(--mk-text)] sm:mt-4 sm:text-5xl lg:text-7xl">
               Win the client.
               <span className="mt-2 block text-[var(--mk-text-2)]">
                 Then run the business.
               </span>
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-[var(--mk-text-2)] sm:text-lg">
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
               {BRAND.pitch}
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <MagneticButton href={MARKETING_ROUTES.features}>
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap">
+              <MagneticButton href={MARKETING_ROUTES.features} className="w-full sm:w-auto">
                 Explore the platform
               </MagneticButton>
-              <MagneticButton href="#lifecycle" variant="secondary">
+              <MagneticButton
+                href="#lifecycle"
+                variant="secondary"
+                className="w-full sm:w-auto"
+              >
                 See how it works
               </MagneticButton>
             </div>
           </div>
-          <div className="relative hidden lg:block">
+          <div className="relative hidden min-w-0 lg:block">
             <div className="translate-y-4 rotate-[-1.5deg] scale-[0.98] transition-transform duration-700 hover:translate-y-0 hover:rotate-0 hover:scale-100">
               <DashboardPreview />
             </div>
           </div>
         </div>
-        <div className="relative mx-auto mt-12 w-full max-w-6xl lg:hidden">
+        <div className="relative mx-auto mt-10 w-full max-w-6xl min-w-0 lg:hidden">
           <DashboardPreview />
         </div>
       </section>
@@ -165,7 +169,7 @@ export function MarketingSections() {
               </span>
             </h2>
           </ScrollReveal>
-          <div className="relative mt-16 grid gap-4 sm:grid-cols-3">
+          <div className="relative mt-12 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-4">
             {[
               "Leads in spreadsheets",
               "Proposals in documents",
@@ -177,10 +181,10 @@ export function MarketingSections() {
               <ScrollReveal key={label} delay={i * 60}>
                 <div
                   className={cn(
-                    "rounded-lg border border-white/10 bg-[#101010] px-4 py-5 text-sm text-[var(--mk-text-2)]",
-                    i % 2 === 0 ? "sm:-translate-y-2" : "sm:translate-y-3",
-                    i % 3 === 1 && "sm:rotate-1",
-                    i % 3 === 2 && "sm:-rotate-1",
+                    "rounded-lg border border-white/10 bg-[#101010] px-4 py-4 text-sm text-[var(--mk-text-2)] sm:py-5",
+                    i % 2 === 0 ? "md:-translate-y-2" : "md:translate-y-3",
+                    i % 3 === 1 && "md:rotate-1",
+                    i % 3 === 2 && "md:-rotate-1",
                   )}
                 >
                   {label}
@@ -289,14 +293,14 @@ export function MarketingSections() {
               accent="into opportunities."
             />
           </ScrollReveal>
-          <div className="mt-12 flex gap-3 overflow-x-auto pb-2">
+          <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:mt-12 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {["New Lead", "Qualified", "Proposal", "Negotiation", "Won", "Lost"].map(
               (col) => {
                 const cards = d.pipelineCards.filter((c) => c.column === col);
                 return (
                   <div
                     key={col}
-                    className="min-w-[10.5rem] flex-1 rounded-lg border border-white/10 bg-[#101010] p-3"
+                    className="w-[78vw] max-w-[14rem] shrink-0 snap-start rounded-lg border border-white/10 bg-[#101010] p-3 sm:w-auto sm:min-w-[10.5rem] sm:max-w-none sm:flex-1"
                   >
                     <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--mk-muted)]">
                       {col}
@@ -492,7 +496,7 @@ export function MarketingSections() {
             <SectionEyebrow>Finance</SectionEyebrow>
             <SectionHeading title="Know where every dollar goes." />
           </ScrollReveal>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
             {[
               { label: "Revenue", value: d.revenue, prefix: "$" },
               { label: "Expenses", value: d.expenses, prefix: "$" },
@@ -635,7 +639,7 @@ export function MarketingSections() {
               lead="Illustrative workflow pattern — wire to your process as the product grows."
             />
           </ScrollReveal>
-          <div className="mt-12 flex flex-wrap items-center gap-3">
+          <ol className="mt-10 grid list-none gap-2 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
             {[
               "WHEN · Proposal accepted",
               "Create project",
@@ -645,25 +649,22 @@ export function MarketingSections() {
               "Notify finance",
               "Create invoice",
             ].map((step, i) => (
-              <div key={step} className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    "rounded-lg border px-4 py-3 text-xs sm:text-sm",
-                    i === 0
-                      ? "border-[var(--mk-bronze)]/40 bg-[var(--mk-bronze)]/10 text-[var(--mk-warm)]"
-                      : "border-white/10 bg-[#101010] text-[var(--mk-text-2)]",
-                  )}
-                >
-                  {step}
-                </div>
-                {i < 6 ? (
-                  <span className="text-[var(--mk-bronze)]" aria-hidden>
-                    →
-                  </span>
-                ) : null}
-              </div>
+              <li
+                key={step}
+                className={cn(
+                  "rounded-lg border px-4 py-3 text-xs sm:text-sm",
+                  i === 0
+                    ? "border-[var(--mk-bronze)]/40 bg-[var(--mk-bronze)]/10 text-[var(--mk-warm)] sm:col-span-2 lg:col-span-3"
+                    : "border-white/10 bg-[#101010] text-[var(--mk-text-2)]",
+                )}
+              >
+                <span className="mr-2 text-[10px] text-[var(--mk-muted)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {step}
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -705,7 +706,7 @@ export function MarketingSections() {
               lead="Portfolio illustrations — not presented as real customers."
             />
           </ScrollReveal>
-          <div className="mt-12 grid gap-4 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3">
             {d.caseStudies.map((c) => (
               <article
                 key={c.segment}

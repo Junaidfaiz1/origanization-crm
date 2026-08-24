@@ -131,14 +131,14 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("max-w-3xl", className)}>
-      <h2 className="mk-display text-balance text-4xl leading-[1.08] text-[var(--mk-text)] sm:text-5xl lg:text-6xl">
+      <h2 className="mk-display text-balance text-[1.85rem] leading-[1.1] text-[var(--mk-text)] sm:text-5xl lg:text-6xl">
         {title}
         {accent ? (
           <span className="mt-2 block text-[var(--mk-text-2)]">{accent}</span>
         ) : null}
       </h2>
       {lead ? (
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--mk-text-2)] sm:text-lg">
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
           {lead}
         </p>
       ) : null}

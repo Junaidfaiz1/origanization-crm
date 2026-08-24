@@ -80,25 +80,25 @@ const CATEGORIES = [
 export default function FeaturesPage() {
   return (
     <MarketingShell>
-      <section className="relative overflow-hidden px-4 pb-12 pt-10 sm:px-6 lg:px-8 lg:pt-16">
+      <section className="relative overflow-hidden px-4 pb-10 pt-8 sm:px-6 sm:pb-12 sm:pt-10 lg:px-8 lg:pt-16">
         <div className="pointer-events-none absolute inset-0 mk-editorial-grid opacity-30" />
         <div className="relative mx-auto max-w-6xl">
           <SectionEyebrow>Features</SectionEyebrow>
-          <h1 className="mk-display mt-4 max-w-3xl text-balance text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+          <h1 className="mk-display mt-3 max-w-3xl text-balance text-[2.1rem] leading-[1.08] sm:mt-4 sm:text-5xl lg:text-6xl">
             Everything your business needs.
             <span className="mt-2 block text-[var(--mk-text-2)]">
               Nothing you don&apos;t.
             </span>
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--mk-text-2)] sm:text-lg">
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
             A complete operating surface for service businesses — from first lead
             to measured profit.
           </p>
         </div>
       </section>
 
-      <section className="px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {CATEGORIES.map((c, i) => (
             <Link
               key={c.title}

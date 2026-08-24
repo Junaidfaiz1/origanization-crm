@@ -49,15 +49,15 @@ export function ProductLandingPage(props: ProductPageProps) {
 
   return (
     <MarketingShell>
-      <section className="relative overflow-hidden px-4 pb-16 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16">
+      <section className="relative overflow-hidden px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-24 lg:pt-16">
         <div className="pointer-events-none absolute inset-0 mk-editorial-grid opacity-30" />
-        <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div>
+        <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12">
+          <div className="min-w-0">
             <SectionEyebrow>{eyebrow}</SectionEyebrow>
-            <h1 className="mk-display mt-4 text-balance text-4xl leading-[1.05] text-[var(--mk-text)] sm:text-5xl lg:text-6xl">
+            <h1 className="mk-display mt-3 text-balance text-[2.1rem] leading-[1.08] text-[var(--mk-text)] sm:mt-4 sm:text-5xl lg:text-6xl">
               {title}
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--mk-text-2)] sm:text-lg">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
               {lead}
             </p>
             {metaphor ? (
@@ -65,22 +65,26 @@ export function ProductLandingPage(props: ProductPageProps) {
                 Visual · {metaphor}
               </p>
             ) : null}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <MagneticButton href={primaryCta.href}>
+            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
+              <MagneticButton href={primaryCta.href} className="w-full sm:w-auto">
                 {primaryCta.label}
               </MagneticButton>
               {secondaryCta ? (
-                <MagneticButton href={secondaryCta.href} variant="secondary">
+                <MagneticButton
+                  href={secondaryCta.href}
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                >
                   {secondaryCta.label}
                 </MagneticButton>
               ) : null}
             </div>
           </div>
-          <div className="relative min-h-[16rem]">
+          <div className="relative min-h-[14rem] min-w-0 sm:min-h-[16rem]">
             {visual ?? (
-              <div className="flex h-full min-h-[16rem] items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-[#151515] via-[#0a0a0a] to-[#050505] p-8">
+              <div className="flex h-full min-h-[14rem] items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-[#151515] via-[#0a0a0a] to-[#050505] p-6 sm:min-h-[16rem] sm:p-8">
                 <div className="text-center">
-                  <div className="mx-auto h-20 w-20 rounded-full border border-[var(--mk-bronze)]/35 bg-[var(--mk-bronze)]/10 shadow-[0_0_60px_rgb(198_138_82_/_0.2)]" />
+                  <div className="mx-auto h-16 w-16 rounded-full border border-[var(--mk-bronze)]/35 bg-[var(--mk-bronze)]/10 shadow-[0_0_60px_rgb(198_138_82_/_0.2)] sm:h-20 sm:w-20" />
                   <p className="mt-4 text-xs tracking-[0.2em] text-[var(--mk-warm)]">
                     {eyebrow}
                   </p>

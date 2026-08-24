@@ -6,7 +6,6 @@
 export const MARKETING_ROUTES = {
   home: "/",
   features: "/features",
-  pricing: "/pricing",
   solutions: "/solutions",
   agencies: "/solutions/agencies",
   softwareHouses: "/solutions/software-houses",
@@ -101,6 +100,6 @@ export const COMPANY_NAV = [
 export const RESOURCE_NAV = [
   { href: MARKETING_ROUTES.guides, title: "Guides", description: "Static articles and playbooks" },
   { href: MARKETING_ROUTES.features, title: "Features", description: "Full product map" },
-  { href: MARKETING_ROUTES.pricing, title: "Pricing", description: "Plans and preview pricing" },
+  { href: MARKETING_ROUTES.security, title: "Security", description: "Tenancy, roles, and boundaries" },
   { href: MARKETING_ROUTES.contact, title: "Contact", description: "Talk with the Technova team" },
 ] as const;

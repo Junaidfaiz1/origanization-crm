@@ -49,7 +49,7 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Custom cursor + scroll progress | Done | QA pending | Desktop only; disabled on touch / reduced motion |
 | Product landings | Done | QA pending | `/crm`, `/project-management`, `/product/bidding`, `/finance`, `/analytics`, plus existing product routes |
 | Solutions | Done | QA pending | Agencies, software houses, consultants, freelancers (+ consulting alias) |
-| Features / Pricing / Security / About / Contact | Done | QA pending | Preview pricing; honest security claims |
+| Features / Security / About / Contact | Done | QA pending | Honest security claims |
 | Guides / Customers | Done | QA pending | Static articles + demo case studies |
 | Custom 404 | Done | QA pending | |
 | Route conflicts avoided | Done | — | App owns `/bidding`, `/projects`, `/resources`, `/payments`; marketing uses `/product/*`, `/project-management`, `/guides` |

@@ -251,6 +251,9 @@ body {
   background-color: var(--mk-bg);
   color: var(--mk-text);
   isolation: isolate;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100vw;
 }
 
 .marketing-root h1,
@@ -259,11 +262,55 @@ body {
   font-family: var(--font-marketing-display), Georgia, "Times New Roman", serif;
   font-weight: 400;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .marketing-root .mk-accent-italic {
   font-family: var(--font-marketing-accent), Georgia, serif;
   font-style: italic;
+}
+
+.mk-section {
+  position: relative;
+  scroll-margin-top: 5rem;
+  overflow-x: clip;
+}
+
+.mk-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .mk-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mk-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* Hide heavy decorative grids on small screens */
+@media (max-width: 767px) {
+  .mk-editorial-grid,
+  .mk-grid-bg {
+    opacity: 0.15 !important;
+    background-size: 48px 48px;
+  }
+
+  .marketing-root .mk-display {
+    letter-spacing: -0.015em;
+  }
+
+  .mk-section {
+    scroll-margin-top: 4.25rem;
+  }
 }
 
 .mk-grid-bg {
@@ -295,11 +342,6 @@ body {
     radial-gradient(ellipse 50% 40% at 50% 20%, rgb(198 138 82 / 0.14), transparent 60%),
     radial-gradient(ellipse 40% 35% at 80% 60%, rgb(140 180 216 / 0.08), transparent 55%),
     radial-gradient(ellipse 35% 30% at 15% 70%, rgb(232 178 123 / 0.06), transparent 50%);
-}
-
-.mk-section {
-  position: relative;
-  scroll-margin-top: 5rem;
 }
 
 .mk-underline {

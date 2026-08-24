@@ -128,7 +128,7 @@ export function LifecycleRail() {
               key={`${stage.id}-${i}`}
               role="listitem"
               className={cn(
-                "min-w-[10.5rem] shrink-0 rounded-lg border px-4 py-4 text-left",
+                "min-w-[9.5rem] shrink-0 rounded-lg border px-3 py-3.5 text-left sm:min-w-[10.5rem] sm:px-4 sm:py-4",
                 stageIndex === active
                   ? "border-[var(--mk-bronze)]/50 bg-[var(--mk-bronze)]/10"
                   : "border-white/10 bg-white/[0.02]",
