@@ -1,20 +1,15 @@
 import { ForgotPasswordForm } from "@/components/auth/auth-forms";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthPanel } from "@/components/auth/auth-panel";
 
 export const metadata = { title: "Reset password" };
 
 export default function ForgotPasswordPage() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Reset your password</CardTitle>
-        <CardDescription>
-          Enter your email and we will send reset instructions if an account exists.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ForgotPasswordForm />
-      </CardContent>
-    </Card>
+    <AuthPanel
+      title="Reset your password"
+      description="Enter your email and we will send reset instructions if an account exists."
+    >
+      <ForgotPasswordForm />
+    </AuthPanel>
   );
 }

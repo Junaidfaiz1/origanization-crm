@@ -152,10 +152,16 @@ export function ContractForm({
             step="0.01"
             required
             defaultValue={contract?.totalAmount ?? ""}
+            placeholder="12000"
           />
         </FormField>
         <FormField label="Currency" htmlFor="currency" error={state.errors?.currency?.[0]}>
-          <Input id="currency" name="currency" defaultValue={contract?.currency ?? "USD"} />
+          <Input
+            id="currency"
+            name="currency"
+            defaultValue={contract?.currency ?? "USD"}
+            placeholder="USD"
+          />
         </FormField>
         <FormField label="Start date" htmlFor="startDate" error={state.errors?.startDate?.[0]}>
           <Input

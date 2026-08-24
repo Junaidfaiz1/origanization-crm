@@ -151,7 +151,8 @@ export function TaskForm({
             name="description"
             rows={3}
             defaultValue={task?.description ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Acceptance criteria and notes…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Assignee" htmlFor="assignedToId" error={state.errors?.assignedToId?.[0]}>
@@ -217,6 +218,7 @@ export function TaskForm({
             min="0"
             step="0.25"
             defaultValue={task?.estimatedHours ?? ""}
+            placeholder="8"
           />
         </FormField>
         <FormField label="Actual hours" htmlFor="actualHours" error={state.errors?.actualHours?.[0]}>
@@ -227,6 +229,7 @@ export function TaskForm({
             min="0"
             step="0.25"
             defaultValue={task?.actualHours ?? ""}
+            placeholder="0"
           />
         </FormField>
       </div>

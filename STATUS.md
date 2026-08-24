@@ -3,7 +3,7 @@
 Living tracker: **what is done**, **what remains**, **QA**, and **bugs**.  
 Update this file after every feature, test pass, or bugfix. Do not mark a feature Done unless it meets the Definition of Done in `.cursor/rules/feature-workflow.mdc`.
 
-**Last updated:** 2026-08-21 (UI/UX redesign polish pass)
+**Last updated:** 2026-08-24 (Cinematic bronze marketing redesign — Laocoön-inspired studio)
 
 | Status | Meaning |
 | --- | --- |
@@ -20,7 +20,7 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 
 | Area | Status |
 | --- | --- |
-| Phase 1 — Foundation | **Done** (app shell; most module pages still placeholders) |
+| Phase 1 — Foundation | **Done** (app shell + **cinematic Technova** marketing site) |
 | Phase 2 — Auth + multi-tenancy | **Done** (register/login/session/RBAC; invite + role UI; real forgot-password) |
 | Phase 3 — CRM | **CRM phase done** — leads, companies, contacts, clients, opportunities, proposals |
 | Phase 4 — Projects | **Done** — projects, requirements, team, milestones, tasks, files, activity |
@@ -32,12 +32,27 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Phase 10 — Reports | **Done** — sales/projects/bidding/finance + live dashboard + Recharts |
 | Phase 11 — Polish | **Done** — design system tokens, collapsible shell, role dashboard, opportunities board, invoice document layout, portal chrome |
 | Phase 12 — Test + deploy | Husky + Vitest wired; no Vercel/cron/migrate-on-prod |
+| **Marketing website** | **Done (build)** — cinematic homepage + product/solution pages; static demo data only; QA pending |
 
 **QA of product features:** none yet (no CRM/bidding/finance flows to QA).  
-**Bugs solved:** none logged (no production bug reports yet).
+**Bugs solved:** header Sign out (2026-08-24).
 
 ---
 
+## Marketing website (Cinematic studio)
+
+| Item | Build | QA | Notes |
+| --- | --- | --- | --- |
+| Homepage hero + metallic 3D core | Done | QA pending | Orbit lifecycle nodes, particles, scroll response, WebGL fallback, reduced motion |
+| Scroll storytelling sections | Done | QA pending | Problem → lifecycle → CRM → bidding → projects → finance → CTA; static demo data |
+| Mega-nav + premium footer | Done | QA pending | Product / Solutions / Resources / Company; bronze tokens |
+| Custom cursor + scroll progress | Done | QA pending | Desktop only; disabled on touch / reduced motion |
+| Product landings | Done | QA pending | `/crm`, `/project-management`, `/product/bidding`, `/finance`, `/analytics`, plus existing product routes |
+| Solutions | Done | QA pending | Agencies, software houses, consultants, freelancers (+ consulting alias) |
+| Features / Pricing / Security / About / Contact | Done | QA pending | Preview pricing; honest security claims |
+| Guides / Customers | Done | QA pending | Static articles + demo case studies |
+| Custom 404 | Done | QA pending | |
+| Route conflicts avoided | Done | — | App owns `/bidding`, `/projects`, `/resources`, `/payments`; marketing uses `/product/*`, `/project-management`, `/guides` |
 ## Phase 1 — Foundation
 
 | Item | Build | QA | Notes |
@@ -260,7 +275,7 @@ Record a row when a human or agent **verifies** a feature (not merely that the p
 
 | Date | Bug | Root cause | Fix | Regression test |
 | --- | --- | --- | --- | --- |
-| — | — | — | — | None yet |
+| 2026-08-24 | Header Sign out no-op | Radix `DropdownMenuItem asChild` + nested `<form>` prevented submit | `SignOutMenuItem` calls `logoutAction` via `onSelect`; cookie clear uses matching `path`/`maxAge: 0` | `tests/logout.test.ts` |
 
 ---
 

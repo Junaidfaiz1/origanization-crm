@@ -112,10 +112,16 @@ export function ExpenseForm({ expense, projects, defaultProjectId }: ExpenseForm
             step="0.01"
             required
             defaultValue={expense?.amount ?? ""}
+            placeholder="125.00"
           />
         </FormField>
         <FormField label="Currency" htmlFor="currency" error={state.errors?.currency?.[0]}>
-          <Input id="currency" name="currency" defaultValue={expense?.currency ?? "USD"} />
+          <Input
+            id="currency"
+            name="currency"
+            defaultValue={expense?.currency ?? "USD"}
+            placeholder="USD"
+          />
         </FormField>
         <FormField
           label="Description"
@@ -128,7 +134,8 @@ export function ExpenseForm({ expense, projects, defaultProjectId }: ExpenseForm
             name="description"
             rows={3}
             defaultValue={expense?.description ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Cloud hosting for March…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
       </div>

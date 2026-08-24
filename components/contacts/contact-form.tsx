@@ -61,7 +61,13 @@ export function ContactForm({ contact, companies, defaultCompanyId }: ContactFor
           </select>
         </FormField>
         <FormField label="Full name" htmlFor="name" error={state.errors?.name?.[0]}>
-          <Input id="name" name="name" required defaultValue={contact?.name ?? ""} />
+          <Input
+            id="name"
+            name="name"
+            required
+            defaultValue={contact?.name ?? ""}
+            placeholder="Jane Doe"
+          />
         </FormField>
         <FormField label="Designation" htmlFor="designation" error={state.errors?.designation?.[0]}>
           <Input
@@ -77,10 +83,17 @@ export function ContactForm({ contact, companies, defaultCompanyId }: ContactFor
             name="email"
             type="email"
             defaultValue={contact?.email ?? ""}
+            placeholder="you@company.com"
           />
         </FormField>
         <FormField label="Phone" htmlFor="phone" error={state.errors?.phone?.[0]}>
-          <Input id="phone" name="phone" type="tel" defaultValue={contact?.phone ?? ""} />
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            defaultValue={contact?.phone ?? ""}
+            placeholder="+1 555 0100"
+          />
         </FormField>
       </div>
       <Button type="submit" disabled={pending}>

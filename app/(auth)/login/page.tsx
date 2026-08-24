@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/auth/auth-forms";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthPanel } from "@/components/auth/auth-panel";
 
 export const metadata = { title: "Sign in" };
 
@@ -17,14 +17,11 @@ export default async function LoginPage({ searchParams }: Props) {
         : undefined;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Sign in to your TechNova workspace.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <LoginForm notice={notice} />
-      </CardContent>
-    </Card>
+    <AuthPanel
+      title="Welcome back"
+      description="Sign in to your Technova workspace."
+    >
+      <LoginForm notice={notice} />
+    </AuthPanel>
   );
 }

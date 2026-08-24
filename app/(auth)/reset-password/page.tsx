@@ -1,5 +1,5 @@
 import { ResetPasswordForm } from "@/components/auth/auth-forms";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthPanel } from "@/components/auth/auth-panel";
 import { inspectAuthToken } from "@/modules/auth/service";
 import { NotFoundError } from "@/lib/errors/app-error";
 import Link from "next/link";
@@ -16,19 +16,17 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
 
   if (!token) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Invalid link</CardTitle>
-          <CardDescription>
-            This password link is missing a token. Request a new one from the sign-in page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link href="/forgot-password" className="text-sm underline">
-            Request reset link
-          </Link>
-        </CardContent>
-      </Card>
+      <AuthPanel
+        title="Invalid link"
+        description="This password link is missing a token. Request a new one from the sign-in page."
+      >
+        <Link
+          href="/forgot-password"
+          className="mk-underline text-sm text-[var(--mk-bronze)] hover:text-[var(--mk-warm)]"
+        >
+          Request reset link →
+        </Link>
+      </AuthPanel>
     );
   }
 
@@ -46,19 +44,17 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
 
   if (!inspection) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Link expired</CardTitle>
-          <CardDescription>
-            {errorMessage ?? "This link is invalid or has expired."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link href="/forgot-password" className="text-sm underline">
-            Request a new reset link
-          </Link>
-        </CardContent>
-      </Card>
+      <AuthPanel
+        title="Link expired"
+        description={errorMessage ?? "This link is invalid or has expired."}
+      >
+        <Link
+          href="/forgot-password"
+          className="mk-underline text-sm text-[var(--mk-bronze)] hover:text-[var(--mk-warm)]"
+        >
+          Request a new reset link →
+        </Link>
+      </AuthPanel>
     );
   }
 
@@ -70,24 +66,19 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
     : "reset";
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {isInvite ? "Accept invitation" : "Choose a new password"}
-        </CardTitle>
-        <CardDescription>
-          {isInvite
-            ? `You are joining as ${inspection.user.email}.`
-            : `Reset password for ${inspection.user.email}.`}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResetPasswordForm
-          token={token}
-          mode={mode}
-          organizationName={inspection.organization?.name}
-        />
-      </CardContent>
-    </Card>
+    <AuthPanel
+      title={isInvite ? "Accept invitation" : "Choose a new password"}
+      description={
+        isInvite
+          ? `You are joining as ${inspection.user.email}.`
+          : `Reset password for ${inspection.user.email}.`
+      }
+    >
+      <ResetPasswordForm
+        token={token}
+        mode={mode}
+        organizationName={inspection.organization?.name}
+      />
+    </AuthPanel>
   );
 }

@@ -176,13 +176,32 @@ export function BidComparisonTable({
           ) : null}
           <div className="grid gap-3 sm:grid-cols-3">
             <FormField label="Amount" htmlFor="amount" error={state.errors?.amount?.[0]}>
-              <Input id="amount" name="amount" type="number" min="0.01" step="0.01" required />
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+                placeholder="3500"
+              />
             </FormField>
             <FormField label="Days" htmlFor="estimatedDays" error={state.errors?.estimatedDays?.[0]}>
-              <Input id="estimatedDays" name="estimatedDays" type="number" min="1" required />
+              <Input
+                id="estimatedDays"
+                name="estimatedDays"
+                type="number"
+                min="1"
+                required
+                placeholder="14"
+              />
             </FormField>
             <FormField label="Message" htmlFor="message" error={state.errors?.message?.[0]}>
-              <Input id="message" name="message" />
+              <Input
+                id="message"
+                name="message"
+                placeholder="Can deliver in two weeks at this rate"
+              />
             </FormField>
           </div>
           <div className="flex gap-2">
@@ -209,13 +228,34 @@ export function SubmitBidForm({ bidRequestId }: { bidRequestId: string }) {
       {state.message ? <p className="text-sm text-destructive">{state.message}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label="Amount" htmlFor="amount" error={state.errors?.amount?.[0]}>
-          <Input id="amount" name="amount" type="number" min="0.01" step="0.01" required />
+          <Input
+            id="amount"
+            name="amount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            placeholder="3500"
+          />
         </FormField>
         <FormField label="Estimated days" htmlFor="estimatedDays" error={state.errors?.estimatedDays?.[0]}>
-          <Input id="estimatedDays" name="estimatedDays" type="number" min="1" required />
+          <Input
+            id="estimatedDays"
+            name="estimatedDays"
+            type="number"
+            min="1"
+            required
+            placeholder="14"
+          />
         </FormField>
         <FormField label="Proposal" htmlFor="proposal" error={state.errors?.proposal?.[0]} className="sm:col-span-2">
-          <textarea id="proposal" name="proposal" rows={3} className={`${selectClassName} min-h-20 py-2`} />
+          <textarea
+            id="proposal"
+            name="proposal"
+            rows={3}
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
+            placeholder="Approach, timeline, and relevant experience…"
+          />
         </FormField>
       </div>
       <Button type="submit" disabled={pending}>

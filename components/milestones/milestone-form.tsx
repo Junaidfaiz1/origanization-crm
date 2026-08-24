@@ -110,7 +110,8 @@ export function MilestoneForm({
             name="description"
             rows={3}
             defaultValue={milestone?.description ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Deliverables included in this milestone…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Amount" htmlFor="amount" error={state.errors?.amount?.[0]}>
@@ -121,6 +122,7 @@ export function MilestoneForm({
             min="0"
             step="0.01"
             defaultValue={milestone?.amount ?? ""}
+            placeholder="5000"
           />
         </FormField>
         <FormField label="Due date" htmlFor="dueDate" error={state.errors?.dueDate?.[0]}>
@@ -153,6 +155,7 @@ export function MilestoneForm({
             min="0"
             step="1"
             defaultValue={milestone?.order ?? 0}
+            placeholder="1"
           />
         </FormField>
       </div>

@@ -125,10 +125,22 @@ export function ProposalForm({
           </select>
         </FormField>
         <FormField label="Title" htmlFor="title" error={state.errors?.title?.[0]} className="sm:col-span-2">
-          <Input id="title" name="title" required defaultValue={proposal?.title ?? ""} />
+          <Input
+            id="title"
+            name="title"
+            required
+            defaultValue={proposal?.title ?? ""}
+            placeholder="Website redesign proposal"
+          />
         </FormField>
         <FormField label="Currency" htmlFor="currency" error={state.errors?.currency?.[0]}>
-          <Input id="currency" name="currency" defaultValue={proposal?.currency ?? "USD"} maxLength={3} />
+          <Input
+            id="currency"
+            name="currency"
+            defaultValue={proposal?.currency ?? "USD"}
+            maxLength={3}
+            placeholder="USD"
+          />
         </FormField>
         <FormField label="Valid until" htmlFor="validUntil" error={state.errors?.validUntil?.[0]}>
           <Input
@@ -151,6 +163,7 @@ export function ProposalForm({
             step="0.01"
             value={discount}
             onChange={(event) => setDiscount(event.target.value)}
+            placeholder="0.00"
           />
         </FormField>
         <FormField label="Tax" htmlFor="tax" error={state.errors?.tax?.[0]}>
@@ -162,6 +175,7 @@ export function ProposalForm({
             step="0.01"
             value={tax}
             onChange={(event) => setTax(event.target.value)}
+            placeholder="0.00"
           />
         </FormField>
         <FormField
@@ -175,7 +189,8 @@ export function ProposalForm({
             name="description"
             rows={3}
             defaultValue={proposal?.description ?? ""}
-            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            placeholder="Scope summary, assumptions, and next steps…"
+            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
         </FormField>
       </div>
@@ -202,7 +217,7 @@ export function ProposalForm({
           {items.map((item, index) => (
             <div key={index} className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-[1fr_6rem_8rem_auto]">
               <Input
-                placeholder="Description"
+                placeholder="Discovery workshop"
                 value={item.description}
                 onChange={(event) =>
                   setItems((current) =>
@@ -213,7 +228,7 @@ export function ProposalForm({
                 }
               />
               <Input
-                placeholder="Qty"
+                placeholder="1"
                 type="number"
                 min="0"
                 step="0.01"
@@ -227,7 +242,7 @@ export function ProposalForm({
                 }
               />
               <Input
-                placeholder="Unit price"
+                placeholder="150.00"
                 type="number"
                 min="0"
                 step="0.01"

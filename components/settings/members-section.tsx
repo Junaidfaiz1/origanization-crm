@@ -53,12 +53,18 @@ export function InviteUserForm({
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="invite-name">Name</Label>
-          <Input id="invite-name" name="name" required />
+          <Input id="invite-name" name="name" required placeholder="Jane Doe" />
           <FieldError messages={state.errors?.name} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="invite-email">Email</Label>
-          <Input id="invite-email" name="email" type="email" required />
+          <Input
+            id="invite-email"
+            name="email"
+            type="email"
+            required
+            placeholder="you@company.com"
+          />
           <FieldError messages={state.errors?.email} />
         </div>
         <div className="space-y-2">

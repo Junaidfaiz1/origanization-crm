@@ -94,6 +94,7 @@ export function PaymentForm({ invoices, defaultInvoiceId }: PaymentFormProps) {
                   : selected.amountDue.toString()
                 : ""
             }
+            placeholder="1000.00"
           />
         </FormField>
         <FormField label="Currency" htmlFor="currency" error={state.errors?.currency?.[0]}>
@@ -102,6 +103,7 @@ export function PaymentForm({ invoices, defaultInvoiceId }: PaymentFormProps) {
             name="currency"
             defaultValue={selected?.currency ?? "USD"}
             maxLength={3}
+            placeholder="USD"
           />
         </FormField>
         <FormField label="Method" htmlFor="method" error={state.errors?.method?.[0]}>
@@ -137,7 +139,7 @@ export function PaymentForm({ invoices, defaultInvoiceId }: PaymentFormProps) {
           <Input
             id="reference"
             name="reference"
-            placeholder="Bank txn / cheque number (optional)"
+            placeholder="TXN-482910"
           />
         </FormField>
         <FormField
@@ -150,8 +152,8 @@ export function PaymentForm({ invoices, defaultInvoiceId }: PaymentFormProps) {
             id="notes"
             name="notes"
             rows={3}
-            placeholder="Optional note about how payment was received"
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Received via wire transfer"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
       </div>

@@ -88,7 +88,13 @@ export function OpportunityForm({
           </select>
         </FormField>
         <FormField label="Deal name" htmlFor="name" error={state.errors?.name?.[0]} className="sm:col-span-2">
-          <Input id="name" name="name" required defaultValue={opportunity?.name ?? ""} />
+          <Input
+            id="name"
+            name="name"
+            required
+            defaultValue={opportunity?.name ?? ""}
+            placeholder="Website redesign — Phase 1"
+          />
         </FormField>
         <FormField
           label="Estimated value"
@@ -102,6 +108,7 @@ export function OpportunityForm({
             min="0"
             step="0.01"
             defaultValue={opportunity?.estimatedValue ?? ""}
+            placeholder="25000"
           />
         </FormField>
         <FormField label="Probability (%)" htmlFor="probability" error={state.errors?.probability?.[0]}>
@@ -112,6 +119,7 @@ export function OpportunityForm({
             min="0"
             max="100"
             defaultValue={opportunity?.probability ?? 0}
+            placeholder="60"
           />
         </FormField>
         <FormField label="Stage" htmlFor="stage" error={state.errors?.stage?.[0]}>
@@ -166,7 +174,8 @@ export function OpportunityForm({
             name="description"
             rows={4}
             defaultValue={opportunity?.description ?? ""}
-            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            placeholder="Client wants a patient portal with SSO and billing…"
+            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           />
         </FormField>
       </div>

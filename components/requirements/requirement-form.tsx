@@ -102,7 +102,8 @@ export function RequirementForm({
             name="description"
             rows={3}
             defaultValue={requirement?.description ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Users must sign in with SSO before accessing records…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Priority" htmlFor="priority" error={state.errors?.priority?.[0]}>

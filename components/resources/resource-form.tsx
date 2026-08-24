@@ -114,6 +114,7 @@ export function ResourceForm({ resource, members, skills }: ResourceFormProps) {
             min="0"
             step="0.01"
             defaultValue={resource?.hourlyRate ?? ""}
+            placeholder="85.00"
           />
         </FormField>
         <FormField
@@ -128,6 +129,7 @@ export function ResourceForm({ resource, members, skills }: ResourceFormProps) {
             min="0"
             max="60"
             defaultValue={resource?.experienceYears ?? ""}
+            placeholder="5"
           />
         </FormField>
         <FormField label="Rating" htmlFor="rating" error={state.errors?.rating?.[0]}>
@@ -139,6 +141,7 @@ export function ResourceForm({ resource, members, skills }: ResourceFormProps) {
             max="5"
             step="0.1"
             defaultValue={resource?.rating ?? ""}
+            placeholder="4.5"
           />
         </FormField>
         <FormField label="Bio" htmlFor="bio" error={state.errors?.bio?.[0]} className="sm:col-span-2">
@@ -147,7 +150,8 @@ export function ResourceForm({ resource, members, skills }: ResourceFormProps) {
             name="bio"
             rows={3}
             defaultValue={resource?.bio ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Full-stack engineer focused on Next.js and PostgreSQL…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Skills" htmlFor="resource-skills" className="sm:col-span-2">

@@ -31,28 +31,54 @@ export function CompanyForm({ company }: CompanyFormProps) {
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Company name" htmlFor="name" error={state.errors?.name?.[0]}>
-          <Input id="name" name="name" required defaultValue={company?.name ?? ""} />
+          <Input
+            id="name"
+            name="name"
+            required
+            defaultValue={company?.name ?? ""}
+            placeholder="Acme Corp"
+          />
         </FormField>
         <FormField label="Website" htmlFor="website" error={state.errors?.website?.[0]}>
           <Input
             id="website"
             name="website"
             type="url"
-            placeholder="https://example.com"
+            placeholder="https://acme.com"
             defaultValue={company?.website ?? ""}
           />
         </FormField>
         <FormField label="Industry" htmlFor="industry" error={state.errors?.industry?.[0]}>
-          <Input id="industry" name="industry" defaultValue={company?.industry ?? ""} />
+          <Input
+            id="industry"
+            name="industry"
+            defaultValue={company?.industry ?? ""}
+            placeholder="Healthcare"
+          />
         </FormField>
         <FormField label="Country" htmlFor="country" error={state.errors?.country?.[0]}>
-          <Input id="country" name="country" defaultValue={company?.country ?? ""} />
+          <Input
+            id="country"
+            name="country"
+            defaultValue={company?.country ?? ""}
+            placeholder="United States"
+          />
         </FormField>
         <FormField label="City" htmlFor="city" error={state.errors?.city?.[0]}>
-          <Input id="city" name="city" defaultValue={company?.city ?? ""} />
+          <Input
+            id="city"
+            name="city"
+            defaultValue={company?.city ?? ""}
+            placeholder="Austin"
+          />
         </FormField>
         <FormField label="Address" htmlFor="address" error={state.errors?.address?.[0]}>
-          <Input id="address" name="address" defaultValue={company?.address ?? ""} />
+          <Input
+            id="address"
+            name="address"
+            defaultValue={company?.address ?? ""}
+            placeholder="100 Main St, Suite 400"
+          />
         </FormField>
       </div>
       <Button type="submit" disabled={pending}>

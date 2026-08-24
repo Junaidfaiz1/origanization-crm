@@ -180,7 +180,8 @@ export function ProjectForm({
             name="description"
             rows={4}
             defaultValue={project?.description ?? ""}
-            className={`${selectClassName} min-h-24 py-2`}
+            placeholder="Goals, deliverables, and constraints…"
+            className={`${selectClassName} min-h-24 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Budget" htmlFor="budget" error={state.errors?.budget?.[0]}>
@@ -191,6 +192,7 @@ export function ProjectForm({
             min="0"
             step="0.01"
             defaultValue={project?.budget ?? ""}
+            placeholder="50000"
           />
         </FormField>
         <FormField
@@ -205,6 +207,7 @@ export function ProjectForm({
             min="0"
             step="0.01"
             defaultValue={project?.estimatedCost ?? ""}
+            placeholder="32000"
           />
         </FormField>
         <FormField
@@ -219,6 +222,7 @@ export function ProjectForm({
             min="0"
             step="0.01"
             defaultValue={project?.actualCost ?? ""}
+            placeholder="0.00"
           />
         </FormField>
         <FormField label="Status" htmlFor="status" error={state.errors?.status?.[0]}>

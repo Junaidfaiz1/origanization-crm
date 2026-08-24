@@ -35,7 +35,13 @@ export function LeadForm({ lead, assignees }: LeadFormProps) {
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Name" htmlFor="name" error={state.errors?.name?.[0]}>
-          <Input id="name" name="name" required defaultValue={lead?.name ?? ""} />
+          <Input
+            id="name"
+            name="name"
+            required
+            defaultValue={lead?.name ?? ""}
+            placeholder="Jane Doe"
+          />
         </FormField>
         <FormField label="Email" htmlFor="email" error={state.errors?.email?.[0]}>
           <Input
@@ -43,10 +49,16 @@ export function LeadForm({ lead, assignees }: LeadFormProps) {
             name="email"
             type="email"
             defaultValue={lead?.email ?? ""}
+            placeholder="you@company.com"
           />
         </FormField>
         <FormField label="Phone" htmlFor="phone" error={state.errors?.phone?.[0]}>
-          <Input id="phone" name="phone" defaultValue={lead?.phone ?? ""} />
+          <Input
+            id="phone"
+            name="phone"
+            defaultValue={lead?.phone ?? ""}
+            placeholder="+1 555 0100"
+          />
         </FormField>
         <FormField
           label="Company"
@@ -57,10 +69,16 @@ export function LeadForm({ lead, assignees }: LeadFormProps) {
             id="companyName"
             name="companyName"
             defaultValue={lead?.companyName ?? ""}
+            placeholder="Acme Corp"
           />
         </FormField>
         <FormField label="Source" htmlFor="source" error={state.errors?.source?.[0]}>
-          <Input id="source" name="source" defaultValue={lead?.source ?? ""} />
+          <Input
+            id="source"
+            name="source"
+            defaultValue={lead?.source ?? ""}
+            placeholder="Referral, LinkedIn, website…"
+          />
         </FormField>
         <FormField
           label="Estimated value"
@@ -74,6 +92,7 @@ export function LeadForm({ lead, assignees }: LeadFormProps) {
             min="0"
             step="0.01"
             defaultValue={lead?.estimatedValue ?? ""}
+            placeholder="10000"
           />
         </FormField>
         <FormField label="Status" htmlFor="status" error={state.errors?.status?.[0]}>
@@ -119,7 +138,8 @@ export function LeadForm({ lead, assignees }: LeadFormProps) {
           name="notes"
           rows={4}
           defaultValue={lead?.notes ?? ""}
-          className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-base md:text-sm"
+          placeholder="Interested in a Q3 website redesign…"
+          className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-base placeholder:text-muted-foreground md:text-sm"
         />
       </FormField>
       <Button type="submit" disabled={pending}>

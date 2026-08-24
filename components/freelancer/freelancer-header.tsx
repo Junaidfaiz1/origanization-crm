@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { logoutAction } from "@/modules/auth/actions";
+import { SignOutMenuItem } from "@/components/auth/sign-out-menu-item";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,7 +16,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -113,13 +113,7 @@ export function FreelancerHeader({
               <p className="text-caption">{organizationName}</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <form action={logoutAction} className="w-full">
-                <button type="submit" className="w-full text-left">
-                  Sign out
-                </button>
-              </form>
-            </DropdownMenuItem>
+            <SignOutMenuItem />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

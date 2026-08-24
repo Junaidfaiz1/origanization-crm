@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Bell, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { logoutAction } from "@/modules/auth/actions";
+import { SignOutMenuItem } from "@/components/auth/sign-out-menu-item";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -160,13 +161,7 @@ export function Header({
                 <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <form action={logoutAction} className="w-full">
-                  <button type="submit" className="w-full text-left">
-                    Sign out
-                  </button>
-                </form>
-              </DropdownMenuItem>
+              <SignOutMenuItem />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

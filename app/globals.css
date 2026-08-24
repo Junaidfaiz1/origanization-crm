@@ -230,3 +230,107 @@ body {
   --sidebar-accent: #0f172a;
   --sidebar-active: #2dd4bf;
 }
+
+/* —— Marketing: Cinematic product studio —— */
+.marketing-root {
+  --mk-bg: #050505;
+  --mk-bg-2: #0a0a0a;
+  --mk-surface: #101010;
+  --mk-elevated: #151515;
+  --mk-text: #f5f1ea;
+  --mk-text-2: #a3a3a3;
+  --mk-muted: #666666;
+  --mk-bronze: #c68a52;
+  --mk-warm: #e8b27b;
+  --mk-blue: #8cb4d8;
+  --mk-line: rgb(255 255 255 / 0.1);
+  --mk-glow: rgb(198 138 82 / 0.28);
+  --mk-accent: var(--mk-bronze);
+  font-family: var(--font-marketing-sans), var(--font-geist-sans), ui-sans-serif,
+    system-ui, sans-serif;
+  background-color: var(--mk-bg);
+  color: var(--mk-text);
+  isolation: isolate;
+}
+
+.marketing-root h1,
+.marketing-root h2,
+.marketing-root .mk-display {
+  font-family: var(--font-marketing-display), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.marketing-root .mk-accent-italic {
+  font-family: var(--font-marketing-accent), Georgia, serif;
+  font-style: italic;
+}
+
+.mk-grid-bg {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, black, transparent);
+}
+
+.mk-editorial-grid {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent calc(8.333% - 1px),
+    rgb(255 255 255 / 0.04) calc(8.333% - 1px),
+    rgb(255 255 255 / 0.04) 8.333%
+  );
+}
+
+.mk-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.mk-radial-glow {
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 20%, rgb(198 138 82 / 0.14), transparent 60%),
+    radial-gradient(ellipse 40% 35% at 80% 60%, rgb(140 180 216 / 0.08), transparent 55%),
+    radial-gradient(ellipse 35% 30% at 15% 70%, rgb(232 178 123 / 0.06), transparent 50%);
+}
+
+.mk-section {
+  position: relative;
+  scroll-margin-top: 5rem;
+}
+
+.mk-underline {
+  background-image: linear-gradient(var(--mk-bronze), var(--mk-bronze));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  transition: background-size 0.4s ease;
+}
+
+.mk-underline:hover {
+  background-size: 100% 1px;
+}
+
+.mk-focus-ring:focus-visible {
+  outline: 2px solid var(--mk-warm);
+  outline-offset: 3px;
+}
+
+html.mk-custom-cursor,
+html.mk-custom-cursor * {
+  cursor: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-root *,
+  .marketing-root *::before,
+  .marketing-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

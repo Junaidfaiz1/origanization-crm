@@ -136,7 +136,12 @@ export function ClientForm({
           </select>
         </FormField>
         <FormField label="Notes" htmlFor="notes" error={state.errors?.notes?.[0]} className="sm:col-span-2">
-          <Input id="notes" name="notes" defaultValue={client?.notes ?? ""} />
+          <Input
+            id="notes"
+            name="notes"
+            defaultValue={client?.notes ?? ""}
+            placeholder="Preferred contact hours, billing notes…"
+          />
         </FormField>
       </div>
       <Button type="submit" disabled={pending}>

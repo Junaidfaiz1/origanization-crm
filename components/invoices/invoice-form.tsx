@@ -189,6 +189,7 @@ export function InvoiceForm({
             name="currency"
             defaultValue={invoice?.currency ?? "USD"}
             maxLength={3}
+            placeholder="USD"
           />
         </FormField>
         <FormField label="Discount" htmlFor="discount" error={state.errors?.discount?.[0]}>
@@ -200,6 +201,7 @@ export function InvoiceForm({
             step="0.01"
             value={discount}
             onChange={(event) => setDiscount(event.target.value)}
+            placeholder="0.00"
           />
         </FormField>
         <FormField label="Tax" htmlFor="tax" error={state.errors?.tax?.[0]}>
@@ -211,6 +213,7 @@ export function InvoiceForm({
             step="0.01"
             value={tax}
             onChange={(event) => setTax(event.target.value)}
+            placeholder="0.00"
           />
         </FormField>
         <FormField
@@ -224,7 +227,8 @@ export function InvoiceForm({
             name="notes"
             rows={3}
             defaultValue={invoice?.notes ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Payment terms: Net 30…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
       </div>
@@ -257,7 +261,7 @@ export function InvoiceForm({
               className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-[1fr_6rem_8rem_auto]"
             >
               <Input
-                placeholder="Description"
+                placeholder="Consulting hours"
                 value={item.description}
                 onChange={(event) =>
                   setItems((current) =>
@@ -270,7 +274,7 @@ export function InvoiceForm({
                 }
               />
               <Input
-                placeholder="Qty"
+                placeholder="1"
                 type="number"
                 min="0"
                 step="0.01"
@@ -286,7 +290,7 @@ export function InvoiceForm({
                 }
               />
               <Input
-                placeholder="Unit price"
+                placeholder="150.00"
                 type="number"
                 min="0"
                 step="0.01"

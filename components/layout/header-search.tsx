@@ -26,9 +26,6 @@ export function HeaderSearch() {
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
-      setHits([]);
-      setSearched(false);
-      setActiveIndex(-1);
       return;
     }
 

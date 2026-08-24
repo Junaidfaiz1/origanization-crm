@@ -145,7 +145,7 @@ export function TimeEntryForm({
             min="0"
             step="0.01"
             defaultValue={entry?.hourlyRate ?? ""}
-            placeholder="Uses resource profile if blank"
+            placeholder="85.00"
           />
         </FormField>
         <FormField label="Start" htmlFor="startedAt" error={state.errors?.startedAt?.[0]}>
@@ -188,7 +188,8 @@ export function TimeEntryForm({
             name="notes"
             rows={3}
             defaultValue={entry?.notes ?? ""}
-            className={`${selectClassName} min-h-20 py-2`}
+            placeholder="Implemented auth middleware and tests…"
+            className={`${selectClassName} min-h-20 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
       </div>

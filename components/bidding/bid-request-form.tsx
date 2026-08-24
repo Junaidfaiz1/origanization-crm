@@ -69,7 +69,13 @@ export function BidRequestForm({
           </select>
         </FormField>
         <FormField label="Title" htmlFor="title" error={state.errors?.title?.[0]} className="sm:col-span-2">
-          <Input id="title" name="title" required defaultValue={request?.title ?? ""} />
+          <Input
+            id="title"
+            name="title"
+            required
+            defaultValue={request?.title ?? ""}
+            placeholder="Frontend implementation — Phase 2"
+          />
         </FormField>
         <FormField label="Description" htmlFor="description" error={state.errors?.description?.[0]} className="sm:col-span-2">
           <textarea
@@ -77,17 +83,39 @@ export function BidRequestForm({
             name="description"
             rows={4}
             defaultValue={request?.description ?? ""}
-            className={`${selectClassName} min-h-24 py-2`}
+            placeholder="Scope, tech stack, and acceptance criteria…"
+            className={`${selectClassName} min-h-24 py-2 placeholder:text-muted-foreground`}
           />
         </FormField>
         <FormField label="Budget min" htmlFor="budgetMin" error={state.errors?.budgetMin?.[0]}>
-          <Input id="budgetMin" name="budgetMin" type="number" min="0" step="0.01" defaultValue={request?.budgetMin ?? ""} />
+          <Input
+            id="budgetMin"
+            name="budgetMin"
+            type="number"
+            min="0"
+            step="0.01"
+            defaultValue={request?.budgetMin ?? ""}
+            placeholder="2000"
+          />
         </FormField>
         <FormField label="Budget max" htmlFor="budgetMax" error={state.errors?.budgetMax?.[0]}>
-          <Input id="budgetMax" name="budgetMax" type="number" min="0" step="0.01" defaultValue={request?.budgetMax ?? ""} />
+          <Input
+            id="budgetMax"
+            name="budgetMax"
+            type="number"
+            min="0"
+            step="0.01"
+            defaultValue={request?.budgetMax ?? ""}
+            placeholder="5000"
+          />
         </FormField>
         <FormField label="Currency" htmlFor="currency" error={state.errors?.currency?.[0]}>
-          <Input id="currency" name="currency" defaultValue={request?.currency ?? "USD"} />
+          <Input
+            id="currency"
+            name="currency"
+            defaultValue={request?.currency ?? "USD"}
+            placeholder="USD"
+          />
         </FormField>
         <FormField label="Type" htmlFor="biddingType" error={state.errors?.biddingType?.[0]}>
           <select id="biddingType" name="biddingType" defaultValue={request?.biddingType ?? "EXTERNAL"} className={selectClassName}>

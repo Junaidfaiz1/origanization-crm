@@ -108,8 +108,8 @@ export function ActiveTimerPanel({
           <input
             id="timer-notes"
             name="notes"
-            className={selectClassName}
-            placeholder="Optional"
+            className={`${selectClassName} placeholder:text-muted-foreground`}
+            placeholder="Working on API integration"
           />
         </FormField>
         <div className="sm:col-span-2">
