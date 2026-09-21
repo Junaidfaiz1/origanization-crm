@@ -3,7 +3,8 @@ import type { Prisma } from "@/generated/prisma/client";
 
 type AuditInput = {
   organizationId: string;
-  userId: string;
+  /** Null for system jobs (cron). */
+  userId?: string | null;
   action: string;
   entityType: string;
   entityId: string;
@@ -19,7 +20,7 @@ export async function writeAuditLog(
   await client.auditLog.create({
     data: {
       organizationId: data.organizationId,
-      userId: data.userId,
+      userId: data.userId ?? null,
       action: data.action,
       entityType: data.entityType,
       entityId: data.entityId,

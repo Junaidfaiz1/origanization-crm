@@ -3,7 +3,7 @@
 Living tracker: **what is done**, **what remains**, **QA**, and **bugs**.  
 Update this file after every feature, test pass, or bugfix. Do not mark a feature Done unless it meets the Definition of Done in `.cursor/rules/feature-workflow.mdc`.
 
-**Last updated:** 2026-08-24 (Cinematic bronze marketing redesign — Laocoön-inspired studio)
+**Last updated:** 2026-08-24 (Vercel Hobby-safe daily cron schedules)
 
 | Status | Meaning |
 | --- | --- |
@@ -31,7 +31,7 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Phase 9 — Notifications | **Done** — in-app center + event hooks; Resend provider wired (needs `RESEND_API_KEY`) |
 | Phase 10 — Reports | **Done** — sales/projects/bidding/finance + live dashboard + Recharts |
 | Phase 11 — Polish | **Done** — design system tokens, collapsible shell, role dashboard, opportunities board, invoice document layout, portal chrome |
-| Phase 12 — Test + deploy | Husky + Vitest wired; no Vercel/cron/migrate-on-prod |
+| Phase 12 — Test + deploy | **Cron + Vercel crons Done**; E2E manual pay Done; prod Neon migrate still manual on deploy |
 | **Marketing website** | **Done (build)** — cinematic homepage + product/solution pages; static demo data only; QA pending |
 
 **QA of product features:** none yet (no CRM/bidding/finance flows to QA).  
@@ -203,9 +203,9 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Item | Build | Notes |
 | --- | --- | --- |
 | `npm run typecheck` / `lint` / `test` | Wired | Unit tests for helpers only |
-| Prisma migrate on Neon/prod | Not started | Local/dev may use `db:push` |
-| Vercel + cron (`expire-bids`, overdue invoices, reminders) | Not started | No `/api/cron/*` |
-| E2E: lead → bid accept → invoice → payment | Not started | |
+| Prisma migrate on Neon/prod | Not started | Run `prisma migrate deploy` on first Vercel/Neon deploy |
+| Vercel + cron (`expire-bids`, overdue invoices, reminders) | **Done** | `vercel.json` + `/api/cron/*`; **Hobby-safe daily** schedules (UTC 02/03/04/09); secret Bearer / `x-cron-secret`; tests in `tests/cron.test.ts` |
+| E2E: lead → bid accept → invoice → payment | **Done (manual)** | `tests/e2e-workflow.test.ts` — service-layer chain; MANUAL payments only (no Stripe) |
 
 ---
 
@@ -215,7 +215,8 @@ These prove **helpers**, not full features:
 
 | Test file | Covers | Product QA? |
 | --- | --- | --- |
-| `tests/profit.test.ts` | Profit / margin / divide-by-zero | No |
+| `tests/e2e-workflow.test.ts` | Full chain: lead convert → proposal accept → bid negotiate/accept → invoice → **manual** payment → profit (no Stripe) | No |
+| `tests/cron.test.ts` | Cron secret auth + selection rules for expire/overdue/reminders; `INVOICE_REMINDER` type | No |
 | `tests/leads.test.ts` | Convert-twice, archived, tenant scope, CLIENT cannot LEAD_VIEW | No |
 | `tests/companies.test.ts` | Archive rules, validation, tenant scope, CLIENT/FREELANCER lack COMPANY_VIEW | No |
 | `tests/contacts.test.ts` | Archive rules (incl. primary client), validation, tenant scope, COMPANY perms | No |
@@ -297,6 +298,6 @@ After `add tests for <feature>`: mention the test file under Automated tests; do
 
 After `fix: <bug>`: move a row from Open bugs → Bugs solved (date, cause, fix, test path).
 
-Suggested next command: **`implement deploy`** / cron / Stripe, or **`what's next?`** (see [`COMMANDS.md`](COMMANDS.md)).
+Suggested next command: deploy to Vercel (set `CRON_SECRET`, run `prisma migrate deploy`), or product QA. Stripe remains deferred — payments stay manual record/void.
 
-**Note:** Put `RESEND_API_KEY` only in local `.env` (gitignored). Rotate any key shared in chat. File uploads require Cloudflare R2 env vars.
+**Note:** Put `RESEND_API_KEY` only in local `.env` (gitignored). Rotate any key shared in chat. File uploads require Cloudflare R2 env vars. Cron routes need `CRON_SECRET` (≥8 chars) as `Authorization: Bearer …` or `x-cron-secret`. Vercel Hobby allows **once-per-day** crons only (current `vercel.json` is daily UTC).
