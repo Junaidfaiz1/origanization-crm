@@ -31,18 +31,18 @@ export function ProductWindow({
   return (
     <div
       className={cn(
-        "w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0c0c0c] shadow-[0_40px_120px_rgb(0_0_0_/_0.55)]",
+        "w-full max-w-full overflow-hidden rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] shadow-[0_30px_80px_rgb(17_20_26_/_0.14)]",
         className,
       )}
       data-cursor="panel"
     >
-      <div className="flex items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
+      <div className="flex items-center gap-2 border-b border-[var(--mk-line)] px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
         <div className="flex shrink-0 gap-1.5" aria-hidden>
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]/80" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]/80" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]/80" />
         </div>
-        <p className="min-w-0 flex-1 truncate text-center text-[10px] tracking-[0.16em] text-[var(--mk-muted)] sm:text-[11px] sm:tracking-[0.2em]">
+        <p className="min-w-0 flex-1 truncate text-center text-[11px] tracking-[0.06em] text-[var(--mk-muted)] sm:tracking-[0.06em]">
           {title}
         </p>
         <span className="hidden sm:inline">
@@ -51,14 +51,14 @@ export function ProductWindow({
       </div>
 
       {/* Mobile workspace pills */}
-      <div className="flex gap-1.5 overflow-x-auto border-b border-white/[0.06] px-3 py-2 sm:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1.5 overflow-x-auto border-b border-[var(--mk-line)] px-3 py-2 sm:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {NAV.map((item) => (
           <span
             key={item}
             className={cn(
-              "shrink-0 rounded-md px-2.5 py-1 text-[10px]",
+              "shrink-0 rounded-md px-2.5 py-1 text-[11px]",
               item === activeNav
-                ? "bg-white/[0.08] text-[var(--mk-warm)]"
+                ? "bg-[#eef1fe] font-semibold text-[#1a33b0]"
                 : "text-[var(--mk-muted)]",
             )}
           >
@@ -73,8 +73,8 @@ export function ProductWindow({
           compact ? "min-h-[10rem] sm:min-h-[12rem]" : "min-h-[14rem] sm:min-h-[18rem]",
         )}
       >
-        <aside className="hidden w-36 shrink-0 border-r border-white/[0.06] bg-[#090909] p-3 md:block">
-          <p className="mb-3 px-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--mk-muted)]">
+        <aside className="hidden w-36 shrink-0 border-r border-[var(--mk-line)] bg-[var(--mk-surface)] p-3 md:block">
+          <p className="mb-3 px-2 text-[11px] font-medium uppercase tracking-[0.06em] text-[var(--mk-muted)]">
             Workspace
           </p>
           <ul className="space-y-0.5">
@@ -84,7 +84,7 @@ export function ProductWindow({
                   className={cn(
                     "block rounded-md px-2 py-1.5 text-xs",
                     item === activeNav
-                      ? "bg-white/[0.06] text-[var(--mk-warm)]"
+                      ? "bg-[#eef1fe] font-semibold text-[#1a33b0]"
                       : "text-[var(--mk-text-2)]",
                   )}
                 >
@@ -151,8 +151,8 @@ export function MetricTile({
   delta?: string;
 }) {
   return (
-    <div className="min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.02] p-2.5 sm:p-3">
-      <p className="truncate text-[9px] uppercase tracking-[0.14em] text-[var(--mk-muted)] sm:text-[10px] sm:tracking-[0.16em]">
+    <div className="min-w-0 rounded-lg border border-[var(--mk-line)] bg-[var(--mk-tint)] p-2.5 sm:p-3">
+      <p className="truncate text-[11px] uppercase tracking-[0.06em] text-[var(--mk-muted)] sm:tracking-[0.06em]">
         {label}
       </p>
       <p className="mt-1.5 truncate text-base font-medium tracking-tight text-[var(--mk-text)] sm:mt-2 sm:text-lg">

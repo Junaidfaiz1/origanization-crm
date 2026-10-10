@@ -38,7 +38,7 @@ export function ContactForm() {
   }
 
   const field =
-    "border-white/10 bg-white/[0.03] text-[var(--mk-text)] focus-visible:border-[var(--mk-bronze)]/50 focus-visible:ring-[var(--mk-bronze)]/20";
+    "border-[var(--mk-line)] bg-[var(--mk-tint)] text-[var(--mk-text)] focus-visible:border-[var(--mk-bronze)]/50 focus-visible:ring-[var(--mk-bronze)]/20";
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -95,11 +95,11 @@ export function ContactForm() {
             defaultValue=""
             className={`flex h-9 w-full rounded-md border px-3 text-sm outline-none ${field}`}
           >
-            <option value="" disabled className="bg-[#101010]">
+            <option value="" disabled className="bg-[var(--mk-surface)]">
               Select size
             </option>
             {SIZES.map((s) => (
-              <option key={s} value={s} className="bg-[#101010]">
+              <option key={s} value={s} className="bg-[var(--mk-surface)]">
                 {s}
               </option>
             ))}

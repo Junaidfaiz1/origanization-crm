@@ -11,7 +11,7 @@ export const metadata = marketingMetadata({
 
 function FreelancerVisual() {
   return (
-    <div className="relative min-h-[16rem] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-orange-950/30 via-slate-950 to-slate-950 p-5">
+    <div className="relative min-h-[16rem] overflow-hidden rounded-3xl border border-[var(--mk-line)] bg-gradient-to-br from-orange-950/30 via-slate-950 to-slate-950 p-5">
       <div className="grid gap-2 sm:grid-cols-2">
         {[
           "Available requests",
@@ -26,14 +26,14 @@ function FreelancerVisual() {
             className={`rounded-xl border px-3 py-3 text-xs font-medium ${
               i < 2
                 ? "border-orange-400/30 bg-orange-500/10 text-orange-50"
-                : "border-white/10 bg-white/[0.03] text-slate-300"
+                : "border-[var(--mk-line)] bg-[var(--mk-tint)] text-slate-300"
             }`}
           >
             {item}
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[10px] text-slate-500">
+      <p className="mt-4 text-center text-[11px] text-slate-500">
         Private bids stay private · margin stays internal
       </p>
     </div>
@@ -46,7 +46,7 @@ export default function FreelancerPortalPage() {
       eyebrow="Freelancer portal"
       title={
         <>
-          Exactly what collaborators need
+          Exactly what collaborators need{" "}
           <span className="mt-2 block text-slate-300">— nothing they shouldn’t see.</span>
         </>
       }

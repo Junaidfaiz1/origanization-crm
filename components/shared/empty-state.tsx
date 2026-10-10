@@ -20,15 +20,15 @@ export function EmptyState({
     <div
       role="status"
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-10 text-center sm:px-6 sm:py-14",
+        "flex flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-card px-4 py-10 text-center sm:px-6 sm:py-14",
         className,
       )}
     >
       <div
-        className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-muted"
+        className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-accent"
         aria-hidden
       >
-        <Icon className="h-5 w-5 text-muted-foreground" />
+        <Icon className="h-5 w-5 text-accent-foreground" />
       </div>
       <h2 className="text-h4">{title}</h2>
       <p className="mt-1 max-w-md text-sm text-muted-foreground">{description}</p>

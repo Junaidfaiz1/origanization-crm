@@ -22,6 +22,7 @@ export default function SolutionsPage() {
         <div className="mx-auto max-w-6xl">
           <SectionEyebrow>Solutions</SectionEyebrow>
           <SectionHeading
+            as="h1"
             className="mt-4"
             title="Built for how service"
             accent="businesses actually work."
@@ -32,9 +33,9 @@ export default function SolutionsPage() {
               <Link
                 key={s.href}
                 href={s.href}
-                className="group rounded-xl border border-white/10 bg-[#101010] p-8 transition-colors hover:border-[var(--mk-bronze)]/40"
+                className="group rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-8 transition-colors hover:border-[var(--mk-bronze)]/40"
               >
-                <p className="text-[10px] tracking-[0.2em] text-[var(--mk-muted)]">
+                <p className="text-[11px] tracking-[0.06em] text-[var(--mk-muted)]">
                   {String(i + 1).padStart(2, "0")}
                 </p>
                 <h2 className="mt-3 text-2xl text-[var(--mk-text)] group-hover:text-[var(--mk-warm)]">

@@ -15,7 +15,7 @@ export default function SoftwareHousesPage() {
       eyebrow="Software houses"
       title={
         <>
-          Sell projects.
+          Sell projects.{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             Deliver them. Protect the margin.
           </span>

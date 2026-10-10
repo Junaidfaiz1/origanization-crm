@@ -16,7 +16,7 @@ export type FreelancerNavItem = {
 };
 
 export const FREELANCER_NAV: FreelancerNavItem[] = [
-  { href: "/freelancer", label: "Home", icon: LayoutDashboard },
+  { href: "/freelancer", label: "Overview", icon: LayoutDashboard },
   { href: "/freelancer/requests", label: "Open requests", icon: Briefcase },
   { href: "/freelancer/bids", label: "My bids", icon: Gavel },
   { href: "/freelancer/tasks", label: "Tasks", icon: ListTodo },

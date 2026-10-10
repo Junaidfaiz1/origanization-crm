@@ -84,7 +84,7 @@ export function Sidebar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-sidebar-muted hover:bg-sidebar-accent hover:text-white"
+                  className="text-sidebar-muted hover:bg-muted hover:text-sidebar-foreground"
                   asChild
                 >
                   <Link href="/settings" aria-label="Settings">
@@ -104,7 +104,7 @@ export function Sidebar({
                     type="submit"
                     variant="ghost"
                     size="icon"
-                    className="text-sidebar-muted hover:bg-sidebar-accent hover:text-white"
+                    className="text-sidebar-muted hover:bg-muted hover:text-sidebar-foreground"
                     aria-label="Sign out"
                   >
                     <LogOut className="h-4 w-4" />
@@ -122,7 +122,7 @@ export function Sidebar({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="ml-auto text-sidebar-muted hover:bg-sidebar-accent hover:text-white"
+                  className="ml-auto text-sidebar-muted hover:bg-muted hover:text-sidebar-foreground"
                   onClick={toggle}
                   aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 >

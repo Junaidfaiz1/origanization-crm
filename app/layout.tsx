@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from "next";
 import {
   Geist,
   Geist_Mono,
-  Italiana,
-  Outfit,
-  Playfair_Display,
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+  Space_Grotesk,
 } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "sonner";
@@ -20,23 +20,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const marketingDisplay = Italiana({
-  variable: "--font-marketing-display",
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600"],
 });
 
-const marketingSans = Outfit({
-  variable: "--font-marketing-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const marketingAccent = Playfair_Display({
-  variable: "--font-marketing-accent",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
-  style: ["italic", "normal"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -54,8 +53,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f6f9" },
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f6f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0d12" },
   ],
 };
 
@@ -63,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${marketingDisplay.variable} ${marketingSans.variable} ${marketingAccent.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${plexSans.variable} ${plexMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full overflow-x-hidden bg-background font-sans text-foreground">

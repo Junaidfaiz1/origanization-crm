@@ -2,12 +2,10 @@ import Link from "next/link";
 import { BRAND } from "@/lib/marketing/copy";
 import {
   COMPANY_NAV,
-  MARKETING_ROUTES,
   PRODUCT_NAV,
   RESOURCE_NAV,
   SOLUTION_NAV,
 } from "@/lib/marketing/routes";
-import { MagneticButton } from "@/components/marketing/primitives";
 
 function Col({
   title,
@@ -18,15 +16,15 @@ function Col({
 }) {
   return (
     <div className="min-w-0">
-      <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--mk-muted)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mk-muted)]">
         {title}
       </p>
-      <ul className="mt-3 space-y-2 sm:mt-4 sm:space-y-2.5">
+      <ul className="mt-3 space-y-3">
         {items.map((item) => (
-          <li key={item.href}>
+          <li key={item.href + item.title}>
             <Link
               href={item.href}
-              className="mk-underline text-sm text-[var(--mk-text-2)] hover:text-[var(--mk-text)]"
+              className="text-[15px] text-[#e4e7ec] transition-colors hover:text-white"
             >
               {item.title}
             </Link>
@@ -39,60 +37,35 @@ function Col({
 
 export function MarketingFooter() {
   return (
-    <footer className="relative border-t border-white/10 bg-[#050505]">
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <div className="grid gap-10 border-b border-white/[0.06] pb-12 sm:pb-16 lg:grid-cols-[1.2fr_2fr]">
-          <div>
-            <p className="font-[family-name:var(--font-marketing-display)] text-3xl text-[var(--mk-text)] sm:text-4xl">
-              {BRAND.name}
-            </p>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-4">
-              One workspace for the business behind the work.
+    <footer className="mk-ink relative">
+      <div className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap gap-12">
+          <div className="flex min-w-[16rem] flex-1 flex-col gap-4">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-[#2443d9] font-display text-sm font-bold text-white">
+                TN
+              </span>
+              <span className="font-display text-[19px] font-semibold">{BRAND.name}</span>
+            </div>
+            <p className="max-w-xs text-[15px] leading-relaxed text-[var(--mk-text-2)]">
+              {BRAND.tagline}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-6 xs:gap-8 sm:grid-cols-4 sm:gap-8">
+          <div className="grid flex-[2] grid-cols-2 gap-8 sm:grid-cols-4">
             <Col title="Product" items={PRODUCT_NAV} />
             <Col title="Solutions" items={SOLUTION_NAV} />
-            <Col title="Company" items={COMPANY_NAV} />
             <Col title="Resources" items={RESOURCE_NAV} />
+            <Col title="Company" items={COMPANY_NAV} />
           </div>
         </div>
 
-        <div className="grid gap-6 py-12 sm:gap-8 sm:py-16 lg:grid-cols-[1.4fr_auto] lg:items-end">
-          <div>
-            <h2 className="mk-display max-w-xl text-2xl text-[var(--mk-text)] sm:text-4xl">
-              Ready to run the whole business from one place?
-            </h2>
-          </div>
-          <MagneticButton href="/register" className="w-full sm:w-auto">
-            Start building
-          </MagneticButton>
-        </div>
-
-        <div className="flex flex-col gap-4 border-t border-white/[0.06] pt-8 text-xs text-[var(--mk-muted)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-[var(--mk-line)] pt-6 text-[13px] text-[var(--mk-muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {BRAND.legalName}. All rights reserved.
+            © {new Date().getFullYear()} {BRAND.legalName}
           </p>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href={MARKETING_ROUTES.security}
-              className="hover:text-[var(--mk-text-2)]"
-            >
-              Privacy
-            </Link>
-            <Link
-              href={MARKETING_ROUTES.security}
-              className="hover:text-[var(--mk-text-2)]"
-            >
-              Terms
-            </Link>
-            <Link
-              href={MARKETING_ROUTES.contact}
-              className="hover:text-[var(--mk-text-2)]"
-            >
-              Cookies
-            </Link>
-          </div>
+          <Link href="/login" className="text-[var(--mk-text-2)] hover:text-white">
+            Sign in
+          </Link>
         </div>
       </div>
     </footer>

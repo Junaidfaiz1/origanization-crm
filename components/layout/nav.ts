@@ -41,10 +41,15 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
   {
     title: "Overview",
-    items: [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }],
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/activity", label: "Activity", icon: History, permission: "PROJECT_VIEW" },
+      { href: "/notifications", label: "Notifications", icon: Bell },
+      { href: "/reports", label: "Reports", icon: BarChart3, permission: "REPORT_VIEW" },
+    ],
   },
   {
-    title: "CRM",
+    title: "Sales",
     items: [
       { href: "/leads", label: "Leads", icon: Contact, permission: "LEAD_VIEW" },
       { href: "/companies", label: "Companies", icon: Building2, permission: "COMPANY_VIEW" },
@@ -55,25 +60,29 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: "Bidding",
+    items: [
+      { href: "/bidding", label: "Bidding", icon: Gavel, permission: "BID_REQUEST_VIEW" },
+    ],
+  },
+  {
     title: "Delivery",
     items: [
       { href: "/projects", label: "Projects", icon: FolderKanban, permission: "PROJECT_VIEW" },
-      { href: "/progress", label: "Progress", icon: Gauge, permission: "PROJECT_VIEW" },
-      { href: "/requirements", label: "Requirements", icon: ListChecks, permission: "PROJECT_VIEW" },
-      { href: "/team", label: "Team", icon: UsersRound, permission: "PROJECT_VIEW" },
-      { href: "/files", label: "Files", icon: Paperclip, permission: "PROJECT_VIEW" },
-      { href: "/activity", label: "Activity", icon: History, permission: "PROJECT_VIEW" },
-      { href: "/bidding", label: "Bidding", icon: Gavel, permission: "BID_REQUEST_VIEW" },
-      { href: "/resources", label: "Resources", icon: Users, permission: "RESOURCE_VIEW" },
-      { href: "/milestones", label: "Milestones", icon: ClipboardList, permission: "PROJECT_VIEW" },
       { href: "/tasks", label: "Tasks", icon: ListTodo, permission: "TASK_VIEW" },
+      { href: "/milestones", label: "Milestones", icon: ClipboardList, permission: "PROJECT_VIEW" },
+      { href: "/requirements", label: "Requirements", icon: ListChecks, permission: "PROJECT_VIEW" },
+      { href: "/resources", label: "Resources", icon: Users, permission: "RESOURCE_VIEW" },
+      { href: "/team", label: "Team", icon: UsersRound, permission: "PROJECT_VIEW" },
       { href: "/time-tracking", label: "Time tracking", icon: Timer, permission: "TIME_ENTRY_VIEW" },
-      { href: "/contracts", label: "Contracts", icon: FileText, permission: "CONTRACT_VIEW" },
+      { href: "/progress", label: "Progress", icon: Gauge, permission: "PROJECT_VIEW" },
+      { href: "/files", label: "Files", icon: Paperclip, permission: "PROJECT_VIEW" },
     ],
   },
   {
     title: "Finance",
     items: [
+      { href: "/contracts", label: "Contracts", icon: FileText, permission: "CONTRACT_VIEW" },
       { href: "/invoices", label: "Invoices", icon: Receipt, permission: "INVOICE_VIEW" },
       { href: "/payments", label: "Payments", icon: CreditCard, permission: "PAYMENT_VIEW" },
       { href: "/expenses", label: "Expenses", icon: Wallet, permission: "EXPENSE_VIEW" },
@@ -81,10 +90,6 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: "Workspace",
-    items: [
-      { href: "/reports", label: "Reports", icon: BarChart3, permission: "REPORT_VIEW" },
-      { href: "/notifications", label: "Notifications", icon: Bell },
-      { href: "/settings", label: "Settings", icon: Settings },
-    ],
+    items: [{ href: "/settings", label: "Settings", icon: Settings }],
   },
 ];

@@ -12,8 +12,8 @@ export const metadata = marketingMetadata({
 function TimeVisual() {
   const bars = [40, 65, 30, 80, 55, 45, 70];
   return (
-    <div className="relative flex min-h-[16rem] flex-col justify-center overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-950/40 via-slate-950 to-slate-950 p-6">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300/80">
+    <div className="relative flex min-h-[16rem] flex-col justify-center overflow-hidden rounded-3xl border border-[var(--mk-line)] bg-gradient-to-br from-cyan-950/40 via-slate-950 to-slate-950 p-6">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-cyan-300/80">
         Week · project effort
       </p>
       <div className="mt-6 flex h-28 items-end gap-2">
@@ -23,14 +23,14 @@ function TimeVisual() {
               className="w-full rounded-t-md bg-gradient-to-t from-cyan-700/80 to-cyan-300/90"
               style={{ height: `${h}%` }}
             />
-            <span className="text-[9px] text-slate-600">D{i + 1}</span>
+            <span className="text-[11px] text-slate-600">D{i + 1}</span>
           </div>
         ))}
       </div>
-      <div className="mt-6 flex items-center gap-2 text-[10px] text-slate-400">
-        <span className="rounded-md border border-white/10 px-2 py-1">Time</span>
+      <div className="mt-6 flex items-center gap-2 text-[11px] text-slate-400">
+        <span className="rounded-md border border-[var(--mk-line)] px-2 py-1">Time</span>
         <span className="text-cyan-500">→</span>
-        <span className="rounded-md border border-white/10 px-2 py-1">Project</span>
+        <span className="rounded-md border border-[var(--mk-line)] px-2 py-1">Project</span>
         <span className="text-cyan-500">→</span>
         <span className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-cyan-100">
           Cost
@@ -46,7 +46,7 @@ export default function TimeTrackingProductPage() {
       eyebrow="Time tracking"
       title={
         <>
-          Know where
+          Know where{" "}
           <span className="mt-2 block text-slate-300">your time goes.</span>
         </>
       }

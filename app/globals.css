@@ -1,82 +1,83 @@
 @import "tailwindcss";
 
 /* TechNova design tokens — prefer semantic vars over ad-hoc Tailwind colors */
+/* 2026 redesign: ink + cobalt, light chrome. Numbers in mono, headings in Space Grotesk. */
 :root {
-  --background: #f4f6f9;
-  --foreground: #0f172a;
+  --background: #f5f6f8;
+  --foreground: #11141a;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #11141a;
   --elevated: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: #f1f3f6;
+  --muted-foreground: #5b6271;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0f766e;
-  --primary-foreground: #f0fdfa;
-  --secondary: #eef2f7;
-  --secondary-foreground: #1e293b;
-  --accent: #ecfdf8;
-  --accent-foreground: #115e59;
-  --destructive: #dc2626;
+  --popover-foreground: #11141a;
+  --primary: #2443d9;
+  --primary-foreground: #ffffff;
+  --secondary: #eceef2;
+  --secondary-foreground: #11141a;
+  --accent: #eef1fe;
+  --accent-foreground: #1a33b0;
+  --destructive: #b93a0a;
   --destructive-foreground: #ffffff;
-  --success: #059669;
-  --success-foreground: #ecfdf5;
-  --warning: #d97706;
-  --warning-foreground: #fffbeb;
-  --info: #0284c7;
-  --info-foreground: #f0f9ff;
-  --border: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --border-strong: #cbd5e1;
-  --input: #e2e8f0;
-  --ring: #0f766e;
-  --sidebar: #0b1220;
-  --sidebar-foreground: #e2e8f0;
-  --sidebar-muted: #94a3b8;
-  --sidebar-accent: #132036;
-  --sidebar-border: #1e293b;
-  --sidebar-active: #0f766e;
-  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.04);
-  --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.06), 0 1px 2px rgb(15 23 42 / 0.04);
+  --success: #056a45;
+  --success-foreground: #ffffff;
+  --warning: #8a5300;
+  --warning-foreground: #ffffff;
+  --info: #1a33b0;
+  --info-foreground: #ffffff;
+  --border: #e4e7ec;
+  --border-subtle: #eef0f3;
+  --border-strong: #d5d9e0;
+  --input: #d5d9e0;
+  --ring: #2443d9;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #11141a;
+  --sidebar-muted: #4a5160;
+  --sidebar-accent: #eef1fe;
+  --sidebar-border: #e4e7ec;
+  --sidebar-active: #1a33b0;
+  --shadow-xs: 0 1px 2px rgb(17 20 26 / 0.04);
+  --shadow-sm: 0 1px 2px rgb(17 20 26 / 0.04), 0 8px 24px rgb(17 20 26 / 0.06);
 }
 
 .dark {
-  --background: #020617;
-  --foreground: #e2e8f0;
-  --card: #0b1220;
-  --card-foreground: #e2e8f0;
-  --elevated: #111827;
-  --muted: #111827;
-  --muted-foreground: #94a3b8;
-  --popover: #0b1220;
-  --popover-foreground: #e2e8f0;
-  --primary: #2dd4bf;
-  --primary-foreground: #042f2e;
-  --secondary: #1e293b;
-  --secondary-foreground: #e2e8f0;
-  --accent: #134e4a;
-  --accent-foreground: #ccfbf1;
-  --destructive: #f87171;
-  --destructive-foreground: #450a0a;
-  --success: #34d399;
-  --success-foreground: #064e3b;
-  --warning: #fbbf24;
-  --warning-foreground: #78350f;
-  --info: #38bdf8;
-  --info-foreground: #0c4a6e;
-  --border: #1e293b;
-  --border-subtle: #0f172a;
-  --border-strong: #334155;
-  --input: #1e293b;
-  --ring: #2dd4bf;
-  --sidebar: #020617;
-  --sidebar-foreground: #e2e8f0;
-  --sidebar-muted: #94a3b8;
-  --sidebar-accent: #111827;
-  --sidebar-border: #1e293b;
-  --sidebar-active: #2dd4bf;
+  --background: #0b0d12;
+  --foreground: #e6e8ee;
+  --card: #12151c;
+  --card-foreground: #e6e8ee;
+  --elevated: #181c25;
+  --muted: #1a1e27;
+  --muted-foreground: #9aa1ae;
+  --popover: #12151c;
+  --popover-foreground: #e6e8ee;
+  --primary: #7c93f5;
+  --primary-foreground: #0b0d12;
+  --secondary: #1f2430;
+  --secondary-foreground: #e6e8ee;
+  --accent: #1c2550;
+  --accent-foreground: #c9d2fb;
+  --destructive: #f0794a;
+  --destructive-foreground: #1a0a03;
+  --success: #4cc38a;
+  --success-foreground: #04150d;
+  --warning: #f2b347;
+  --warning-foreground: #1d1203;
+  --info: #8ea1f2;
+  --info-foreground: #0b0d12;
+  --border: #242935;
+  --border-subtle: #181c25;
+  --border-strong: #333a48;
+  --input: #2b313e;
+  --ring: #7c93f5;
+  --sidebar: #0e1117;
+  --sidebar-foreground: #e6e8ee;
+  --sidebar-muted: #9aa1ae;
+  --sidebar-accent: #1c2550;
+  --sidebar-border: #1f2430;
+  --sidebar-active: #c9d2fb;
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.3);
 }
 
 @theme inline {
@@ -114,12 +115,14 @@
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-active: var(--sidebar-active);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plex-sans), var(--font-geist-sans);
+  --font-mono: var(--font-plex-mono), var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk), var(--font-plex-sans);
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
 }
@@ -135,10 +138,18 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-plex-sans), var(--font-geist-sans), ui-sans-serif,
+    system-ui, sans-serif;
 }
 
-/* Typography scale */
+/* Typography scale — headings use the display face */
+.text-display,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4 {
+  font-family: var(--font-space-grotesk), var(--font-plex-sans), sans-serif;
+}
 .text-display {
   font-size: 2rem;
   line-height: 1.2;
@@ -218,35 +229,28 @@ body {
   border: 0;
 }
 
-/* Client portal: slightly lighter sidebar treatment */
-.portal-client-sidebar {
-  --sidebar: #0f172a;
-  --sidebar-accent: #1e293b;
-  --sidebar-active: #14b8a6;
-}
-
-.dark .portal-client-sidebar {
-  --sidebar: #020617;
-  --sidebar-accent: #0f172a;
-  --sidebar-active: #2dd4bf;
-}
-
-/* —— Marketing: Cinematic product studio —— */
+/* —— Marketing: 2026 light redesign (ink + cobalt) ——
+   Token names are kept from the old cinematic theme so every page re-skins at once:
+   --mk-bronze is now the cobalt accent, --mk-warm its darker hover. */
 .marketing-root {
-  --mk-bg: #050505;
-  --mk-bg-2: #0a0a0a;
-  --mk-surface: #101010;
-  --mk-elevated: #151515;
-  --mk-text: #f5f1ea;
-  --mk-text-2: #a3a3a3;
-  --mk-muted: #666666;
-  --mk-bronze: #c68a52;
-  --mk-warm: #e8b27b;
-  --mk-blue: #8cb4d8;
-  --mk-line: rgb(255 255 255 / 0.1);
-  --mk-glow: rgb(198 138 82 / 0.28);
+  --mk-bg: #ffffff;
+  --mk-bg-2: #f5f6f8;
+  --mk-surface: #ffffff;
+  --mk-elevated: #ffffff;
+  --mk-tint: #f5f6f8;
+  --mk-tint-2: #eceef2;
+  --mk-text: #11141a;
+  --mk-text-2: #4a5160;
+  --mk-muted: #5b6271;
+  --mk-bronze: #2443d9;
+  --mk-warm: #1a33b0;
+  --mk-blue: #2443d9;
+  --mk-line: #e4e7ec;
+  --mk-glow: transparent;
+  --mk-on-accent: #ffffff;
+  --mk-ink: #11141a;
   --mk-accent: var(--mk-bronze);
-  font-family: var(--font-marketing-sans), var(--font-geist-sans), ui-sans-serif,
+  font-family: var(--font-plex-sans), var(--font-geist-sans), ui-sans-serif,
     system-ui, sans-serif;
   background-color: var(--mk-bg);
   color: var(--mk-text);
@@ -259,16 +263,30 @@ body {
 .marketing-root h1,
 .marketing-root h2,
 .marketing-root .mk-display {
-  font-family: var(--font-marketing-display), Georgia, "Times New Roman", serif;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-family: var(--font-space-grotesk), var(--font-plex-sans), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-.marketing-root .mk-accent-italic {
-  font-family: var(--font-marketing-accent), Georgia, serif;
-  font-style: italic;
+/* Dark ink band used for contrast sections on the light site. */
+.mk-ink {
+  --mk-bg: #11141a;
+  --mk-bg-2: #11141a;
+  --mk-surface: #181c25;
+  --mk-elevated: #181c25;
+  --mk-tint: #181c25;
+  --mk-tint-2: #222733;
+  --mk-text: #ffffff;
+  --mk-text-2: #a9afba;
+  --mk-muted: #8e95a3;
+  --mk-bronze: #8ea1f2;
+  --mk-warm: #c9d2fb;
+  --mk-line: #262b35;
+  --mk-on-accent: #11141a;
+  background-color: var(--mk-bg);
+  color: var(--mk-text);
 }
 
 .mk-section {
@@ -280,7 +298,7 @@ body {
 .mk-container {
   margin-inline: auto;
   width: 100%;
-  max-width: 72rem;
+  max-width: 80rem;
   padding-inline: 1rem;
 }
 
@@ -315,10 +333,9 @@ body {
 
 .mk-grid-bg {
   background-image:
-    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, black, transparent);
+    linear-gradient(#e9ebef 1px, transparent 1px),
+    linear-gradient(90deg, #e9ebef 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
 .mk-editorial-grid {
@@ -326,22 +343,19 @@ body {
     90deg,
     transparent,
     transparent calc(8.333% - 1px),
-    rgb(255 255 255 / 0.04) calc(8.333% - 1px),
-    rgb(255 255 255 / 0.04) 8.333%
+    rgb(17 20 26 / 0.04) calc(8.333% - 1px),
+    rgb(17 20 26 / 0.04) 8.333%
   );
 }
 
 .mk-noise {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  opacity: 0;
   pointer-events: none;
 }
 
 .mk-radial-glow {
-  background:
-    radial-gradient(ellipse 50% 40% at 50% 20%, rgb(198 138 82 / 0.14), transparent 60%),
-    radial-gradient(ellipse 40% 35% at 80% 60%, rgb(140 180 216 / 0.08), transparent 55%),
-    radial-gradient(ellipse 35% 30% at 15% 70%, rgb(232 178 123 / 0.06), transparent 50%);
+  background: none;
 }
 
 .mk-underline {
@@ -359,11 +373,6 @@ body {
 .mk-focus-ring:focus-visible {
   outline: 2px solid var(--mk-warm);
   outline-offset: 3px;
-}
-
-html.mk-custom-cursor,
-html.mk-custom-cursor * {
-  cursor: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

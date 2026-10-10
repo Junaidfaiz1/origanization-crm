@@ -11,9 +11,9 @@ export const metadata = marketingMetadata({
 
 function ClientBoundaryVisual() {
   return (
-    <div className="relative grid min-h-[16rem] gap-3 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950 via-slate-950 to-teal-950/30 p-5 sm:grid-cols-2">
-      <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-4 opacity-70">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+    <div className="relative grid min-h-[16rem] gap-3 overflow-hidden rounded-3xl border border-[var(--mk-line)] bg-gradient-to-br from-slate-950 via-slate-950 to-teal-950/30 p-5 sm:grid-cols-2">
+      <div className="rounded-2xl border border-[var(--mk-line)] bg-slate-950/80 p-4 opacity-70">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
           Internal
         </p>
         <ul className="mt-4 space-y-2 text-[11px] text-slate-500">
@@ -26,7 +26,7 @@ function ClientBoundaryVisual() {
         </ul>
       </div>
       <div className="rounded-2xl border border-teal-500/35 bg-teal-500/10 p-4 shadow-[0_0_40px_rgb(13_148_136_/_0.15)]">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-teal-300">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-teal-300">
           Client portal
         </p>
         <ul className="mt-4 space-y-2 text-[11px] text-slate-200">
@@ -48,7 +48,7 @@ export default function ClientPortalPage() {
       eyebrow="Client portal"
       title={
         <>
-          A better client experience
+          A better client experience{" "}
           <span className="mt-2 block text-slate-300">with a hard boundary.</span>
         </>
       }

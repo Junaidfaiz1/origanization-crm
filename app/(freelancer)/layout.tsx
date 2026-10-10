@@ -1,8 +1,4 @@
 import { requireFreelancerUser } from "@/lib/auth/page";
-import {
-  FreelancerBrand,
-  FreelancerSidebarNav,
-} from "@/components/freelancer/freelancer-sidebar";
 import { FreelancerHeader } from "@/components/freelancer/freelancer-header";
 import { AppApolloProvider } from "@/components/providers/apollo-provider";
 import { Button } from "@/components/ui/button";
@@ -38,20 +34,14 @@ export default async function FreelancerLayout({
 
   return (
     <AppApolloProvider>
-      <div className="flex min-h-dvh bg-background">
-        <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
-          <FreelancerBrand />
-          <FreelancerSidebarNav />
-        </aside>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <FreelancerHeader
-            userName={ctx.user.name}
-            organizationName={ctx.user.organization.name}
-          />
-          <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 lg:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            {children}
-          </main>
-        </div>
+      <div className="flex min-h-dvh flex-col bg-background">
+        <FreelancerHeader
+          userName={ctx.user.name}
+          organizationName={ctx.user.organization.name}
+        />
+        <main className="mx-auto w-full max-w-[1264px] flex-1 px-3 py-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-8 lg:px-8">
+          {children}
+        </main>
       </div>
     </AppApolloProvider>
   );

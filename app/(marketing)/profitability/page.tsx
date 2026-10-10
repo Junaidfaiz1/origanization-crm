@@ -16,7 +16,7 @@ export const metadata = marketingMetadata({
 
 function ProfitVisual() {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#101010] p-5">
+    <div className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-5">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm font-medium">Project margins</p>
         <DemoBadge />
@@ -28,13 +28,13 @@ function ProfitVisual() {
               <span>{p.name}</span>
               <span className="text-[var(--mk-bronze)]">{p.margin}%</span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--mk-tint)]">
               <div
                 className="h-full bg-gradient-to-r from-[var(--mk-bronze)] to-[var(--mk-blue)]"
                 style={{ width: `${p.margin}%` }}
               />
             </div>
-            <p className="mt-1 text-[10px] text-[var(--mk-muted)]">
+            <p className="mt-1 text-[11px] text-[var(--mk-muted)]">
               {formatDemoMoney(p.revenue)} · {formatDemoMoney(p.profit)} profit
             </p>
           </li>
@@ -50,7 +50,7 @@ export default function ProfitabilityPage() {
       eyebrow="Profitability"
       title={
         <>
-          Margin is the truth
+          Margin is the truth{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             behind the revenue.
           </span>

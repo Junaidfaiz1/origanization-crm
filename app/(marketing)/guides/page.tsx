@@ -22,6 +22,7 @@ export default function GuidesPage() {
         <div className="mx-auto max-w-6xl">
           <SectionEyebrow>Resources</SectionEyebrow>
           <SectionHeading
+            as="h1"
             className="mt-4"
             title="Guides for operators."
             lead="Static articles for product storytelling. Not connected to a CMS yet."
@@ -30,9 +31,9 @@ export default function GuidesPage() {
             {d.articles.map((a) => (
               <article
                 key={a.slug}
-                className="rounded-xl border border-white/10 bg-[#101010] p-6"
+                className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6"
               >
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--mk-muted)]">
+                <p className="text-[11px] uppercase tracking-[0.06em] text-[var(--mk-muted)]">
                   Article
                 </p>
                 <h2 className="mt-3 text-xl text-[var(--mk-text)]">{a.title}</h2>

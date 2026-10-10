@@ -15,7 +15,7 @@ export default function ConsultantsPage() {
       eyebrow="Consultants"
       title={
         <>
-          Turn expertise
+          Turn expertise{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             into predictable revenue.
           </span>

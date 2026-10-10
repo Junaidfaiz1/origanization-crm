@@ -21,6 +21,7 @@ export default function SecurityPage() {
         <div className="mx-auto max-w-6xl">
           <SectionEyebrow>Security</SectionEyebrow>
           <SectionHeading
+            as="h1"
             className="mt-4"
             title="Your business data"
             accent="deserves serious protection."
@@ -30,7 +31,7 @@ export default function SecurityPage() {
             {SECURITY_POINTS.map((p) => (
               <div
                 key={p.title}
-                className="rounded-xl border border-white/10 bg-[#101010] p-6"
+                className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6"
               >
                 <h2 className="text-base font-medium">{p.title}</h2>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--mk-text-2)]">
@@ -39,8 +40,8 @@ export default function SecurityPage() {
               </div>
             ))}
           </div>
-          <div className="mt-14 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--mk-muted)]">
+          <div className="mt-14 overflow-hidden rounded-xl border border-[var(--mk-line)] bg-[var(--mk-bg-2)] p-8">
+            <p className="text-[11px] uppercase tracking-[0.06em] text-[var(--mk-muted)]">
               Technical sketch
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-[var(--mk-text-2)]">

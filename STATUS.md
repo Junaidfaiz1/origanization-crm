@@ -3,7 +3,7 @@
 Living tracker: **what is done**, **what remains**, **QA**, and **bugs**.  
 Update this file after every feature, test pass, or bugfix. Do not mark a feature Done unless it meets the Definition of Done in `.cursor/rules/feature-workflow.mdc`.
 
-**Last updated:** 2026-08-24 (Vercel Hobby-safe daily cron schedules)
+**Last updated:** 2026-10-10 (redesign phase 4 — marketing website; all 4 redesign phases built)
 
 | Status | Meaning |
 | --- | --- |
@@ -35,11 +35,11 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | **Marketing website** | **Done (build)** — cinematic homepage + product/solution pages; static demo data only; QA pending |
 
 **QA of product features:** none yet (no CRM/bidding/finance flows to QA).  
-**Bugs solved:** header Sign out (2026-08-24).
+**Bugs solved:** header Sign out (2026-08-24); website UI pass — sign-in chips, heading spacing, h1 structure, tiny labels (2026-10-10).
 
 ---
 
-## Marketing website (Cinematic studio)
+## Marketing website (2026 light redesign — formerly “Cinematic studio”)
 
 | Item | Build | QA | Notes |
 | --- | --- | --- | --- |
@@ -196,6 +196,17 @@ Update this file after every feature, test pass, or bugfix. Do not mark a featur
 | Portal chrome | **Done** | Client lighter sidebar treatment; freelancer work portal; theme toggle parity |
 | Toasts, confirm dialogs, kanban | **Done** | ConfirmDialog on shared Dialog primitive; tasks + opportunities boards |
 
+### 2026 redesign (ink + cobalt)
+
+Visual spec: design canvas “TechNova CRM Redesign” (claude.ai artifact). Implemented in phases.
+
+| Phase | Build | QA | Notes |
+| --- | --- | --- | --- |
+| 1 — Foundation | **Done** | QA pending | Tokens (light + dark), IBM Plex Sans / Plex Mono / Space Grotesk, light sidebar + nav groups (Overview, Sales, Bidding, Delivery, Finance, Workspace), header, Button/Card/Badge/Input/Textarea/Tabs/Avatar, StatusBadge dot, DataTable, MetricCard, MoneyDisplay (mono), EmptyState |
+| 2 — Dashboard, pipeline, auth screens | **Done** | QA pending | Dashboard: date + greeting, KPI grid, revenue bar chart + “Needs attention” (real counts only), pipeline chart + projects, tasks/activity + milestones. Charts on cobalt palette with compact axes. Opportunities board: stage swatches, column totals, card avatars; segmented view toggle. Auth: ink lifecycle panel + light form (login, register, forgot, reset) — no logic changes |
+| 3 — Client + freelancer portals (top nav) | **Done** | QA pending | Shared `PortalTopNav` (org mark, portal label, horizontal links, bell, theme, account menu; sheet nav below `lg`); sidebars removed; centered 1264px content; “Home” → “Overview”; dead `PortalAside`/`PortalBrand`/`FreelancerBrand` + `.portal-client-sidebar` removed |
+| 4 — Marketing website (replace cinematic theme) | **Done** | QA pending | `--mk-*` tokens re-pointed to light ink + cobalt (+ `.mk-ink` dark band); dark hex/`white/*` utilities codemodded to tokens across all marketing pages; new homepage (`components/marketing/home.tsx`, no WebGL); solid navbar with TN mark + “Start free”; ink footer; ProductLanding: grid hero, problem/“With Technova” cards, feature cards, cobalt CTA; restyled primitives (no magnetic motion); light ProductWindow; new 404. Removed unused 3D scene (`components/three/*`), custom cursor, scroll progress, old sections/fallback/chrome, scene store, and Italiana/Outfit/Playfair fonts. `three` / `@react-three/*` deps still in package.json (now unused) |
+
 ---
 
 ## Phase 12 — Test + deploy
@@ -276,6 +287,11 @@ Record a row when a human or agent **verifies** a feature (not merely that the p
 
 | Date | Bug | Root cause | Fix | Regression test |
 | --- | --- | --- | --- | --- |
+| 2026-10-10 | Empty placeholder box in hero on 4 solution pages (agencies, consultants, freelancers, software houses) | `ProductLandingPage` fallback when a page passes no `visual` was a blank tile | Fallback is now a product preview built from the page’s own `uiTitle`, `uiItems` and `workflow` | DOM check at 1440/375: 5 preview rows, no overflow |
+| 2026-10-10 | Sign-in lifecycle chips wrapped (Invoice on 2nd line) | 5 chips + arrows wider than the 432–512px auth panel | Compact chips, `flex-nowrap`, step numbers only from `xl` | Measured in browser at 1024/1280/1440/1920: 1 row |
+| 2026-10-10 | Marketing headings read as joined words (“you’retrying”, “clientbefore”) | JSX line break before a `block` span drops the space in text/a11y | `{" "}` before the second line in 18 page titles + `SectionHeading` | DOM check of h1 text |
+| 2026-10-10 | No `<h1>` on guides, security, solutions, contact, customers; two on auth pages | Page titles used `SectionHeading` (h2); auth panel tagline was h1 | `SectionHeading as="h1"`; auth tagline → `<p>` | DOM check: exactly one h1 on 29 routes |
+| 2026-10-10 | 9–10px labels and 0.14–0.24em tracking left from cinematic theme | Old theme sizes kept after re-skin | Min 11px; label tracking 0.06em | DOM check: no text < 11px |
 | 2026-08-24 | Header Sign out no-op | Radix `DropdownMenuItem asChild` + nested `<form>` prevented submit | `SignOutMenuItem` calls `logoutAction` via `onSelect`; cookie clear uses matching `path`/`maxAge: 0` | `tests/logout.test.ts` |
 
 ---

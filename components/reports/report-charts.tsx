@@ -6,8 +6,6 @@ import {
   CartesianGrid,
   Cell,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -16,16 +14,27 @@ import {
   YAxis,
 } from "recharts";
 
+/** Redesign palette: cobalt first, then hues that also differ in lightness. */
 const COLORS = [
-  "hsl(199 72% 36%)",
-  "hsl(160 45% 32%)",
-  "hsl(28 80% 42%)",
-  "hsl(215 16% 42%)",
-  "hsl(340 55% 42%)",
-  "hsl(250 25% 45%)",
-  "hsl(90 35% 36%)",
-  "hsl(190 50% 38%)",
+  "#2443d9",
+  "#f2a65a",
+  "#0b7a53",
+  "#8ea1f2",
+  "#b93a0a",
+  "#5b6271",
+  "#7c3aed",
+  "#c9d2fb",
 ];
+
+const AXIS_TICK = { fontSize: 11, fill: "var(--muted-foreground)" };
+
+const TOOLTIP_STYLE = {
+  borderRadius: 10,
+  border: "1px solid var(--border)",
+  background: "var(--popover)",
+  color: "var(--popover-foreground)",
+  fontSize: 12,
+};
 
 type MoneyPoint = { label: string; amount: number };
 type CountPoint = { label: string; count: number };
@@ -37,6 +46,16 @@ function moneyTooltip(value: number | undefined) {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function compactMoney(value: number) {
+  if (!Number.isFinite(value)) return "";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
   }).format(value);
 }
 
@@ -52,9 +71,9 @@ function ChartShell({
   empty?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <div className="mb-3">
-        <h3 className="text-h4 tracking-tight">{title}</h3>
+    <div className="min-w-0 rounded-xl border border-border bg-card p-5">
+      <div className="mb-4">
+        <h3 className="text-h4 text-[17px] tracking-tight">{title}</h3>
         {description ? (
           <p className="mt-0.5 text-caption text-muted-foreground">{description}</p>
         ) : null}
@@ -79,20 +98,29 @@ export function RevenueTrendChart({ data }: { data: MoneyPoint[] }) {
       empty={empty}
     >
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-          <YAxis tick={{ fontSize: 11 }} width={48} />
-          <Tooltip formatter={(value) => moneyTooltip(Number(value))} />
-          <Line
-            type="monotone"
+        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <CartesianGrid vertical={false} stroke="var(--border-subtle)" />
+          <XAxis dataKey="label" tick={AXIS_TICK} axisLine={false} tickLine={false} />
+          <YAxis
+            tick={AXIS_TICK}
+            width={52}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(value) => compactMoney(Number(value))}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--muted)" }}
+            contentStyle={TOOLTIP_STYLE}
+            formatter={(value) => moneyTooltip(Number(value))}
+          />
+          <Bar
             dataKey="amount"
             name="Revenue"
-            stroke={COLORS[0]}
-            strokeWidth={2}
-            dot={{ r: 3 }}
+            fill={COLORS[0]}
+            radius={[6, 6, 2, 2]}
+            maxBarSize={32}
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </ChartShell>
   );
@@ -108,11 +136,30 @@ export function PipelineValueChart({ data }: { data: StagePoint[] }) {
     >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 24 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="label" tick={{ fontSize: 10 }} interval={0} angle={-25} textAnchor="end" height={50} />
-          <YAxis tick={{ fontSize: 11 }} width={48} />
-          <Tooltip formatter={(value) => moneyTooltip(Number(value))} />
-          <Bar dataKey="value" name="Value" fill={COLORS[0]} radius={[4, 4, 0, 0]} />
+          <CartesianGrid vertical={false} stroke="var(--border-subtle)" />
+          <XAxis
+            dataKey="label"
+            tick={{ ...AXIS_TICK, fontSize: 10 }}
+            interval={0}
+            angle={-25}
+            textAnchor="end"
+            height={50}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={AXIS_TICK}
+            width={52}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(value) => compactMoney(Number(value))}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--muted)" }}
+            contentStyle={TOOLTIP_STYLE}
+            formatter={(value) => moneyTooltip(Number(value))}
+          />
+          <Bar dataKey="value" name="Value" fill={COLORS[0]} radius={[6, 6, 2, 2]} maxBarSize={40} />
         </BarChart>
       </ResponsiveContainer>
     </ChartShell>

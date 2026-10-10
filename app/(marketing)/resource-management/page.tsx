@@ -11,7 +11,7 @@ export const metadata = marketingMetadata({
 
 function ResourceVisual() {
   return (
-    <div className="relative flex min-h-[16rem] flex-col justify-center gap-3 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-violet-950/35 via-slate-950 to-slate-950 p-6">
+    <div className="relative flex min-h-[16rem] flex-col justify-center gap-3 overflow-hidden rounded-3xl border border-[var(--mk-line)] bg-gradient-to-br from-violet-950/35 via-slate-950 to-slate-950 p-6">
       {[
         { name: "Employee", skill: "Full-stack", load: "72%" },
         { name: "Freelancer", skill: "Design", load: "Assigned" },
@@ -19,14 +19,14 @@ function ResourceVisual() {
       ].map((row) => (
         <div
           key={`${row.name}-${row.skill}`}
-          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5"
+          className="flex items-center gap-3 rounded-xl border border-[var(--mk-line)] bg-[var(--mk-tint)] px-3 py-2.5"
         >
           <span className="h-8 w-8 shrink-0 rounded-full bg-violet-500/20 ring-1 ring-violet-400/30" />
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-slate-200">{row.name}</p>
-            <p className="text-[10px] text-slate-500">{row.skill}</p>
+            <p className="text-[11px] text-slate-500">{row.skill}</p>
           </div>
-          <span className="rounded-md border border-white/10 px-2 py-1 text-[10px] text-slate-400">
+          <span className="rounded-md border border-[var(--mk-line)] px-2 py-1 text-[11px] text-slate-400">
             {row.load}
           </span>
         </div>
@@ -41,7 +41,7 @@ export default function ResourceManagementPage() {
       eyebrow="Resources"
       title={
         <>
-          Know who is working
+          Know who is working{" "}
           <span className="mt-2 block text-slate-300">on what.</span>
         </>
       }

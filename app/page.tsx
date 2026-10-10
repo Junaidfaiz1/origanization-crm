@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth/session";
 import { getAuthenticatedUser } from "@/modules/auth/service";
 import { homePathForRole } from "@/lib/auth/home";
 import { redirect } from "next/navigation";
-import { MarketingExperience } from "@/components/marketing/marketing-experience";
+import { MarketingHome } from "@/components/marketing/home";
 import { HOME_METADATA } from "@/lib/marketing/seo";
 
 export const metadata = HOME_METADATA;
@@ -14,5 +14,5 @@ export default async function HomePage() {
     redirect(homePathForRole(user?.roleKey));
   }
 
-  return <MarketingExperience />;
+  return <MarketingHome />;
 }

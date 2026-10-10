@@ -61,9 +61,9 @@ export const PRODUCT_NAV = [
     description: "Revenue, pipeline, and performance views",
   },
   {
-    href: MARKETING_ROUTES.features,
-    title: "Automation",
-    description: "Workflow patterns from win to invoice",
+    href: MARKETING_ROUTES.clientPortal,
+    title: "Client portal",
+    description: "Progress, files, and invoices for your clients",
   },
 ] as const;
 
@@ -93,13 +93,11 @@ export const SOLUTION_NAV = [
 export const COMPANY_NAV = [
   { href: MARKETING_ROUTES.about, title: "About", description: "Mission and product philosophy" },
   { href: MARKETING_ROUTES.customers, title: "Customers", description: "Demo case studies" },
-  { href: MARKETING_ROUTES.security, title: "Security", description: "Tenancy, roles, and boundaries" },
-  { href: MARKETING_ROUTES.contact, title: "Contact", description: "Talk with the TechNova team" },
+  { href: MARKETING_ROUTES.contact, title: "Contact", description: "Talk with the Technova team" },
 ] as const;
 
 export const RESOURCE_NAV = [
   { href: MARKETING_ROUTES.guides, title: "Guides", description: "Static articles and playbooks" },
   { href: MARKETING_ROUTES.features, title: "Features", description: "Full product map" },
   { href: MARKETING_ROUTES.security, title: "Security", description: "Tenancy, roles, and boundaries" },
-  { href: MARKETING_ROUTES.contact, title: "Contact", description: "Talk with the Technova team" },
 ] as const;
