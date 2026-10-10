@@ -287,6 +287,7 @@ Record a row when a human or agent **verifies** a feature (not merely that the p
 
 | Date | Bug | Root cause | Fix | Regression test |
 | --- | --- | --- | --- | --- |
+| 2026-10-10 | Website navbar showed Contact (and Security) twice; “Automation” duplicated Features | Same links listed in both COMPANY_NAV and RESOURCE_NAV; Automation pointed at /features | Company: About, Customers, Contact · Resources: Guides, Features, Security · Product: Automation → Client portal; footer bottom bar no longer repeats column links | DOM check: no duplicate links in navbar menus or footer |
 | 2026-10-10 | Empty placeholder box in hero on 4 solution pages (agencies, consultants, freelancers, software houses) | `ProductLandingPage` fallback when a page passes no `visual` was a blank tile | Fallback is now a product preview built from the page’s own `uiTitle`, `uiItems` and `workflow` | DOM check at 1440/375: 5 preview rows, no overflow |
 | 2026-10-10 | Sign-in lifecycle chips wrapped (Invoice on 2nd line) | 5 chips + arrows wider than the 432–512px auth panel | Compact chips, `flex-nowrap`, step numbers only from `xl` | Measured in browser at 1024/1280/1440/1920: 1 row |
 | 2026-10-10 | Marketing headings read as joined words (“you’retrying”, “clientbefore”) | JSX line break before a `block` span drops the space in text/a11y | `{" "}` before the second line in 18 page titles + `SectionHeading` | DOM check of h1 text |
@@ -300,7 +301,7 @@ Record a row when a human or agent **verifies** a feature (not merely that the p
 
 | Opened | Bug | Severity | Status |
 | --- | --- | --- | --- |
-| — | — | — | None logged |
+| 2026-10-10 | DB role permissions out of sync with `config/permissions.ts`: system roles lack RESOURCE_*, TIME_ENTRY_* and PAYMENT_CREATE/UPDATE (owner/admin missing 10, PM 8, finance 4, employee/freelancer 3). Owner sees “no access” on /resources, /time-tracking, /payments/new; freelancer on /freelancer/time | High | Open — needs `npm run db:seed` (or a permission backfill migration) against the target DB; not run because `.env` points at the remote Neon DB |
 
 ---
 
