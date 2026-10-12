@@ -40,7 +40,7 @@ export default function FinancePage() {
       eyebrow="Finance"
       title={
         <>
-          Know where
+          Know where{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             every dollar goes.
           </span>

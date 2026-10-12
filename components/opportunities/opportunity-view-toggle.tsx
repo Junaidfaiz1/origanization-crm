@@ -22,13 +22,13 @@ export function OpportunityViewToggle() {
   }
 
   return (
-    <div className="inline-flex rounded-md border border-border bg-card p-0.5">
+    <div className="inline-flex rounded-lg bg-secondary p-[3px]">
       <Link
         href={hrefFor("list")}
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-xs font-medium",
+          "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium",
           view === "list"
-            ? "bg-muted text-foreground"
+            ? "bg-card text-foreground shadow-xs"
             : "text-muted-foreground hover:text-foreground",
         )}
         aria-current={view === "list" ? "page" : undefined}
@@ -39,9 +39,9 @@ export function OpportunityViewToggle() {
       <Link
         href={hrefFor("kanban")}
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-xs font-medium",
+          "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium",
           view === "kanban"
-            ? "bg-muted text-foreground"
+            ? "bg-card text-foreground shadow-xs"
             : "text-muted-foreground hover:text-foreground",
         )}
         aria-current={view === "kanban" ? "page" : undefined}

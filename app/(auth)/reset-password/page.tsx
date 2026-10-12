@@ -22,7 +22,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       >
         <Link
           href="/forgot-password"
-          className="mk-underline text-sm text-[var(--mk-bronze)] hover:text-[var(--mk-warm)]"
+          className="text-sm font-medium text-primary hover:underline"
         >
           Request reset link →
         </Link>
@@ -50,7 +50,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       >
         <Link
           href="/forgot-password"
-          className="mk-underline text-sm text-[var(--mk-bronze)] hover:text-[var(--mk-warm)]"
+          className="text-sm font-medium text-primary hover:underline"
         >
           Request a new reset link →
         </Link>

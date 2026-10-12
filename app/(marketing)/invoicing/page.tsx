@@ -11,11 +11,11 @@ export const metadata = marketingMetadata({
 
 function InvoiceVisual() {
   return (
-    <div className="relative min-h-[16rem] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-950/35 via-slate-950 to-slate-950 p-6">
-      <div className="rounded-2xl border border-white/10 bg-[#0b1220] shadow-[0_20px_60px_rgb(0_0_0_/_0.4)]">
-        <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
-          <span className="text-[10px] uppercase tracking-wider text-slate-500">Invoice</span>
-          <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-200">
+    <div className="relative min-h-[16rem] overflow-hidden rounded-3xl border border-[var(--mk-line)] bg-gradient-to-br from-emerald-950/35 via-slate-950 to-slate-950 p-6">
+      <div className="rounded-2xl border border-[var(--mk-line)] bg-[var(--mk-surface)] shadow-[0_20px_50px_rgb(17_20_26_/_0.1)]">
+        <div className="flex items-center justify-between border-b border-[var(--mk-line)] px-4 py-3">
+          <span className="text-[11px] uppercase tracking-wider text-slate-500">Invoice</span>
+          <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-200">
             Draft
           </span>
         </div>
@@ -24,20 +24,20 @@ function InvoiceVisual() {
             <span>Client · Project</span>
             <span className="text-slate-300">Linked</span>
           </div>
-          <div className="h-px bg-white/[0.06]" />
+          <div className="h-px bg-[var(--mk-tint)]" />
           {["Line item A", "Line item B"].map((line) => (
             <div key={line} className="flex justify-between text-xs">
               <span className="text-slate-400">{line}</span>
-              <span className="h-2 w-12 rounded bg-white/10" />
+              <span className="h-2 w-12 rounded bg-[var(--mk-tint)]" />
             </div>
           ))}
-          <div className="flex justify-between border-t border-white/[0.06] pt-3 text-sm font-semibold text-white">
+          <div className="flex justify-between border-t border-[var(--mk-line)] pt-3 text-sm font-semibold text-[var(--mk-text)]">
             <span>Total</span>
             <span className="h-3 w-16 rounded bg-emerald-400/30" />
           </div>
         </div>
       </div>
-      <p className="mt-4 text-center text-[10px] text-slate-600">
+      <p className="mt-4 text-center text-[11px] text-slate-600">
         Unique invoice numbers per organization
       </p>
     </div>
@@ -50,7 +50,7 @@ export default function InvoicingPage() {
       eyebrow="Invoicing"
       title={
         <>
-          Bill the work
+          Bill the work{" "}
           <span className="mt-2 block text-slate-300">you actually delivered.</span>
         </>
       }

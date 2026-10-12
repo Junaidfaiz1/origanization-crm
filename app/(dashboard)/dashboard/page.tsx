@@ -288,10 +288,124 @@ export default async function DashboardPage() {
     }
   }
 
+  type AttentionItem = {
+    key: string;
+    title: string;
+    meta: string;
+    href: string;
+    tone: "red" | "amber" | "blue";
+  };
+
+  const attention: AttentionItem[] = [];
+  const plural = (count: number, word: string) =>
+    `${count} ${word}${count === 1 ? "" : "s"}`;
+
+  if (metrics.overdueInvoices) {
+    attention.push({
+      key: "overdue",
+      title: `${plural(metrics.overdueInvoices, "invoice")} overdue`,
+      meta: "Need collection",
+      href: "/invoices?status=OVERDUE",
+      tone: "red",
+    });
+  }
+  if (metrics.pendingProposals) {
+    attention.push({
+      key: "proposals",
+      title: `${plural(metrics.pendingProposals, "proposal")} awaiting client`,
+      meta: "Sent or viewed, no decision yet",
+      href: "/proposals",
+      tone: "amber",
+    });
+  }
+  if (metrics.openBids) {
+    attention.push({
+      key: "bids",
+      title: `${plural(metrics.openBids, "bid request")} open`,
+      meta: "Review and score incoming bids",
+      href: "/bidding",
+      tone: "amber",
+    });
+  }
+  if (metrics.upcomingMilestones) {
+    attention.push({
+      key: "milestones",
+      title: `${plural(metrics.upcomingMilestones, "milestone")} due soon`,
+      meta: "Due in the next 14 days",
+      href: "/milestones",
+      tone: "blue",
+    });
+  }
+  if (metrics.myOpenTasks) {
+    attention.push({
+      key: "tasks",
+      title: `${plural(metrics.myOpenTasks, "open task")} assigned to you`,
+      meta: "Across your projects",
+      href: "/tasks",
+      tone: "blue",
+    });
+  }
+
+  const ATTENTION_DOT: Record<AttentionItem["tone"], string> = {
+    red: "bg-destructive",
+    amber: "bg-[#c77c02]",
+    blue: "bg-primary",
+  };
+
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
+  const attentionCard = (
+    <Card className="min-w-0 overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle>Needs attention</CardTitle>
+        {attention.length > 0 ? (
+          <span className="inline-flex h-6 items-center rounded-full bg-destructive/10 px-2.5 text-xs font-medium text-destructive">
+            {plural(attention.length, "item")}
+          </span>
+        ) : null}
+      </CardHeader>
+      {attention.length === 0 ? (
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Nothing urgent right now. Overdue invoices, open bids and due
+            milestones will show up here.
+          </p>
+        </CardContent>
+      ) : (
+        <ul className="border-t border-border-subtle">
+          {attention.map((item) => (
+            <li key={item.key} className="border-b border-border-subtle last:border-b-0">
+              <Link
+                href={item.href}
+                className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-muted/60"
+              >
+                <span
+                  className={`mt-1.5 size-2 shrink-0 rounded-full ${ATTENTION_DOT[item.tone]}`}
+                  aria-hidden
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium">{item.title}</span>
+                  <span className="block text-[13px] text-muted-foreground">
+                    {item.meta}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+
   return (
-    <PageContainer className="space-y-8">
+    <PageContainer className="space-y-6">
       <div className="min-w-0">
-        <h1 className="text-h1">
+        <p className="text-[13px] text-muted-foreground">{today}</p>
+        <h1 className="mt-1 font-display text-[32px] font-semibold leading-tight tracking-[-0.02em]">
           {greetingForHour()}, {firstName}
         </h1>
         <p className="mt-1 max-w-2xl text-body text-muted-foreground">
@@ -308,7 +422,7 @@ export default async function DashboardPage() {
       </div>
 
       {kpis.length > 0 ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {kpis.slice(0, 6).map((kpi) => (
             <MetricCard
               key={kpi.key}
@@ -322,14 +436,13 @@ export default async function DashboardPage() {
         </div>
       ) : null}
 
-      {charts ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <RevenueTrendChart data={charts.revenueByMonth} />
-          <PipelineValueChart data={charts.pipelineByStage} />
-        </div>
-      ) : null}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        {charts ? <RevenueTrendChart data={charts.revenueByMonth} /> : null}
+        {attentionCard}
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
+        {charts ? <PipelineValueChart data={charts.pipelineByStage} /> : null}
         {metrics.canViewProjects ? (
           <Card className="min-w-0 overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -377,7 +490,9 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         ) : null}
+      </div>
 
+      <div className="grid gap-4 lg:grid-cols-2">
         {metrics.canViewTasks && metrics.myTaskItems.length > 0 ? (
           <Card className="min-w-0 overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -437,10 +552,9 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         )}
-      </div>
 
       {metrics.canViewProjects && metrics.upcomingMilestoneItems.length > 0 ? (
-        <Card>
+        <Card className="min-w-0 overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Upcoming milestones</CardTitle>
             <Link
@@ -472,6 +586,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       ) : null}
+      </div>
     </PageContainer>
   );
 }

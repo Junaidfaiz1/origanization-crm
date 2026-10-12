@@ -22,6 +22,7 @@ export default function ContactPage() {
           <div>
             <SectionEyebrow>Contact</SectionEyebrow>
             <SectionHeading
+              as="h1"
               className="mt-4"
               title="Tell us what you’re"
               accent="trying to run."
@@ -32,7 +33,7 @@ export default function ContactPage() {
               <p>Common themes: bidding, delivery margin, client portals.</p>
             </div>
           </div>
-          <div className="rounded-xl border border-white/10 bg-[#101010] p-6 sm:p-8">
+          <div className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6 sm:p-8">
             <ContactForm />
           </div>
         </div>

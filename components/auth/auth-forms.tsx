@@ -15,14 +15,21 @@ import { cn } from "@/lib/utils/cn";
 
 const initialState: AuthFormState = {};
 
-const fieldClass =
-  "h-11 border-white/10 bg-white/[0.03] text-[var(--mk-text)] placeholder:text-[var(--mk-muted)] focus-visible:border-[var(--mk-bronze)]/50 focus-visible:ring-[var(--mk-bronze)]/20";
+const fieldClass = "h-11 md:h-11 md:text-[15px]";
 
-const labelClass = "text-[var(--mk-text-2)]";
+const labelClass = "text-sm font-medium text-foreground";
+
+const errorBoxClass =
+  "rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2.5 text-sm text-destructive";
+
+const noticeBoxClass =
+  "rounded-lg border border-success/20 bg-success/10 px-3 py-2.5 text-sm text-success";
+
+const linkClass = "font-medium text-primary hover:underline";
 
 function FieldError({ messages }: { messages?: string[] }) {
   if (!messages?.length) return null;
-  return <p className="text-sm text-rose-300/90">{messages[0]}</p>;
+  return <p className="text-sm text-destructive">{messages[0]}</p>;
 }
 
 function AuthSubmit({
@@ -39,11 +46,10 @@ function AuthSubmit({
       type="submit"
       disabled={pending}
       className={cn(
-        "mk-focus-ring inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[var(--mk-bronze)] px-4 text-sm font-medium tracking-wide text-[#1a120c] transition-[transform,background-color,opacity] duration-300 hover:-translate-y-0.5 hover:bg-[var(--mk-warm)] disabled:pointer-events-none disabled:opacity-60",
+        "inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-[15px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60",
       )}
     >
       {pending ? busy : idle}
-      <span aria-hidden>→</span>
     </button>
   );
 }
@@ -55,14 +61,14 @@ export function LoginForm({ notice }: { notice?: string }) {
     <form action={action} className="space-y-4">
       {notice ? (
         <p
-          className="rounded-md border border-[var(--mk-bronze)]/25 bg-[var(--mk-bronze)]/10 px-3 py-2 text-sm text-[var(--mk-warm)]"
+          className={noticeBoxClass}
           role="status"
         >
           {notice}
         </p>
       ) : null}
       {state.message ? (
-        <p className="rounded-md border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        <p className={errorBoxClass}>
           {state.message}
         </p>
       ) : null}
@@ -97,10 +103,10 @@ export function LoginForm({ notice }: { notice?: string }) {
         <FieldError messages={state.errors?.password} />
       </div>
       <AuthSubmit pending={pending} idle="Sign in" busy="Signing in..." />
-      <p className="text-center text-sm text-[var(--mk-muted)]">
+      <p className="text-center text-sm text-muted-foreground">
         <Link
           href="/forgot-password"
-          className="mk-underline text-[var(--mk-text-2)] hover:text-[var(--mk-text)]"
+          className={linkClass}
         >
           Forgot password?
         </Link>
@@ -115,7 +121,7 @@ export function RegisterForm() {
   return (
     <form action={action} className="space-y-4">
       {state.message ? (
-        <p className="rounded-md border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        <p className={errorBoxClass}>
           {state.message}
         </p>
       ) : null}
@@ -194,7 +200,7 @@ export function ForgotPasswordForm() {
     <form action={action} className="space-y-4">
       {state.message ? (
         <p
-          className="rounded-md border border-[var(--mk-bronze)]/25 bg-[var(--mk-bronze)]/10 px-3 py-2 text-sm text-[var(--mk-warm)]"
+          className={noticeBoxClass}
           role="status"
         >
           {state.message}
@@ -219,10 +225,10 @@ export function ForgotPasswordForm() {
         idle="Send reset link"
         busy="Sending..."
       />
-      <p className="text-center text-sm text-[var(--mk-muted)]">
+      <p className="text-center text-sm text-muted-foreground">
         <Link
           href="/login"
-          className="mk-underline text-[var(--mk-text-2)] hover:text-[var(--mk-text)]"
+          className={linkClass}
         >
           Back to sign in
         </Link>
@@ -267,14 +273,14 @@ export function ResetPasswordForm({
       ) : null}
       {organizationName ? (
         <p
-          className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--mk-text-2)]"
+          className="rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground"
           role="status"
         >
           Join {organizationName}
         </p>
       ) : null}
       {state.message ? (
-        <p className="rounded-md border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        <p className={errorBoxClass}>
           {state.message}
         </p>
       ) : null}

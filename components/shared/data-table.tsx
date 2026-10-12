@@ -30,35 +30,35 @@ export function DataTable<T>({
     <>
       <div
         className={cn(
-          "hidden overflow-x-auto rounded-lg border border-border md:block",
+          "hidden overflow-x-auto rounded-xl border border-border bg-card md:block",
           className,
         )}
       >
         <table className={cn("w-full text-left text-sm", minWidthClassName)}>
           {caption ? <caption className="sr-only">{caption}</caption> : null}
-          <thead className="sticky top-0 z-10 border-b border-border bg-muted/80 text-xs font-medium text-muted-foreground backdrop-blur">
+          <thead className="sticky top-0 z-10 border-b border-border bg-muted/70 text-xs font-medium uppercase tracking-[0.04em] text-muted-foreground backdrop-blur">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.id}
                   scope="col"
-                  className={cn("px-3 py-2.5 font-medium", column.className)}
+                  className={cn("px-4 py-2.5 font-medium", column.className)}
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border bg-card">
+          <tbody className="divide-y divide-border-subtle bg-card">
             {rows.map((row) => (
               <tr
                 key={rowKey(row)}
-                className="transition-colors hover:bg-muted/40"
+                className="transition-colors hover:bg-muted/50"
               >
                 {columns.map((column) => (
                   <td
                     key={column.id}
-                    className={cn("px-3 py-2.5 align-middle", column.className)}
+                    className={cn("px-4 py-3 align-middle", column.className)}
                   >
                     {column.cell(row)}
                   </td>

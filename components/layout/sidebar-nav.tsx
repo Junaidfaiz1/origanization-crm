@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { NAV_SECTIONS } from "@/components/layout/nav";
 import {
   AppBrand,
-  NavActiveIndicator,
   navLinkClass,
 } from "@/components/layout/app-brand";
 import { hasPermission, type PermissionKey } from "@/config/permissions";
@@ -49,7 +48,7 @@ export function SidebarNav({
         return (
           <div key={section.title} className="mb-4">
             {!collapsed ? (
-              <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-sidebar-muted">
+              <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 {section.title}
               </p>
             ) : (
@@ -72,7 +71,6 @@ export function SidebarNav({
                     className={navLinkClass(active, collapsed)}
                     title={collapsed ? item.label : undefined}
                   >
-                    <NavActiveIndicator active={active} />
                     <Icon className="h-4 w-4 shrink-0" />
                     {!collapsed ? (
                       <span className="truncate">{item.label}</span>

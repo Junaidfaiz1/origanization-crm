@@ -45,8 +45,8 @@ export function Header({
   const { theme, setTheme, resolvedTheme } = useTheme();
 
   return (
-    <header className="z-20 shrink-0 border-b border-border bg-card/90 pt-[env(safe-area-inset-top)] backdrop-blur">
-      <div className="flex h-14 items-center gap-2 px-3 sm:px-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)_minmax(0,1fr)] lg:gap-4 lg:px-6">
+    <header className="z-20 shrink-0 border-b border-border bg-card pt-[env(safe-area-inset-top)]">
+      <div className="flex h-16 items-center gap-2 px-3 sm:px-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)_minmax(0,1fr)] lg:gap-4 lg:px-6">
         {/* Left — menu (mobile) + org context */}
         <div className="flex min-w-0 items-center gap-2 lg:justify-self-start">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -129,7 +129,7 @@ export function Header({
             >
               <Bell className="h-4 w-4" />
               {unreadNotificationCount > 0 ? (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
+                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground ring-2 ring-card">
                   {unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}
                 </span>
               ) : null}

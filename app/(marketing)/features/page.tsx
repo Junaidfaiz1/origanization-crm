@@ -85,7 +85,7 @@ export default function FeaturesPage() {
         <div className="relative mx-auto max-w-6xl">
           <SectionEyebrow>Features</SectionEyebrow>
           <h1 className="mk-display mt-3 max-w-3xl text-balance text-[2.1rem] leading-[1.08] sm:mt-4 sm:text-5xl lg:text-6xl">
-            Everything your business needs.
+            Everything your business needs.{" "}
             <span className="mt-2 block text-[var(--mk-text-2)]">
               Nothing you don&apos;t.
             </span>
@@ -103,11 +103,11 @@ export default function FeaturesPage() {
             <Link
               key={c.title}
               href={c.href}
-              className={`group rounded-xl border border-white/10 bg-[#101010] p-6 transition-colors hover:border-[var(--mk-bronze)]/40 ${
+              className={`group rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6 transition-colors hover:border-[var(--mk-bronze)]/40 ${
                 i === 0 || i === 1 ? "lg:min-h-[14rem]" : ""
               }`}
             >
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--mk-muted)]">
+              <p className="text-[11px] uppercase tracking-[0.06em] text-[var(--mk-muted)]">
                 {String(i + 1).padStart(2, "0")}
               </p>
               <h2 className="mt-3 text-xl font-medium text-[var(--mk-text)] group-hover:text-[var(--mk-warm)]">
@@ -120,14 +120,14 @@ export default function FeaturesPage() {
           ))}
         </div>
 
-        <div className="mx-auto mt-16 max-w-6xl rounded-xl border border-white/10 bg-[#0a0a0a] p-8">
+        <div className="mx-auto mt-16 max-w-6xl rounded-xl border border-[var(--mk-line)] bg-[var(--mk-bg-2)] p-8">
           <SectionEyebrow>Product destinations</SectionEyebrow>
           <div className="mt-6 flex flex-wrap gap-3">
             {PRODUCT_NAV.map((p) => (
               <Link
                 key={p.href}
                 href={p.href}
-                className="rounded-md border border-white/10 px-4 py-2 text-sm text-[var(--mk-text-2)] hover:border-[var(--mk-bronze)]/40"
+                className="rounded-md border border-[var(--mk-line)] px-4 py-2 text-sm text-[var(--mk-text-2)] hover:border-[var(--mk-bronze)]/40"
               >
                 {p.title}
               </Link>

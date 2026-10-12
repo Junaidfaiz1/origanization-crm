@@ -42,7 +42,7 @@ export default function AnalyticsPage() {
       eyebrow="Analytics"
       title={
         <>
-          See the business
+          See the business{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             behind the busy.
           </span>

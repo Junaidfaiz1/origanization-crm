@@ -69,14 +69,14 @@ export function OpportunityPipelineSummary({
                 }}
                 className={`w-40 rounded-xl border p-3 text-left transition-colors ${
                   active
-                    ? "border-primary bg-primary/5"
+                    ? "border-primary bg-accent"
                     : "border-border bg-card hover:bg-muted/40"
                 }`}
               >
                 <div className="mb-2">
                   <StatusBadge status={stage.stage} />
                 </div>
-                <p className="text-lg font-semibold">{stage.count}</p>
+                <p className="font-display text-lg font-semibold">{stage.count}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   <MoneyDisplay amount={stage.value} />
                 </p>
@@ -111,8 +111,8 @@ function SummaryCard({
 }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <div className="mt-1 text-xl font-semibold tracking-tight">{value}</div>
+      <p className="text-[13px] font-medium text-muted-foreground">{label}</p>
+      <div className="mt-1.5 font-display text-2xl font-semibold tracking-tight">{value}</div>
       <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
     </div>
   );

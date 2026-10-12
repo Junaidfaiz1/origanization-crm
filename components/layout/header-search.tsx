@@ -119,7 +119,7 @@ export function HeaderSearch() {
         }}
         onKeyDown={onKeyDown}
         placeholder="Search workspace…"
-        className="h-9 min-w-0 pl-9 pr-9"
+        className="h-10 min-w-0 border-border bg-muted pl-9 pr-9 shadow-none focus-visible:bg-card"
         aria-label="Search leads, clients, projects, and more"
         aria-autocomplete="list"
         aria-controls={listId}

@@ -48,7 +48,7 @@ export function SheetContent({
       >
         {children}
         <DialogPrimitive.Close
-          className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] rounded-md p-2 text-sidebar-muted hover:bg-sidebar-accent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] rounded-md p-2 text-sidebar-muted hover:bg-muted hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Close menu"
         >
           <X className="h-4 w-4" />

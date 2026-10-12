@@ -32,7 +32,7 @@ function ProjectVisual() {
           value={formatDemoMoney(d.project.budgetUsed)}
         />
       </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--mk-tint)]">
         <div
           className="h-full bg-[var(--mk-bronze)]"
           style={{ width: `${d.project.progress}%` }}
@@ -48,7 +48,7 @@ export default function ProjectManagementPage() {
       eyebrow="Projects"
       title={
         <>
-          Once you win the work,
+          Once you win the work,{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             deliver it beautifully.
           </span>

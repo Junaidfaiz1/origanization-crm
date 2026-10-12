@@ -10,7 +10,6 @@ import {
   SOLUTION_NAV,
   MARKETING_ROUTES,
 } from "@/lib/marketing/routes";
-import { MagneticButton } from "@/components/marketing/primitives";
 import { cn } from "@/lib/utils/cn";
 
 type MenuKey = "product" | "solutions" | "resources" | "company" | null;
@@ -29,7 +28,7 @@ function MegaPanel({
           key={item.href}
           href={item.href}
           onClick={onNavigate}
-          className="group rounded-lg border border-transparent px-3 py-3 transition-colors hover:border-white/10 hover:bg-white/[0.03]"
+          className="group rounded-lg border border-transparent px-3 py-3 transition-colors hover:border-[var(--mk-line)] hover:bg-[var(--mk-tint-2)]"
           data-cursor="link"
         >
           <p className="text-sm font-medium text-[var(--mk-text)] group-hover:text-[var(--mk-warm)]">
@@ -57,8 +56,8 @@ function NavTrigger({
     <button
       type="button"
       className={cn(
-        "mk-focus-ring inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm text-[var(--mk-text-2)] transition-colors hover:text-[var(--mk-text)]",
-        open && "text-[var(--mk-text)]",
+        "mk-focus-ring inline-flex h-10 items-center gap-1.5 rounded-[10px] px-3.5 text-[15px] font-medium text-[var(--mk-text-2)] transition-colors hover:bg-[var(--mk-tint)] hover:text-[var(--mk-text)]",
+        open && "bg-[var(--mk-tint)] text-[var(--mk-text)]",
       )}
       aria-expanded={open}
       onClick={onClick}
@@ -127,23 +126,23 @@ export function MarketingNavbar() {
     <header
       ref={rootRef}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color,padding] duration-300",
+        "fixed inset-x-0 top-0 z-50 border-b bg-[var(--mk-bg)] transition-[border-color,box-shadow] duration-300",
         scrolled
-          ? "border-b border-white/10 bg-[#050505]/72 py-2 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent py-4",
+          ? "border-[var(--mk-line)] shadow-[0_1px_2px_rgb(17_20_26_/_0.04)]"
+          : "border-[var(--mk-line)]",
       )}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-[72px] sm:gap-4 sm:px-6 lg:px-8">
         <Link
           href={MARKETING_ROUTES.home}
-          className="mk-focus-ring group flex min-w-0 items-baseline gap-2"
+          className="mk-focus-ring group flex min-w-0 items-center gap-2.5"
           data-cursor="link"
         >
-          <span className="font-[family-name:var(--font-marketing-display)] text-xl tracking-wide text-[var(--mk-text)] sm:text-2xl">
-            Technova
+          <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-[var(--mk-bronze)] font-display text-sm font-bold text-[var(--mk-on-accent)]">
+            TN
           </span>
-          <span className="hidden text-[10px] uppercase tracking-[0.22em] text-[var(--mk-muted)] sm:inline">
-            CRM
+          <span className="font-display text-[19px] font-semibold text-[var(--mk-text)]">
+            Technova
           </span>
         </Link>
 
@@ -165,7 +164,7 @@ export function MarketingNavbar() {
           ))}
 
           {menu ? (
-            <div className="absolute left-1/2 top-full z-50 mt-3 w-[min(36rem,90vw)] -translate-x-1/2 rounded-xl border border-white/10 bg-[#0c0c0c]/95 p-3 shadow-[0_30px_80px_rgb(0_0_0_/_0.55)] backdrop-blur-xl">
+            <div className="absolute left-1/2 top-full z-50 mt-3 w-[min(36rem,90vw)] -translate-x-1/2 rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-3 shadow-[0_20px_50px_rgb(17_20_26_/_0.12)]">
               <MegaPanel items={panels[menu]} onNavigate={() => setMenu(null)} />
             </div>
           ) : null}
@@ -174,19 +173,22 @@ export function MarketingNavbar() {
         <div className="hidden items-center gap-2 lg:flex">
           <Link
             href="/login"
-            className="mk-focus-ring rounded-md px-3 py-2 text-sm text-[var(--mk-text-2)] hover:text-[var(--mk-text)]"
+            className="mk-focus-ring inline-flex h-10 items-center rounded-[10px] px-3.5 text-[15px] font-medium text-[var(--mk-text)] hover:bg-[var(--mk-tint)]"
             data-cursor="link"
           >
-            Login
+            Sign in
           </Link>
-          <MagneticButton href="/register" className="!px-4 !py-2 text-xs">
-            Get started
-          </MagneticButton>
+          <Link
+            href="/register"
+            className="mk-focus-ring inline-flex h-10 items-center rounded-[10px] bg-[var(--mk-ink)] px-[18px] text-[15px] font-semibold text-white hover:bg-[#262b35]"
+          >
+            Start free
+          </Link>
         </div>
 
         <button
           type="button"
-          className="mk-focus-ring rounded-md border border-white/10 p-2 text-[var(--mk-text)] lg:hidden"
+          className="mk-focus-ring rounded-md border border-[var(--mk-line)] p-2 text-[var(--mk-text)] lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((v) => !v)}
@@ -196,7 +198,7 @@ export function MarketingNavbar() {
       </div>
 
       {mobileOpen ? (
-        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/10 bg-[#050505] px-4 py-4 lg:hidden">
+        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-[var(--mk-line)] bg-[var(--mk-bg)] px-4 py-4 lg:hidden">
           {(
             [
               ["product", "Product", PRODUCT_NAV],
@@ -205,7 +207,7 @@ export function MarketingNavbar() {
               ["company", "Company", COMPANY_NAV],
             ] as const
           ).map(([key, label, items]) => (
-            <div key={key} className="border-b border-white/[0.06] py-2">
+            <div key={key} className="border-b border-[var(--mk-line)] py-2">
               <button
                 type="button"
                 className="flex w-full items-center justify-between py-2 text-sm text-[var(--mk-text)]"
@@ -234,17 +236,17 @@ export function MarketingNavbar() {
           <div className="mt-4 flex flex-col gap-2">
             <Link
               href="/login"
-              className="rounded-md border border-white/10 px-4 py-3 text-center text-sm"
+              className="rounded-xl border border-[var(--mk-line)] px-4 py-3 text-center text-sm font-medium"
               onClick={() => setMobileOpen(false)}
             >
-              Login
+              Sign in
             </Link>
             <Link
               href="/register"
-              className="rounded-md bg-[var(--mk-bronze)] px-4 py-3 text-center text-sm font-medium text-[#1a120c]"
+              className="rounded-xl bg-[var(--mk-ink)] px-4 py-3 text-center text-sm font-semibold text-white"
               onClick={() => setMobileOpen(false)}
             >
-              Get started
+              Start free
             </Link>
           </div>
         </div>

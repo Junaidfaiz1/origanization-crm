@@ -23,6 +23,7 @@ export default function CustomersPage() {
         <div className="mx-auto max-w-6xl">
           <SectionEyebrow>Customers</SectionEyebrow>
           <SectionHeading
+            as="h1"
             className="mt-4"
             title="Demo case studies."
             lead="Portfolio illustrations for product storytelling — not presented as real customer logos or testimonials."
@@ -31,10 +32,10 @@ export default function CustomersPage() {
             {d.caseStudies.map((c) => (
               <article
                 key={c.segment}
-                className="rounded-xl border border-white/10 bg-[#101010] p-6"
+                className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6"
               >
                 <DemoBadge>{c.label}</DemoBadge>
-                <p className="mt-4 text-xs uppercase tracking-[0.18em] text-[var(--mk-bronze)]">
+                <p className="mt-4 text-xs uppercase tracking-[0.06em] text-[var(--mk-bronze)]">
                   {c.segment}
                 </p>
                 <h2 className="mt-3 text-2xl text-[var(--mk-text)]">{c.headline}</h2>

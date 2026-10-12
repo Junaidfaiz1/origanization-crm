@@ -6,8 +6,6 @@ import {
   useState,
   useSyncExternalStore,
   type ReactNode,
-  type MouseEvent,
-  type RefObject,
 } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
@@ -27,84 +25,48 @@ export function MagneticButton({
   variant?: "primary" | "secondary" | "ghost";
   type?: "button" | "submit";
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  function onMove(e: MouseEvent) {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    setOffset({ x: x * 0.18, y: y * 0.18 });
-  }
-
-  function onLeave() {
-    setOffset({ x: 0, y: 0 });
-  }
-
+  // Name kept for existing imports; the redesign drops the magnetic pointer motion.
   const styles = cn(
-    "mk-focus-ring group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md px-6 py-3 text-sm font-medium tracking-wide transition-[transform,box-shadow,background-color,border-color] duration-300 will-change-transform",
+    "mk-focus-ring group inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl px-6 text-[15px] font-semibold transition-colors duration-200",
     variant === "primary" &&
-      "bg-[var(--mk-bronze)] text-[#1a120c] shadow-[0_0_0_1px_rgb(232_178_123_/_0.25)] hover:-translate-y-0.5 hover:bg-[var(--mk-warm)]",
+      "bg-[var(--mk-bronze)] text-[var(--mk-on-accent)] hover:bg-[var(--mk-warm)]",
     variant === "secondary" &&
-      "border border-white/15 bg-white/[0.03] text-[var(--mk-text)] hover:-translate-y-0.5 hover:border-[var(--mk-bronze)]/50 hover:bg-white/[0.06]",
+      "border border-[var(--mk-line)] bg-[var(--mk-surface)] text-[var(--mk-text)] hover:bg-[var(--mk-tint)]",
     variant === "ghost" &&
       "text-[var(--mk-text-2)] hover:text-[var(--mk-text)]",
     className,
   );
 
-  const motionStyle = {
-    transform: `translate3d(${offset.x}px, ${offset.y}px, 0)`,
-  };
+  const arrow =
+    variant === "primary" ? (
+      <span
+        className="transition-transform duration-200 group-hover:translate-x-0.5"
+        aria-hidden
+      >
+        →
+      </span>
+    ) : null;
 
   if (href) {
     return (
-      <Link
-        ref={ref as RefObject<HTMLAnchorElement>}
-        href={href}
-        className={styles}
-        style={motionStyle}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        data-cursor="magnetic"
-      >
+      <Link href={href} className={styles}>
         {children}
-        <span
-          className="translate-x-0 transition-transform duration-300 group-hover:translate-x-1"
-          aria-hidden
-        >
-          →
-        </span>
+        {arrow}
       </Link>
     );
   }
 
   return (
-    <button
-      ref={ref as RefObject<HTMLButtonElement>}
-      type={type}
-      className={styles}
-      style={motionStyle}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      onClick={onClick}
-      data-cursor="magnetic"
-    >
+    <button type={type} className={styles} onClick={onClick}>
       {children}
-      <span
-        className="translate-x-0 transition-transform duration-300 group-hover:translate-x-1"
-        aria-hidden
-      >
-        →
-      </span>
+      {arrow}
     </button>
   );
 }
 
 export function DemoBadge({ children = "Demo data" }: { children?: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mk-muted)]">
+    <span className="inline-flex items-center rounded-md bg-[#fef4e2] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a5300]">
       {children}
     </span>
   );
@@ -112,7 +74,7 @@ export function DemoBadge({ children = "Demo data" }: { children?: ReactNode }) 
 
 export function SectionEyebrow({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--mk-bronze)]">
+    <p className="font-mono text-[13px] font-medium uppercase tracking-[0.06em] text-[var(--mk-bronze)]">
       {children}
     </p>
   );
@@ -123,22 +85,28 @@ export function SectionHeading({
   accent,
   lead,
   className,
+  as: Heading = "h2",
 }: {
   title: ReactNode;
   accent?: ReactNode;
   lead?: ReactNode;
   className?: string;
+  /** Use "h1" when the heading is the page title. */
+  as?: "h1" | "h2";
 }) {
   return (
     <div className={cn("max-w-3xl", className)}>
-      <h2 className="mk-display text-balance text-[1.85rem] leading-[1.1] text-[var(--mk-text)] sm:text-5xl lg:text-6xl">
+      <Heading className="mk-display text-balance text-[2rem] leading-[1.04] text-[var(--mk-text)] sm:text-5xl lg:text-[56px]">
         {title}
         {accent ? (
-          <span className="mt-2 block text-[var(--mk-text-2)]">{accent}</span>
+          <>
+            {" "}
+            <span className="mt-1 block text-[var(--mk-muted)]">{accent}</span>
+          </>
         ) : null}
-      </h2>
+      </Heading>
       {lead ? (
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
+        <p className="mt-4 max-w-xl text-base leading-relaxed text-[var(--mk-text-2)] sm:mt-6 sm:text-lg">
           {lead}
         </p>
       ) : null}

@@ -17,5 +17,9 @@ export function MoneyDisplay({
     currency,
   }).format(Number.isFinite(value) ? value : 0);
 
-  return <span className={cn("tabular-nums", className)}>{formatted}</span>;
+  return (
+    <span className={cn("font-mono tabular-nums tracking-tight", className)}>
+      {formatted}
+    </span>
+  );
 }

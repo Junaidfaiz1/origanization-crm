@@ -45,7 +45,7 @@ export default function CrmPage() {
       eyebrow="CRM"
       title={
         <>
-          Know every client
+          Know every client{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             before the next meeting.
           </span>

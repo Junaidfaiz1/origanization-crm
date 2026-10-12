@@ -38,7 +38,7 @@ export default function BiddingProductPage() {
       eyebrow="Bidding"
       title={
         <>
-          Stop chasing every opportunity.
+          Stop chasing every opportunity.{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             Start choosing the right ones.
           </span>

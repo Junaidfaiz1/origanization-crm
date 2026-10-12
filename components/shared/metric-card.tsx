@@ -29,7 +29,9 @@ export function MetricCard({
         {Icon ? <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden /> : null}
       </CardHeader>
       <CardContent>
-        <div className="truncate text-h2 tracking-tight">{value}</div>
+        <div className="truncate font-display text-[28px] font-semibold leading-tight tracking-tight tabular-nums">
+          {value}
+        </div>
         {trend ? (
           <p className="mt-1 text-caption text-muted-foreground">{trend}</p>
         ) : null}
@@ -42,7 +44,7 @@ export function MetricCard({
 
   if (href) {
     return (
-      <Link href={href} className="block min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
+      <Link href={href} className="block min-w-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring">
         {body}
       </Link>
     );

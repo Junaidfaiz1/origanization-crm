@@ -4,15 +4,11 @@ import { cn } from "@/lib/utils/cn";
 type StatusTone = "success" | "warning" | "error" | "info" | "neutral";
 
 const TONE_CLASSES: Record<StatusTone, string> = {
-  success:
-    "border-success/25 bg-success/10 text-success dark:border-success/30 dark:bg-success/15 dark:text-success",
-  warning:
-    "border-warning/25 bg-warning/10 text-warning dark:border-warning/30 dark:bg-warning/15 dark:text-warning",
-  error:
-    "border-destructive/25 bg-destructive/10 text-destructive dark:border-destructive/30 dark:bg-destructive/15",
-  info: "border-info/25 bg-info/10 text-info dark:border-info/30 dark:bg-info/15 dark:text-info",
-  neutral:
-    "border-border bg-muted text-muted-foreground dark:border-border-strong",
+  success: "bg-success/10 text-success dark:bg-success/15",
+  warning: "bg-warning/10 text-warning dark:bg-warning/15",
+  error: "bg-destructive/10 text-destructive dark:bg-destructive/15",
+  info: "bg-info/10 text-info dark:bg-info/15",
+  neutral: "bg-secondary text-secondary-foreground",
 };
 
 /** Map domain statuses to a small semantic palette for consistency across modules. */
@@ -105,6 +101,7 @@ export function StatusBadge({
   const tone = statusTone(status);
   return (
     <Badge className={cn("capitalize", TONE_CLASSES[tone], className)}>
+      <span className="size-1.5 shrink-0 rounded-full bg-current opacity-80" aria-hidden />
       {label}
     </Badge>
   );

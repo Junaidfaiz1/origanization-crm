@@ -15,7 +15,7 @@ export default function FreelancersPage() {
       eyebrow="Freelancers"
       title={
         <>
-          Run your freelance business
+          Run your freelance business{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             like a company.
           </span>

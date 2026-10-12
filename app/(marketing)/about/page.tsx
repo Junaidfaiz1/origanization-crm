@@ -63,14 +63,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/[0.06] bg-[#0a0a0a] px-4 py-20 sm:px-6 lg:px-8">
+      <section className="border-t border-[var(--mk-line)] bg-[var(--mk-bg-2)] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <SectionHeading title="Product philosophy" />
           <div className="mt-10 grid gap-4 md:grid-cols-2">
             {PRINCIPLES.map((p) => (
               <div
                 key={p.title}
-                className="rounded-xl border border-white/10 bg-[#101010] p-6"
+                className="rounded-xl border border-[var(--mk-line)] bg-[var(--mk-surface)] p-6"
               >
                 <h2 className="text-lg font-medium">{p.title}</h2>
                 <p className="mt-3 text-sm text-[var(--mk-text-2)]">{p.body}</p>
@@ -83,11 +83,11 @@ export default function AboutPage() {
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <SectionEyebrow>Timeline</SectionEyebrow>
-          <ol className="mt-10 space-y-6 border-l border-white/10 pl-6">
+          <ol className="mt-10 space-y-6 border-l border-[var(--mk-line)] pl-6">
             {TIMELINE.map((item) => (
               <li key={item.y} className="relative">
                 <span className="absolute -left-[1.7rem] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--mk-bronze)]" />
-                <p className="text-xs uppercase tracking-[0.18em] text-[var(--mk-muted)]">
+                <p className="text-xs uppercase tracking-[0.06em] text-[var(--mk-muted)]">
                   {item.y}
                 </p>
                 <p className="mt-1 text-[var(--mk-text)]">{item.t}</p>

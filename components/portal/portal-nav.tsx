@@ -15,7 +15,7 @@ export type PortalNavItem = {
 };
 
 export const PORTAL_NAV: PortalNavItem[] = [
-  { href: "/portal", label: "Home", icon: LayoutDashboard },
+  { href: "/portal", label: "Overview", icon: LayoutDashboard },
   { href: "/portal/proposals", label: "Proposals", icon: FileText },
   { href: "/portal/projects", label: "Projects", icon: FolderKanban },
   { href: "/portal/invoices", label: "Invoices", icon: Receipt },

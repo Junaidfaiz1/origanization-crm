@@ -14,7 +14,7 @@ export default function AgenciesPage() {
       eyebrow="Agencies"
       title={
         <>
-          From lead
+          From lead{" "}
           <span className="mt-2 block text-[var(--mk-text-2)]">
             to retained client.
           </span>

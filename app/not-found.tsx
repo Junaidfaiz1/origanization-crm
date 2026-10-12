@@ -1,33 +1,34 @@
 import Link from "next/link";
+import { MarketingNavbar } from "@/components/marketing/navbar";
 import { MagneticButton } from "@/components/marketing/primitives";
 
 export default function NotFound() {
   return (
-    <div className="marketing-root relative flex min-h-dvh flex-col items-center justify-center bg-[#050505] px-4 text-[var(--mk-text)]">
-      <div className="pointer-events-none absolute inset-0 mk-radial-glow" />
-      <div className="relative mx-auto max-w-lg text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--mk-bronze)]">
-          404
-        </p>
-        <h1 className="mk-display mt-4 text-balance text-4xl leading-[1.08] sm:text-5xl">
-          Looks like this page left the workspace.
-        </h1>
-        <p className="mt-4 text-sm leading-relaxed text-[var(--mk-text-2)]">
-          The route you opened is not part of Technova — or it moved. Head back
-          home and continue from there.
-        </p>
-        <div className="mt-10 flex justify-center">
-          <MagneticButton href="/">Back to Technova</MagneticButton>
-        </div>
-        <p className="mt-4">
-          <Link
-            href="/contact"
-            className="mk-underline text-xs text-[var(--mk-muted)]"
-          >
-            Contact support
+    <div className="marketing-root mk-grid-bg flex min-h-dvh flex-col bg-[var(--mk-bg-2)]">
+      <MarketingNavbar />
+      <main className="flex flex-1 items-center justify-center px-6 pt-24 pb-16">
+        <div className="flex max-w-xl flex-col items-center gap-5 text-center">
+          <span className="font-display text-[96px] font-bold leading-[0.9] tracking-[-0.05em] text-[var(--mk-bronze)] sm:text-[160px]">
+            404
+          </span>
+          <h1 className="mk-display text-3xl sm:text-4xl">This page went off-pipeline.</h1>
+          <p className="text-[17px] leading-relaxed text-[var(--mk-text-2)]">
+            The link may be old, or the page has moved. Try one of these instead.
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+            <MagneticButton href="/">Back to home</MagneticButton>
+            <MagneticButton href="/features" variant="secondary">
+              See features
+            </MagneticButton>
+            <MagneticButton href="/login" variant="secondary">
+              Sign in
+            </MagneticButton>
+          </div>
+          <Link href="/contact" className="text-sm text-[var(--mk-muted)] hover:text-[var(--mk-text)]">
+            Contact us
           </Link>
-        </p>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
